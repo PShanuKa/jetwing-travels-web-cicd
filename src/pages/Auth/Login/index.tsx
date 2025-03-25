@@ -25,7 +25,7 @@ const LoginPage = () => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "admin1@example.com",
-    password: "admin123",
+    password: "admin1@example.com",
     MdRememberMe: false,
   });
   const [formError, setFormError] = useState({

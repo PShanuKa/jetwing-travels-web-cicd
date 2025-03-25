@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --primary: #101928;
+  --gray: #fff;
+  --textBlue: #3153C4;
+  --textGray: #667185;
+  --bgBlue: #F9FAFB;
+  --borderGray: #E5E7EB;
+  --tableHeaderBg: #EEF4FE;
+  --iconGray: #98A2B3;
+  --red: #FF2E2E;
+}

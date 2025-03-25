@@ -46,7 +46,7 @@ const Table = () => {
               <td className="py-4 px-6"> {user.email}</td>
               <td className="py-4 px-6">{user.name}</td>
               <td className="py-4 px-6">
-                {user.permissionNames.map((name) => `[${name}]`).join(" ")}
+                {user.permissionNames.map((name: any) => `[${name}]`).join(" ")}
               </td>
 
               <td className="py-4 px-6">

@@ -9,7 +9,18 @@ import { useGetAllOrganizationsQuery } from "@/services/organizationSlice";
 import { useNavigate } from "react-router-dom";
 import { BiLoaderAlt } from "react-icons/bi";
 
-const initialFormData = {
+const initialFormData: {
+  firstName: string;
+  lastName: string;
+  address: string;
+  mobileNumber: string;
+  email: string;
+  roleName: string;
+  permissionNames: string[];
+  organizationIds: number[]; // Explicitly set the type to an array of numbers
+  nicOrPassportNumber: string;
+  password: string;
+} = {
   firstName: "",
   lastName: "",
   address: "",
@@ -17,10 +28,11 @@ const initialFormData = {
   email: "",
   roleName: "",
   permissionNames: [],
-  organizationIds: [],
+  organizationIds: [], // This will now correctly infer an array of numbers
   nicOrPassportNumber: "",
   password: "",
 };
+
 
 const validationSchema = Yup.object({
   firstName: Yup.string().required("First name is required"),

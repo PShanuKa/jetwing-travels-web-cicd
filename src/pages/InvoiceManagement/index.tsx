@@ -24,7 +24,6 @@ const InvoiceManagement = () => {
             }}
           />
         </div>
-
         <div className="flex items-center gap-2 md:hidden">
           <div
             onClick={() => setSearchIsOpen(!searchIsOpen)}

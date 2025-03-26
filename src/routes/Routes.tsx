@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { authRoutes, IRoute, privateRoutes } from ".";
+import { authRoutes, IRoute, privateRoutes, publicRoutes } from ".";
 // import Default from "@/Layouts/Default";
 import { useSelector } from "react-redux";
 // import Logout from "@/pages/Auth/Logout";
@@ -27,6 +27,10 @@ const AllRoutes = () => {
 
       {privateRoutes.map((route: IRoute, index: number) => (
         <Route key={index} path={`/admin${route.path}`} element={!user ? <Navigate to="/admin/login" /> : <DefaultLayout>{route.element}</DefaultLayout>} />
+      ))}
+
+      {publicRoutes.map((route: IRoute, index: number) => (
+        <Route key={index} path={`/${route.path}`} element={route.element} />
       ))}
 
       {/* <Route path="/admin/logout" element={<Logout />} /> */}

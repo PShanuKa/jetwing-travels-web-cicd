@@ -301,7 +301,7 @@ const AddNewCustomer = () => {
             onClick={handleSubmit}
             className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white  py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"
           >
-            {isLoading && (
+            {isLoading || isEditLoading && (
               <AiOutlineLoading3Quarters className="animate-spin" />
             )}
             {type === "edit" ? "Update" : "Save"}

@@ -12,6 +12,7 @@ import PaymentManagement from "@/pages/PaymentManagement";
 import Report from "@/pages/Report";
 import AddInvoice from "@/pages/InvoiceManagement/AddInvoice";
 import Settings from "@/pages/Settings";
+import Payment from "@/pages/Payment";
 
 export interface IRoute {
   path: string;
@@ -47,7 +48,7 @@ const privateRoutes: IRoute[] = [
     name: "Add New User",
   },
   {
-    path: "/user/edit/:id",
+    path: "/user/:id/:encodedItem",
     element: <AddNewUser />,
     name: "Edit User",
   },
@@ -113,4 +114,12 @@ const privateRoutes: IRoute[] = [
   },
 ];
 
-export { authRoutes, privateRoutes };
+const publicRoutes: IRoute[] = [
+  {
+    path: "/payment",
+    element: <Payment />,
+    name: "Payment",
+  },
+];
+
+export { authRoutes, privateRoutes, publicRoutes };

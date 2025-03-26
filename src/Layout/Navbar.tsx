@@ -1,5 +1,5 @@
 import { RootState } from "@/app/store";
-import { setCompanySelectedOpen, setIsSidebarOpen } from "@/features/metaSlice";
+import { clearCompanySelected,  setIsSidebarOpen } from "@/features/metaSlice";
 
 import { HiMenuAlt2 } from "react-icons/hi";
 import { IoChevronDown } from "react-icons/io5";
@@ -72,7 +72,7 @@ const Navbar = () => {
               <li className="px-4 py-2 cursor-pointer font-semibold">
                 Elison Eyo
               </li>
-              <li onClick={() =>{ dispatch(setCompanySelectedOpen(true)); setIsDropdownOpen(false)}} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+              <li onClick={() =>{ dispatch(clearCompanySelected()); setIsDropdownOpen(false)}} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                 Change Company
               </li>
             </ul>

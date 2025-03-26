@@ -1,16 +1,16 @@
 import Input from "@/components/common/Input";
 import logo from "@/assets/logo.png";
 import RightBar from "./RightBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import { useCreateUserMutation } from "@/services/userSlice";
+import { useCreateUserMutation, useUpdateUserMutation } from "@/services/userSlice";
 import { useGetAllOrganizationsQuery } from "@/services/organizationSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BiLoaderAlt } from "react-icons/bi";
 
 const initialFormData: {
-  firstName: string;
+  fullName: string;
   lastName: string;
   address: string;
   mobileNumber: string;
@@ -21,7 +21,7 @@ const initialFormData: {
   nicOrPassportNumber: string;
   password: string;
 } = {
-  firstName: "",
+  fullName: "",
   lastName: "",
   address: "",
   mobileNumber: "",
@@ -34,24 +34,50 @@ const initialFormData: {
 };
 
 
+const AddNewUser = () => {
+  const [formData, setFormData] = useState(initialFormData);
+  const [formErrors, setFormErrors] = useState<any>({});
+  const navigate = useNavigate();
+  const { id, encodedItem } = useParams();
+  const type = id && encodedItem ? "edit" : "view";
+  const decodedItem = decodeURIComponent(encodedItem || "");
+  const parsedItem = JSON.parse(decodedItem || "{}");
+
+  // console.log(parsedItem);
+
+  
 const validationSchema = Yup.object({
-  firstName: Yup.string().required("First name is required"),
-  lastName: Yup.string().required("Last name is required"),
+  fullName: Yup.string().required("Full name is required"),
   address: Yup.string().required("Address is required"),
   mobileNumber: Yup.string().required("Mobile number is required"),
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
-  password: Yup.string().required("Password is required"),
+  // password: Yup.string().required("Password is required"),
   nicOrPassportNumber: Yup.string().required(
     "NIC or Passport Number is required"
   ),
 });
 
-const AddNewUser = () => {
-  const [formData, setFormData] = useState(initialFormData);
-  const [formErrors, setFormErrors] = useState<any>({});
-  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    if (type === "edit" && parsedItem) {
+      setFormData({
+        ...formData,
+        fullName: parsedItem.name,
+        email: parsedItem.email,
+        address: parsedItem.address,
+        mobileNumber: parsedItem.mobileNumber,
+        nicOrPassportNumber: parsedItem.identityNumber,
+        roleName: parsedItem.roleName,
+        organizationIds: parsedItem.organizationIds,
+        // password: parsedItem.password,
+      });
+
+      console.log("formData", parsedItem.name);
+    }
+  }, [type]);
 
   const handleChange = (e: any) => {
     setFormData({
@@ -64,16 +90,24 @@ const AddNewUser = () => {
     });
   };
 
-  const [createUser, { isLoading: isLoadingCreateUser }] = useCreateUserMutation();
-  const { data: organizations , isLoading: isLoadingOrganizations } = useGetAllOrganizationsQuery(undefined);
+  const [createUser, { isLoading: isLoadingCreateUser }] =
+    useCreateUserMutation();
+  const [updateUser, { isLoading: isLoadingUpdateUser }] =
+    useUpdateUserMutation();
+  const { data: organizations, isLoading: isLoadingOrganizations } =
+    useGetAllOrganizationsQuery(undefined);
 
   // Handle organization card click
   const handleOrganizationClick = (organizationId: number) => {
     setFormData((prevData: any) => {
-      const updatedOrganizationIds = prevData.organizationIds.includes(organizationId)
-        ? prevData.organizationIds.filter((id: number) => id !== organizationId)
-        : [...prevData.organizationIds, organizationId];
-  
+      const updatedOrganizationIds = prevData?.organizationIds?.includes(
+        organizationId
+      )
+        ? prevData?.organizationIds?.filter(
+            (id: number) => id !== organizationId
+          )
+        : [...(prevData?.organizationIds || []), organizationId];
+
       return {
         ...prevData,
         organizationIds: updatedOrganizationIds,
@@ -86,27 +120,50 @@ const AddNewUser = () => {
   const handleSubmit = async () => {
     try {
       await validationSchema.validate(formData, { abortEarly: false });
-      await createUser({
-        email: formData.email,
-        name: formData.firstName + " " + formData.lastName,
-        address: formData.address,
-        identityNumber: formData.nicOrPassportNumber,
-        mobileNumber: formData.mobileNumber,
-        organizationIds: formData.organizationIds,
-        roleName: formData.roleName,
-        password: formData.password,
-
-      })
-        .unwrap()
-        .then((res: any) => {
-          toast.success(res.message);
-          setFormData(initialFormData);
-          navigate("/admin/user");
+      if (type == "edit") {
+        await updateUser({
+          id: parsedItem.id,
+          email: formData.email,
+          name: formData.fullName,
+          address: formData.address,
+          identityNumber: formData.nicOrPassportNumber,
+          mobileNumber: formData.mobileNumber,
+          organizationIds: formData.organizationIds,
+          roleName: formData.roleName,
+          password: undefined,
         })
-        .catch((err: any) => {
-          toast.error(err.data.message || "Something went wrong");
-        });
+          .unwrap()
+          .then((res: any) => {
+            toast.success(res.message);
+            setFormData(initialFormData);
+            navigate("/admin/user");
+          })
+          .catch((err: any) => {
+            toast.error(err.data.message || "Something went wrong");
+          });
+      } else {
+        await createUser({
+          email: formData.email,
+          name: formData.fullName,
+          address: formData.address,
+          identityNumber: formData.nicOrPassportNumber,
+          mobileNumber: formData.mobileNumber,
+          organizationIds: formData.organizationIds,
+          roleName: formData.roleName,
+          password: formData.password,
+        })
+          .unwrap()
+          .then((res: any) => {
+            toast.success(res.message);
+            setFormData(initialFormData);
+            navigate("/admin/user");
+          })
+          .catch((err: any) => {
+            toast.error(err.data.message || "Something went wrong");
+          });
+      }
     } catch (err: any) {
+      console.log(err.inner);
       const errors: any = {};
       err.inner.forEach((error: any) => {
         errors[error.path] = error.message;
@@ -133,19 +190,19 @@ const AddNewUser = () => {
         </h1>
 
         <div className="grid gap-5">
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid  gap-5">
             <div>
               <Input
-                label="First Name"
-                placeholder="Enter first name"
-                name="firstName"
+                label="Full Name"
+                placeholder="Enter full name"
+                name="fullName"
                 required
-                value={formData.firstName}
+                value={formData.fullName}
                 onChangeHandler={handleChange}
-                errors={formErrors.firstName}
+                errors={formErrors.fullName}
               />
             </div>
-            <div>
+            {/* <div>
               <Input
                 label="Last Name"
                 placeholder="Enter last name"
@@ -155,7 +212,7 @@ const AddNewUser = () => {
                 onChangeHandler={handleChange}
                 errors={formErrors.lastName}
               />
-            </div>
+            </div> */}
           </div>
           <div>
             <Input
@@ -270,20 +327,16 @@ const AddNewUser = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
           {isLoadingOrganizations && (
             <div className="flex">
-            <BiLoaderAlt className="text-[var(--primary)] text-[24px] animate-spin" />
-          </div>
+              <BiLoaderAlt className="text-[var(--primary)] text-[24px] animate-spin" />
+            </div>
           )}
-
-
-
-
 
           {organizations?.data?.content?.map((organization: any) => (
             <div
               key={organization.id}
               onClick={() => handleOrganizationClick(organization.id)} // Pass the organization ID
               className={`w-full aspect-square transition-all duration-150 border rounded-lg p-1 flex flex-col active:scale-95 justify-center items-center gap-2 group cursor-pointer ${
-                formData.organizationIds.includes(organization.id) // Check if the ID is selected
+                formData?.organizationIds?.includes(organization.id) // Check if the ID is selected
                   ? "bg-[var(--primary)] border-transparent hover:bg-[var(--primary)]/80"
                   : "border-[var(--borderGray)]/20 hover:bg-[var(--primary)]/50"
               }`}
@@ -291,7 +344,7 @@ const AddNewUser = () => {
               <img src={logo} alt="" className="object-cover w-[80%]" />
               <p
                 className={`text-[22px] text-center font-medium transition-all duration-150 ${
-                  formData.organizationIds.includes(organization.id) // Highlight if the ID is selected
+                  formData?.organizationIds?.includes(organization.id) // Highlight if the ID is selected
                     ? "text-[#fff]"
                     : "text-[var(--textGray)] group-hover:text-[#fff]"
                 }`}
@@ -312,8 +365,10 @@ const AddNewUser = () => {
             className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"
             onClick={handleSubmit}
           >
-            {isLoadingCreateUser ? (
+            {isLoadingCreateUser || isLoadingUpdateUser ? (
               <BiLoaderAlt className=" text-[24px] animate-spin" />
+            ) : type === "edit" ? (
+              "Update"
             ) : (
               "Save"
             )}

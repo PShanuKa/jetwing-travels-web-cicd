@@ -17,7 +17,6 @@ const invoiceSlice = apiSlice.injectEndpoints({
           method: "GET",
         };
       },
-
     }),
   }),
 });

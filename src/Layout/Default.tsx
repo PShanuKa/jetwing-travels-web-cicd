@@ -1,4 +1,4 @@
-// import CompanySelector from "./Company";
+import CompanySelector from "./Company";
 import LeftSidebar from "./LeftSidebar";
 import Navbar from "./Navbar";
 
@@ -14,7 +14,7 @@ const DefaultLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="">
           <Navbar />
         </div>
-        {/* <CompanySelector /> */}
+        <CompanySelector />
       
         <div className="flex-1 p-5 bg-white md:bg-[#F9FAFB] w-full ">{children}</div>
       </div>

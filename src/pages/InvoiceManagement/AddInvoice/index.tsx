@@ -1,14 +1,16 @@
 import Input from "@/components/common/Input";
 import SearchInput from "@/components/common/SearchInput";
 import { useCreateInvoiceMutation } from "@/services/invoiceSlice";
-import {  useState } from "react";
+import { useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa6";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { IoClose } from "react-icons/io5";
 // import DeleteDialog from "./DeleteDialog";
 import * as Yup from "yup";
+import { useSelector } from "react-redux";
 
 const initialFormData = {
   title: "",
@@ -23,18 +25,14 @@ const initialFormData = {
   postalCode: "",
   tourNumber: "",
   organizationId: "",
-  items: [
-    {
-      description: "",
-      amount: "",
-    },
-  ],
+  items: [],
   initialPayment: "",
   balancePayment: "",
   balancePaymentDueDate: "",
   paymentPercentage: 100,
-  // attachments: [],
+  attachments: null,
 };
+
 
 const titleOptions = [
   {
@@ -75,19 +73,23 @@ const paymentPercentageOptions = [
 ];
 
 const validationSchema = Yup.object({
- title: Yup.string().required("Title is required"),
- tourNumber: Yup.string().required("Tour number is required"),
- firstName: Yup.string().required("First name is required"),
- lastName: Yup.string().required("Last name is required"),
- primaryEmail: Yup.string().email("Invalid email format").required("Primary email is required"),
+  title: Yup.string().required("Title is required"),
+  tourNumber: Yup.string().required("Tour number is required"),
+  firstName: Yup.string().required("First name is required"),
+  lastName: Yup.string().required("Last name is required"),
+  primaryEmail: Yup.string()
+    .email("Invalid email format")
+    .required("Primary email is required"),
 });
+
 
 const AddNewInvoice = () => {
   const { id, encodedItem } = useParams();
   const type = id && encodedItem ? "edit" : "view";
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState<any>(initialFormData);
   const [formErrors, setFormErrors] = useState<any>({});
   const navigate = useNavigate();
+  const companyId =  useSelector((state: any) => state.meta.companySelected)
 
   const handleChange = (e: any) => {
     setFormData({
@@ -103,15 +105,15 @@ const AddNewInvoice = () => {
   const handleAddItem = () => {
     setFormData({
       ...formData,
-      items: [
-        ...formData.items,
-        { description: "", amount: "" }, 
-      ],
+      items: [...formData.items, { description: "", amount: "" }],
     });
   };
 
+  
+// console.log(formData);
+
   const handleDeleteItem = (index: number) => {
-    const updatedItems = formData.items.filter((_, i) => i !== index);
+    const updatedItems = formData.items.filter((_: any, i: number) => i !== index);
     setFormData({
       ...formData,
       items: updatedItems,
@@ -119,8 +121,8 @@ const AddNewInvoice = () => {
   };
 
   const handleItemChange = (index: number, field: string, value: string) => {
-    const updatedItems = formData.items.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
+    const updatedItems = formData.items.map((item: any, i: number) =>
+      i === index ? { ...item, [field]: value , itemId: i } : item
     );
     setFormData({
       ...formData,
@@ -129,18 +131,40 @@ const AddNewInvoice = () => {
   };
 
   const calculateTotalAmount = () => {
-    return formData.items.reduce((total, item) => {
-      const amount = parseFloat(item.amount) || 0; 
+    return formData.items.reduce((total: number, item: any) => {
+      const amount = parseFloat(item.amount) || 0;
       return total + amount;
     }, 0);
   };
 
-
-
-const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
-
+  const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
 
   const handleSubmit = async () => {
+    const formDataToSubmit = new FormData();
+
+    formDataToSubmit.append("title", formData.title);
+    formDataToSubmit.append("tourNumber", formData.tourNumber);
+    formDataToSubmit.append("firstName", formData.firstName);
+    formDataToSubmit.append("lastName", formData.lastName);
+    formDataToSubmit.append("primaryEmail", formData.primaryEmail);
+    formDataToSubmit.append("secondaryEmail", formData.secondaryEmail);
+    formDataToSubmit.append("ccEmail", formData.ccEmail);
+    if(formData.items.length > 0){
+      formDataToSubmit.append("items", JSON.stringify(formData.items));
+    }
+    formDataToSubmit.append("address", formData.address);
+    formDataToSubmit.append("country", formData.country);
+    formDataToSubmit.append("postalCode", formData.postalCode);
+    formDataToSubmit.append("contactNumber", formData.contactNumber);
+    formDataToSubmit.append("initialPayment", formData.initialPayment);
+    formDataToSubmit.append("balancePayment", formData.balancePayment);
+    formDataToSubmit.append("balancePaymentDueDate", formData.balancePaymentDueDate);
+    if(companyId){
+      formDataToSubmit.append("organizationId", companyId);
+    }
+    formDataToSubmit.append("attachments", formData.attachments as unknown as Blob);
+
+
     try {
       await validationSchema.validate(formData, { abortEarly: false });
       if (type === "edit") {
@@ -159,7 +183,7 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
         //   });
         return;
       } else {
-        await createInvoice(formData)
+        await createInvoice(formDataToSubmit)
           .unwrap()
           .then((res: any) => {
             toast.success(res.message);
@@ -171,8 +195,9 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
           });
       }
     } catch (err: any) {
+      console.log(err);
       const errors: any = {};
-      err.inner.forEach((error: any) => {
+      err?.inner?.forEach((error: any) => {
         errors[error.path] = error.message;
       });
       setFormErrors(errors);
@@ -276,7 +301,7 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
               onChangeHandler={handleChange}
             />
           </div>
-        
+
           <div>
             <Input
               label="Address"
@@ -337,14 +362,17 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
         </div> */}
       </div>
 
-      <div className="mt-5  rounded-lg  border border-[var(--borderGray)]/50 md:p-10 bg-[#fff]">
+      <div className="mt-5  rounded-lg  md:border border-[var(--borderGray)]/50 md:p-10 bg-[#fff]">
         <div className="flex justify-between items-center">
           <h1 className="text-[24px] font-medium text-[var(--primary)] mb-5">
             Item Setup
           </h1>
 
           <div>
-            <button onClick={handleAddItem} className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white  py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10">
+            <button
+              onClick={handleAddItem}
+              className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white  py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"
+            >
               <FaPlus />
               Add Item
             </button>
@@ -353,8 +381,11 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
 
         <div className="mt-5">
           {formData.items.length > 0 ? (
-            formData.items.map((item, index) => (
-              <div key={index} className="flex flex-col gap-1 mb-5 border-b border-[var(--borderGray)]/90 pb-5">
+            formData.items.map((item: any, index: number) => (
+              <div
+                key={index}
+                className="flex flex-col gap-1 mb-5 border-b border-[var(--borderGray)]/90 pb-5"
+              >
                 <h1 className="text-[14px] font-bold text-[var(--primary)] text-start">
                   Item {index + 1}
                 </h1>
@@ -364,7 +395,7 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
                     placeholder="Enter description"
                     name={`description-${index}`}
                     type="textarea"
-                    value={item.description}
+                    value={item.description || ""}
                     onChangeHandler={(e) =>
                       handleItemChange(index, "description", e.target.value)
                     }
@@ -404,9 +435,10 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
           {formData.items.length > 0 && (
             <div className="mt-5">
               <h2 className="text-[16px] font-bold text-[var(--primary)] text-start">
-                Total Amount: {calculateTotalAmount().toFixed(2)} {/* Format to 2 decimal places */}
-            </h2>
-          </div>
+                Total Amount: {calculateTotalAmount().toFixed(2)}{" "}
+                {/* Format to 2 decimal places */}
+              </h2>
+            </div>
           )}
         </div>
 
@@ -470,6 +502,7 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
           <div>
             <label className="text-[14px] font-medium text-[var(--primary)] text-start">
               Attachment
+        
             </label>
             <div className="grid grid-cols-5 gap-4">
               <label className="col-span-5 text-[14px] font-medium text-[var(--primary)] text-start">
@@ -477,8 +510,34 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
                   <FaPlus />
                   Add Attachment
                 </div>
-                <input type="file" className="col-span-5 hidden" />
+                <input
+                  type="file"
+                  name="attachments"
+                  onChange={(e: any) => {
+                    setFormData({
+                      ...formData,
+                      attachments: e.target.files?.[0],
+                    });
+                  }}
+                  className="col-span-5 hidden"
+                />
               </label>
+            </div>
+            <div className="flex gap-2 mt-2" >
+              {formData.attachments && (
+                <div className="flex justify-between items-center p-3 gap-2 border border-[var(--borderGray)]/50 pb-2">
+                  <p>{formData.attachments.name || ""}</p>
+                  <button onClick={() => {
+                    setFormData({
+                      ...formData,
+                      attachments: null,
+                    });
+                  }}>
+                  <IoClose />
+                  </button>
+                </div>
+              )}
+              
             </div>
           </div>
         </div>
@@ -492,27 +551,26 @@ const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
           </DeleteDialog> */}
 
           <div className="flex gap-3">
-          <button
-            disabled={isLoading}
-            onClick={() => {
-              // setFormData(initialFormData);
-              navigate("/admin/invoice");
-            }}
-            className="border-[var(--primary)]/20 border hover:opacity-80 focus:opacity-90 active:scale-95 text-[var(--primary)]/60 px-10 py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36x] h-[36px] transition-all duration-150 outline-none"
-          >
-            Cancel
-          </button>
             <button
-            disabled={isLoading}
-            onClick={handleSubmit}
-            className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white  py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"
-          >
-            {isLoading && (
-              <AiOutlineLoading3Quarters className="animate-spin" />
-            )}
-            {type === "edit" ? "Update" : "Create New Invoice"}
-          </button>
-
+              disabled={isLoading}
+              onClick={() => {
+                // setFormData(initialFormData);
+                navigate("/admin/invoice");
+              }}
+              className="border-[var(--primary)]/20 border hover:opacity-80 focus:opacity-90 active:scale-95 text-[var(--primary)]/60 px-10 py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36x] h-[36px] transition-all duration-150 outline-none"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={isLoading}
+              onClick={handleSubmit}
+              className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white  py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"
+            >
+              {isLoading && (
+                <AiOutlineLoading3Quarters className="animate-spin" />
+              )}
+              {type === "edit" ? "Update" : "Create New Invoice"}
+            </button>
           </div>
         </div>
       </div>

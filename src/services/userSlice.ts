@@ -8,6 +8,18 @@ const userSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["users"],
+    }),
+    updateUser: builder.mutation({
+      query: (data) => {
+        const { id, ...rest } = data;
+        return {
+          url: `auth/${id}`,
+          method: "PUT",
+          body: rest,
+        };
+      },
+      invalidatesTags: ["users"],
     }),
     getAllUsers: builder.query({
       query: () => {
@@ -16,10 +28,11 @@ const userSlice = apiSlice.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: ["users"],
     }),
   }),
 });
 
-export const { useCreateUserMutation, useGetAllUsersQuery } = userSlice;
+export const { useCreateUserMutation, useGetAllUsersQuery, useUpdateUserMutation } = userSlice;
 
 export default userSlice;

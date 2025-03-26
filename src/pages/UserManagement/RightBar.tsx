@@ -9,10 +9,19 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 import { LiaUserTagSolid } from "react-icons/lia";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import ResetPassword from "./ResetPassword";
-import { Link } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
 const RightBar = ({ trigger , item }: { trigger: React.ReactNode , item: any }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+
+
+  const handleEditClick = () => {
+    const stringifiedItem = JSON.stringify(item); 
+    const encodedItem = encodeURIComponent(stringifiedItem); 
+    navigate(`${item.id}/${encodedItem}`); 
+  };
 
   const userDetails = [
     {
@@ -102,9 +111,9 @@ const RightBar = ({ trigger , item }: { trigger: React.ReactNode , item: any }) 
                     {item?.email}
                   </p>
                 </div>
-                <Link to={`edit/${item?.id}`} className="w-[40px] h-[40px] rounded-full flex items-center justify-center hover:bg-[#293446]/10 transition-all duration-150">
+                <button onClick={handleEditClick} className="w-[40px] h-[40px] rounded-full flex items-center justify-center hover:bg-[#293446]/10 transition-all duration-150">
                   <BiSolidEdit color="#293446" size={21} />
-                </Link>
+                </button>
               </div>
             </div>
           </div>

@@ -13,6 +13,7 @@ import Report from "@/pages/Report";
 import AddInvoice from "@/pages/InvoiceManagement/AddInvoice";
 import Settings from "@/pages/Settings";
 import Payment from "@/pages/Payment";
+import ExpirePayLink from "@/pages/ExpirePayLink";
 
 export interface IRoute {
   path: string;
@@ -119,6 +120,11 @@ const publicRoutes: IRoute[] = [
     path: "/payment",
     element: <Payment />,
     name: "Payment",
+  },
+  {
+    path: "/expire-pay-link",
+    element: <ExpirePayLink />,
+    name: "Expire Pay Link",
   },
 ];
 

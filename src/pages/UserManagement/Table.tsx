@@ -3,11 +3,18 @@ import RightBar from "./RightBar";
 import { useState } from "react";
 import { useGetAllUsersQuery } from "@/services/userSlice";
 import Pagination from "@/components/common/Pagination";
-const Table = () => {
+
+
+
+const Table = ({ role, organizationId, searchString }: { role: string, organizationId: string, searchString: string }) => {
   const [currentPage, setCurrentPage] = useState(1);
+
   const { data } = useGetAllUsersQuery({
     page: currentPage - 1,
     size: 10,
+    role: role,
+    organizationId: organizationId,
+    searchString: searchString,
   });
 
   return (
@@ -46,7 +53,7 @@ const Table = () => {
               <td className="py-4 px-6"> {user.email}</td>
               <td className="py-4 px-6">{user.name}</td>
               <td className="py-4 px-6">
-                {user.permissionNames.map((name: any) => `[${name}]`).join(" ")}
+                {user?.permissionNames?.map((name: any) => `[${name}]`).join(" ")}
               </td>
 
               <td className="py-4 px-6">

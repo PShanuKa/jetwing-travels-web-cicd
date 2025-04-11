@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IoChevronDown } from "react-icons/io5";
 
 const Dropdown = ({
   options,
@@ -21,18 +22,16 @@ const Dropdown = ({
     setIsOpen(!isOpen);
   };
 
-  
-
-
- const valueName = options.find((option) => option.value === value)?.name;
+  const valueName = options.find((option) => option.value === value)?.name;
 
   return (
     <div className="relative w-full">
       <button
         onClick={toggleDropdown}
-        className={`w-full h-[44px] border border-[var(--borderGray)]/50 rounded-md p-2 text-left text-[14px] outline-none hover:bg-gray-100 transition-all duration-300 ${errors ? "border-[var(--red)]" : ""}`}
+        className={`w-full h-[44px] border border-[var(--borderGray)]/50 rounded-md p-2 text-left text-[14px] outline-none hover:bg-gray-100 transition-all duration-300 flex items-center justify-between ${errors ? "border-[var(--red)]" : ""}`}
       >
-        {valueName ? valueName  :   (placeholder || "Select an option")}
+        <span>{valueName ? valueName : (placeholder || "Select an option")}</span>
+        <IoChevronDown className={`text-gray-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
         <ul className="absolute top-[48px] left-0 w-full bg-white border border-[var(--borderGray)]/50 rounded-md shadow-md z-10 overflow-hidden">

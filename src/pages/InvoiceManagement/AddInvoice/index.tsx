@@ -11,6 +11,7 @@ import { IoClose } from "react-icons/io5";
 // import DeleteDialog from "./DeleteDialog";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
+import Dropdown from "@/components/common/Dropdown";
 
 const initialFormData = {
   title: "",
@@ -31,8 +32,8 @@ const initialFormData = {
   balancePaymentDueDate: "",
   paymentPercentage: 100,
   attachments: null,
+  currency: "LKR",
 };
-
 
 const titleOptions = [
   {
@@ -72,6 +73,21 @@ const paymentPercentageOptions = [
   },
 ];
 
+const paymentCurrencyOptions = [
+  {
+    name: "LKR",
+    value: "LKR",
+  },
+  {
+    name: "USD",
+    value: "USD",
+  },
+  {
+    name: "EUR",
+    value: "EUR",
+  },
+];
+
 const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
   tourNumber: Yup.string().required("Tour number is required"),
@@ -82,14 +98,13 @@ const validationSchema = Yup.object({
     .required("Primary email is required"),
 });
 
-
 const AddNewInvoice = () => {
   const { id, encodedItem } = useParams();
   const type = id && encodedItem ? "edit" : "view";
   const [formData, setFormData] = useState<any>(initialFormData);
   const [formErrors, setFormErrors] = useState<any>({});
   const navigate = useNavigate();
-  const companyId =  useSelector((state: any) => state.meta.companySelected)
+  const companyId = useSelector((state: any) => state.meta.companySelected);
 
   const handleChange = (e: any) => {
     setFormData({
@@ -109,11 +124,12 @@ const AddNewInvoice = () => {
     });
   };
 
-  
-// console.log(formData);
+  // console.log(formData);
 
   const handleDeleteItem = (index: number) => {
-    const updatedItems = formData.items.filter((_: any, i: number) => i !== index);
+    const updatedItems = formData.items.filter(
+      (_: any, i: number) => i !== index
+    );
     setFormData({
       ...formData,
       items: updatedItems,
@@ -122,7 +138,7 @@ const AddNewInvoice = () => {
 
   const handleItemChange = (index: number, field: string, value: string) => {
     const updatedItems = formData.items.map((item: any, i: number) =>
-      i === index ? { ...item, [field]: value , itemId: i } : item
+      i === index ? { ...item, [field]: value, itemId: i } : item
     );
     setFormData({
       ...formData,
@@ -149,7 +165,7 @@ const AddNewInvoice = () => {
     formDataToSubmit.append("primaryEmail", formData.primaryEmail);
     formDataToSubmit.append("secondaryEmail", formData.secondaryEmail);
     formDataToSubmit.append("ccEmail", formData.ccEmail);
-    if(formData.items.length > 0){
+    if (formData.items.length > 0) {
       formDataToSubmit.append("items", JSON.stringify(formData.items));
     }
     formDataToSubmit.append("address", formData.address);
@@ -158,12 +174,18 @@ const AddNewInvoice = () => {
     formDataToSubmit.append("contactNumber", formData.contactNumber);
     formDataToSubmit.append("initialPayment", formData.initialPayment);
     formDataToSubmit.append("balancePayment", formData.balancePayment);
-    formDataToSubmit.append("balancePaymentDueDate", formData.balancePaymentDueDate);
-    if(companyId){
+    formDataToSubmit.append("currency", formData.currency);
+    formDataToSubmit.append(
+      "balancePaymentDueDate",
+      formData.balancePaymentDueDate
+    );
+    if (companyId) {
       formDataToSubmit.append("organizationId", companyId);
     }
-    formDataToSubmit.append("attachments", formData.attachments as unknown as Blob);
-
+    formDataToSubmit.append(
+      "attachments",
+      formData.attachments as unknown as Blob
+    );
 
     try {
       await validationSchema.validate(formData, { abortEarly: false });
@@ -459,7 +481,7 @@ const AddNewInvoice = () => {
                   onChangeHandler={handleChange}
                 />
               </div>
-              <div className="col-span-4">
+              {/* <div className="col-span-4">
                 <Input
                   placeholder="0.00"
                   name="initialPayment"
@@ -467,6 +489,24 @@ const AddNewInvoice = () => {
                   errors={formErrors.initialPayment || ""}
                   onChangeHandler={handleChange}
                 />
+              </div> */}
+              <div className="col-span-4 flex items-center gap-1">
+                <input
+                  placeholder="0.00"
+                  className="w-full h-[44px] mt-1 border border-[var(--borderGray)]/50 rounded-md p-2 outline-none text-[14px]"
+                  name="initialPayment"
+                  value={formData.initialPayment}
+                  onChange={handleChange}
+                />
+                <div className="mt-1 w-[100px]">
+                  <Dropdown
+                    // placeholder="Select currency"
+                    options={paymentCurrencyOptions}
+                    value={formData.currency}
+                    onChangeHandler={handleChange}
+                    name="currency"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -502,7 +542,6 @@ const AddNewInvoice = () => {
           <div>
             <label className="text-[14px] font-medium text-[var(--primary)] text-start">
               Attachment
-        
             </label>
             <div className="grid grid-cols-5 gap-4">
               <label className="col-span-5 text-[14px] font-medium text-[var(--primary)] text-start">
@@ -523,21 +562,22 @@ const AddNewInvoice = () => {
                 />
               </label>
             </div>
-            <div className="flex gap-2 mt-2" >
+            <div className="flex gap-2 mt-2">
               {formData.attachments && (
                 <div className="flex justify-between items-center p-3 gap-2 border border-[var(--borderGray)]/50 pb-2">
                   <p>{formData.attachments.name || ""}</p>
-                  <button onClick={() => {
-                    setFormData({
-                      ...formData,
-                      attachments: null,
-                    });
-                  }}>
-                  <IoClose />
+                  <button
+                    onClick={() => {
+                      setFormData({
+                        ...formData,
+                        attachments: null,
+                      });
+                    }}
+                  >
+                    <IoClose />
                   </button>
                 </div>
               )}
-              
             </div>
           </div>
         </div>

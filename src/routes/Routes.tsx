@@ -17,6 +17,7 @@ const AllRoutes = () => {
 
   return (
     <Routes>
+      
       {authRoutes.map((route, index) => (
         <Route
           key={index}

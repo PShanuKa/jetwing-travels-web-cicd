@@ -22,9 +22,25 @@ const userSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["users"],
     }),
     getAllUsers: builder.query({
-      query: () => {
+      query: (data) => {
+        const { page, size, role, organizationId, searchString } = data;
+
+        let url = `page=${page}&size=${size}`;
+
+        if (role) {
+          url += `&role=${role}`;
+        }
+
+        if (organizationId) {
+          url += `&organizationId=${organizationId}`;
+        }
+
+        if (searchString) {
+          url += `&searchText=${searchString}`;
+        }
+
         return {
-          url: `auth`,
+          url: `auth?${url}`,
           method: "GET",
         };
       },
@@ -33,6 +49,10 @@ const userSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useCreateUserMutation, useGetAllUsersQuery, useUpdateUserMutation } = userSlice;
+export const {
+  useCreateUserMutation,
+  useGetAllUsersQuery,
+  useUpdateUserMutation,
+} = userSlice;
 
 export default userSlice;

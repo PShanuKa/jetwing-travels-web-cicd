@@ -6,33 +6,49 @@ import { IoSearchOutline } from "react-icons/io5";
 import { GiSettingsKnobs } from "react-icons/gi";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useGetAllOrganizationsQuery } from "@/services/organizationSlice";
+
 
 const UserManagement = () => {
   const [filterIsOpen, setFilterIsOpen] = useState(false);
+
+
+  const { data: companies } = useGetAllOrganizationsQuery(undefined);
+
+
+  const [formData, setFormData] = useState({
+    role: "",
+    organizationId: "",
+    searchString: "",
+  });
+
+
+
   return (
     <div className="md:p-4 p-2 border-[var(--borderGray)] md:border rounded-lg w-full flex flex-col gap-4 bg-white">
       <div className="flex  items-center justify-between">
         <div className=" items-center gap-2 hidden md:flex">
-          <Input value={""} name={""} onChange={()=>{}} />
+          <Input value={formData.searchString} name={"searchString"} onChange={(e) => setFormData({ ...formData, searchString: e.target.value })} />
           <div>
-            <SelectNative className="w-40">
-              <option value="1">Role</option>
+            <SelectNative value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="w-40">
+              <option value="">Role</option>
               <option value="admin">Admin</option>
               <option value="executive">Executive</option>
             </SelectNative>
           </div>
-          <div>
+          {/* <div>
             <SelectNative className="w-40">
-              <option value="1">User Status</option>
+              <option value="">User Status</option>
               <option value="admin">Active</option>
               <option value="executive">Inactive</option>
             </SelectNative>
-          </div>
+          </div> */}
           <div>
-            <SelectNative className="w-40">
-              <option value="1">Company</option>
-              <option value="admin">Admin</option>
-              <option value="executive">Executive</option>
+            <SelectNative value={formData.organizationId} onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })} className="w-40">
+              <option value="">Company</option>
+              {companies?.data?.content?.map((company: any) => (
+                <option value={company.id}>{company.name}</option>
+              ))}
             </SelectNative>
           </div>
         </div>
@@ -116,7 +132,7 @@ const UserManagement = () => {
       </div>
 
       <div className="w-full overflow-x-auto">
-        <div className="w-full"><Table /></div>
+        <div className="w-full"><Table role={formData.role} organizationId={formData.organizationId} searchString={formData.searchString} /></div>
       </div>
     </div>
   );

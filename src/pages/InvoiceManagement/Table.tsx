@@ -89,9 +89,10 @@ const Table = ({ searchString = "" }: { searchString: string }) => {
                 <td className="py-4 px-6">-</td>
                 <td className="py-4 px-6">
                   <RightBar item={invoice}>
-                    <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline border border-[var(--borderGray)]/50 rounded-md p-2 hover:bg-gray-200 transition-all duration-150">
+                    
+                    <div className="font-medium text-blue-600 dark:text-blue-500 hover:underline border border-[var(--borderGray)]/50 rounded-md p-2 hover:bg-gray-200 transition-all duration-150">
                       <CiMenuKebab />
-                    </button>
+                    </div>
                   </RightBar>
                 </td>
               </tr>

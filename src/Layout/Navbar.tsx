@@ -26,6 +26,8 @@ const Navbar = () => {
     }
   }, [isDropdownOpen]);
 
+  const user = useSelector((state: RootState) => state.auth.userInfo);
+
   return (
     <div className="w-full h-[70px] bg-white flex items-center justify-between md:px-4 px-2 shadow-lg z-50">
 
@@ -59,7 +61,7 @@ const Navbar = () => {
           /> */}
           <div className="hidden md:flex items-center gap-1">
             <p className="text-[14px] text-[var(--primary)] font-normal">
-              Hello, Alison Eyo
+              Hello, {user?.name }
             </p>
             <IoChevronDown size={14}  className={`${isDropdownOpen ? 'rotate-180' : ''} transition-all duration-300`}/>
           </div>

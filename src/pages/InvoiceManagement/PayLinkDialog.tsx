@@ -7,8 +7,47 @@ import {
   // DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useGanaratePaymentLinkMutation } from "@/services/invoiceSlice";
+import { toast } from "react-toastify";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
-const PayLinkDialog = ({ children }: { children: React.ReactNode }) => {
+const PayLinkDialog = ({
+  children,
+  item,
+}: {
+  children: React.ReactNode;
+  item: any;
+}) => {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [isExistingEmail, setIsExistingEmail] = useState(true);
+
+  const [generatePaymentLink, { isLoading }] = useGanaratePaymentLinkMutation();
+  console.log(item);
+
+  const handleGeneratePaymentLink = async () => {
+    if (!isExistingEmail) {
+      if (!email) {
+        setError("Please enter a new email");
+        return;
+      } else {
+        setError("");
+      }
+    }
+
+    await generatePaymentLink({
+      id: item?.id,
+      email: isExistingEmail ? item?.primaryEmail : email,
+    })
+      .then((res) => {
+        toast.success(res?.data?.message || "Link Sent Successfully");
+      })
+      .catch((err) => {
+        toast.error(err?.data?.message || "Something went wrong");
+      });
+  };
+
   return (
     <>
       <Dialog>
@@ -39,6 +78,8 @@ const PayLinkDialog = ({ children }: { children: React.ReactNode }) => {
                     className="w-5 h-5"
                     name="fav_language"
                     value="false"
+                    checked={isExistingEmail}
+                    onChange={() => setIsExistingEmail(true)}
                   />
                   <label htmlFor="html">Send to existing Email</label>
                 </div>
@@ -49,6 +90,8 @@ const PayLinkDialog = ({ children }: { children: React.ReactNode }) => {
                     className="w-5 h-5"
                     name="fav_language"
                     value="true"
+                    checked={!isExistingEmail}
+                    onChange={() => setIsExistingEmail(false)}
                   />
                   <label htmlFor="css">Send to new email</label>
                 </div>
@@ -56,15 +99,29 @@ const PayLinkDialog = ({ children }: { children: React.ReactNode }) => {
 
               <div className="flex flex-col gap-2 mt-1">
                 <Input
-                  //   label="Confirm Password"
+                  // label={isExistingEmail ? "Customer Email" : "New Email"}
+                  errors={error}
+                  disabled={isExistingEmail}
+                  value={email}
+                  onChangeHandler={(e) => setEmail(e.target.value)}
                   placeholder="customer@example.com"
                   name="confirmPassword"
                 />
               </div>
 
               <div className="flex flex-col gap-2 mt-5">
-                <button className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] transition-all duration-150 outline-none justify-center text-[14px]">
-                  Send Payment Link
+                <button
+                  onClick={handleGeneratePaymentLink}
+                  className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] transition-all duration-150 outline-none justify-center text-[14px]"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <span>Sending...</span>
+                      <Loader2 className="animate-spin" />
+                    </div>
+                  ) : (
+                    "Send Payment Link"
+                  )}
                 </button>
               </div>
             </div>

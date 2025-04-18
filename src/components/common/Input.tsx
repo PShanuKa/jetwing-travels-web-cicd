@@ -10,6 +10,7 @@ const Input = ({
   options,
   onChangeHandler,
   value,
+  disabled = false,
   errors,
 }: {
   label?: string;
@@ -21,6 +22,7 @@ const Input = ({
   onChangeHandler?: (e: any) => void;
   value?: any;
   errors?: string;
+  disabled?: boolean;
 }) => {
   const onChange = (e: any) => {
      onChangeHandler && onChangeHandler(e);
@@ -45,6 +47,7 @@ const Input = ({
           type={type}
           value={value}
           onChange={onChangeHandler}
+          disabled={disabled}
           name={name}
           className={`w-full h-[44px] border border-[var(--borderGray)]/50 rounded-md p-2 outline-none text-[14px] ${errors ? "border-[var(--red)]" : ""}`}
           placeholder={placeholder}
@@ -58,6 +61,7 @@ const Input = ({
           onChangeHandler={onChange}
           value={value || ""}
           name={name}
+          disabled={disabled}
           errors={errors}
         />
       )}

@@ -18,9 +18,15 @@ const invoiceSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    ganaratePaymentLink: builder.mutation({
+      query: ({id, email}) => ({
+        url: `invoice/generate-link/${id}/${email}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useCreateInvoiceMutation, useGetAllInvoicesQuery } = invoiceSlice;
+export const { useCreateInvoiceMutation, useGetAllInvoicesQuery, useGanaratePaymentLinkMutation } = invoiceSlice;
 
 export default invoiceSlice;

@@ -8,6 +8,7 @@ const Dropdown = ({
   name,
   errors,
   placeholder,
+  disabled = false,
 }: {
   options: { name: string; value: string }[];
   onChangeHandler: (e: any) => void;
@@ -15,6 +16,7 @@ const Dropdown = ({
   name: string;
   errors?: string;
   placeholder?: string;
+  disabled?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 

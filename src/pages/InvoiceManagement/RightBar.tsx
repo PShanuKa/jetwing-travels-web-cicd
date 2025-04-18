@@ -401,7 +401,7 @@ const RightBar = ({
             </>
           )}
 
-          <PayLinkDialog>
+          <PayLinkDialog item={item}>
             <div className="flex gap-2 ">
               <button className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] w-full transition-all duration-150 outline-none justify-center text-[14px]">
                 Send Payment Link

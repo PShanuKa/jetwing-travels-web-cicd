@@ -9,7 +9,7 @@ const Settings = () => {
   const [formData, setFormData] = useState({
     masterVisa: 0,
     amex: 0,
-    hnd: 0,
+    hnb: 0,
   });
 
   const { data } = useGetSettingQuery(undefined);
@@ -26,7 +26,7 @@ const Settings = () => {
     await updateSetting({
       masterOrVisaRate: Number(formData.masterVisa),
       amexRate: Number(formData.amex),
-      hndRate: Number(formData.hnd),
+      hnbRate: Number(formData.hnb),
     })
       .unwrap()
       .then((res) => {
@@ -45,14 +45,14 @@ const Settings = () => {
       setFormData({
         masterVisa: Number(data?.data?.masterOrVisaRate) || 0,
         amex: Number(data?.data?.amexRate) || 0,
-        hnd: Number(data?.data?.hndRate) || 0,
+        hnb: Number(data?.data?.hnbRate) || 0,
       });
     }
   }, [data]);
 
   
   return (
-    <div className="grid grid-cols-2 gap-5 ">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 ">
       <div className="mt-5  rounded-lg  border border-[var(--borderGray)]/50 p-10 bg-[#fff]">
         <div className="flex justify-between items-center">
           <h1 className="text-[24px] font-medium text-[var(--primary)] mb-5">
@@ -119,16 +119,16 @@ const Settings = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-[14px] text-[var(--primary)] font-medium">
-                    HND
+                    HNB
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     placeholder="Enter Card Number"
-                    value={formData.hnd}
+                    value={formData.hnb}
                     onChange={(e) =>
-                      setFormData({ ...formData, hnd: e.target.value })
+                      setFormData({ ...formData, hnb: e.target.value })
                     }
                     className="w-full border border-[var(--borderGray)] rounded-lg p-2 outline-none"
                   />
@@ -140,6 +140,7 @@ const Settings = () => {
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   );

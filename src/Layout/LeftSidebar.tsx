@@ -51,9 +51,9 @@ const LeftSidebar = () => {
           </Link>
 
           <div className="w-full h-[70px]  rounded-[10px] flex items-center gap-3 px-4 my-5">
-            <div>
+            {/* <div>
                 <img src="https://res.cloudinary.com/dldtrjalo/image/upload/v1732767281/oav7dzuhqxvouhciglcd.jpg" alt="" className="w-[50px] h-[40px] rounded-full object-cover" />
-            </div>
+            </div> */}
             <div className="flex justify-between w-full items-center">
 
             <div  >

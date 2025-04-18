@@ -21,8 +21,15 @@ import { TbMessageReport } from "react-icons/tb";
 import { FaFilePdf } from "react-icons/fa6";
 import PayLinkDialog from "./PayLinkDialog";
 
-const RightBar = ({ children, item }: { children: React.ReactNode, item: any }) => {
+const RightBar = ({
+  children,
+  item,
+}: {
+  children: React.ReactNode;
+  item: any;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("invoiceDetails");
 
   const InvoiceDetails = [
@@ -35,7 +42,7 @@ const RightBar = ({ children, item }: { children: React.ReactNode, item: any }) 
     },
     {
       title: "Customer Name",
-      value: item.firstName + " " + item.lastName  ,
+      value: item.firstName + " " + item.lastName,
       icon: <SlUser className="text-[var(--iconGray)] " size={18} />,
     },
     {
@@ -134,6 +141,12 @@ const RightBar = ({ children, item }: { children: React.ReactNode, item: any }) 
     },
   ];
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(item?.paymentLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <>
       <button onClick={() => setIsOpen(!isOpen)} className="focus:outline-none">
@@ -216,22 +229,24 @@ const RightBar = ({ children, item }: { children: React.ReactNode, item: any }) 
             </div>
           </div>
           {activeTab !== "transactionDetails" && (
-
             <div className="w-full">
               <div className="w-full   flex items-center gap-3 px-4 border-b border-[var(--borderGray)] pb-3">
-              <div className="flex justify-between w-full items-center ">
-                <div>
-                  <p className="text-[14px] text-[#475467] font-semibold ">
-                    2025-03-06 08:45 AM
-                  </p>
+                <div className="flex justify-between w-full items-center ">
+                  <div>
+                    <p className="text-[14px] text-[#475467] font-semibold ">
+                      2025-03-06 08:45 AM
+                    </p>
+                  </div>
+                  <Link
+                    to="edit/45451"
+                    className="w-[40px] h-[40px] rounded-full flex items-center justify-center hover:bg-[#293446]/10 transition-all duration-150"
+                  >
+                    <BiSolidEdit color="#293446" size={21} />
+                  </Link>
                 </div>
-                <Link to="edit/45451" className="w-[40px] h-[40px] rounded-full flex items-center justify-center hover:bg-[#293446]/10 transition-all duration-150">
-                  <BiSolidEdit color="#293446" size={21} />
-                </Link>
               </div>
             </div>
-          </div>
-            )}
+          )}
 
           {activeTab === "invoiceDetails" && (
             <>
@@ -324,19 +339,23 @@ const RightBar = ({ children, item }: { children: React.ReactNode, item: any }) 
                 ))}
               </div>
 
-              <div className="mt-5">
-                <p className="text-[14px] font-medium text-[#101928] text-start">
-                  First Payment Link(initial payment)
-                </p>
-                <div className="flex rounded-md mt-3 border border-[var(--borderGray)] p-2 items-center justify-between">
-                  <p className="text-[14px] font-normal text-[#101928] text-start">
-                    https://www.example.com/
+              {item?.paymentLink && (
+                <div className="mt-5">
+                  <p className="text-[14px] font-medium text-[#101928] text-start">
+                    First Payment Link(initial payment)
                   </p>
-                  <button className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 h-[24px] rounded-md font-normal flex items-center gap-2   transition-all duration-150 outline-none justify-center text-[9px]">
-                    Copy Link
-                  </button>
+                  <div className="flex rounded-md mt-3 border border-[var(--borderGray)] p-2 items-center justify-between">
+                    <p className="text-[14px] font-normal text-[#101928] text-start break-all truncate">
+                      {item?.paymentLink}
+                    </p>
+                    <button
+                      onClick={handleCopy}
+                      className="bg-[#04334D] w-[200px] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 h-[24px] rounded-md font-normal flex items-center gap-2   transition-all duration-150 outline-none justify-center text-[9px]">
+                      {copied ? "Copied" : "Copy Link"}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           )}
 
@@ -345,53 +364,50 @@ const RightBar = ({ children, item }: { children: React.ReactNode, item: any }) 
               {transactions.map((transaction) => (
                 <div className="w-full flex flex-col gap-2 p-3 border border-[var(--borderGray)] rounded-lg">
                   <div>
-                <div className="flex justify-between">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-[14px] text-[var(--primary)] font-semibold">
-                      {transaction.transactions}
-                    </p>
-                    <p className="text-[14px] text-[var(--primary)] font-normal">
-                      Reference no: {transaction.referenceNo}
-                    </p>
-                    <div>
-                      <p className="text-[14px] text-[var(--primary)] font-normal">
-                        Payment Method:
-                      </p>
+                    <div className="flex justify-between">
+                      <div className="flex flex-col gap-2">
+                        <p className="text-[14px] text-[var(--primary)] font-semibold">
+                          {transaction.transactions}
+                        </p>
+                        <p className="text-[14px] text-[var(--primary)] font-normal">
+                          Reference no: {transaction.referenceNo}
+                        </p>
+                        <div>
+                          <p className="text-[14px] text-[var(--primary)] font-normal">
+                            Payment Method:
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex items-center  px-3  rounded-full bg-green-500/10">
+                          <p className="text-[14px] text-green-500 font-semibold">
+                            {transaction.paymentMethod}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center  px-3  rounded-full bg-green-500/10">
-                      <p className="text-[14px] text-green-500 font-semibold">
-                        {transaction.paymentMethod}
-                      </p>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="flex justify-between mt-3">
-                  <p className="text-[16px] text-[var(--primary)] font-semibold">
-                    (LKR) {transaction.amount}
-                  </p>
-                  <p className="text-[12px] text-[#475467] font-normal">
-                    {transaction.date}
-                  </p>
-                </div>
-              </div>
+                    <div className="flex justify-between mt-3">
+                      <p className="text-[16px] text-[var(--primary)] font-semibold">
+                        (LKR) {transaction.amount}
+                      </p>
+                      <p className="text-[12px] text-[#475467] font-normal">
+                        {transaction.date}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </>
           )}
 
-            <PayLinkDialog>
-          <div className="flex gap-2 ">
-            <button
-              
-              className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] w-full transition-all duration-150 outline-none justify-center text-[14px]"
-            >
+          <PayLinkDialog>
+            <div className="flex gap-2 ">
+              <button className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] w-full transition-all duration-150 outline-none justify-center text-[14px]">
                 Send Payment Link
               </button>
-          </div>
-            </PayLinkDialog>
+            </div>
+          </PayLinkDialog>
         </div>
       </div>
     </>

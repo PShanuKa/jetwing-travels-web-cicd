@@ -117,7 +117,7 @@ const privateRoutes: IRoute[] = [
 
 const publicRoutes: IRoute[] = [
   {
-    path: "/payment",
+    path: "/payment/:id/:token",
     element: <Payment />,
     name: "Payment",
   },

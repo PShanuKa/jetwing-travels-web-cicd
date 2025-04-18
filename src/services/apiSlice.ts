@@ -5,7 +5,7 @@ import { RootState } from "@/app/store";
 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://103.214.111.82:8082/api",
+  baseUrl: "http://162.251.164.114:8082/api",
   prepareHeaders: (headers, { getState }) => {
     // Get the token from the Redux store
     const token = (getState() as RootState).auth.token; // Assuming token is stored in auth state

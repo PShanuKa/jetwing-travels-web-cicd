@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps
 COPY . .
-RUN npm run build2
+RUN npm run build
 
 # Production stage with Nginx
 FROM nginx:stable-alpine AS production

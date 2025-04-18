@@ -8,14 +8,15 @@ import {
 import { GiDetour } from "react-icons/gi";
 import { BsCalendar2Date } from "react-icons/bs";
 import { useState } from "react";
-
+import { useParams } from "react-router-dom";
 
 const Payment = () => {
+  const { id, token } = useParams();
   const { data, isLoading } = useGetPaymentDetailsQuery({
-    invoiceId: 4,
-    token:
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKV1pQUjI1OTY0IiwiaWF0IjoxNzQzNzU2MjYzLCJleHAiOjE3NDM5MjkwNjN9.7EoB7EWqsc2e24geWTDcA-i7CrLCJ55vPlxwncQ9ZUc",
+    invoiceId: id,
+    token: token,
   });
+
 
   const [initiatePayment, { isLoading: isInitiating }] =
     useInitiatePaymentMutation();

@@ -52,11 +52,11 @@ const Navbar = () => {
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           className="flex items-center gap-2"
         >
-          <img
+          {/* <img
             src="https://res.cloudinary.com/dldtrjalo/image/upload/v1732767281/oav7dzuhqxvouhciglcd.jpg"
             alt="Profile"
             className="md:w-[55px] h-[55px] rounded-full object-cover"
-          />
+          /> */}
           <div className="hidden md:flex items-center gap-1">
             <p className="text-[14px] text-[var(--primary)] font-normal">
               Hello, Alison Eyo

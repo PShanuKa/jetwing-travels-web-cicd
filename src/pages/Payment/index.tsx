@@ -7,7 +7,7 @@ import {
 } from "../../services/paymentSlice";
 import { GiDetour } from "react-icons/gi";
 import { BsCalendar2Date } from "react-icons/bs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MdOutlineErrorOutline } from "react-icons/md";
 
@@ -17,19 +17,42 @@ const Payment = () => {
     invoiceId: id,
     token: token,
   });
+  const [sessionId, setSessionId] = useState(null);
 
+
+
+  
 
   const [initiatePayment, { isLoading: isInitiating }] =
     useInitiatePaymentMutation();
-
   const handleInitiatePayment = async () => {
     await initiatePayment({
       amount: data?.data?.balancePayment,
       invoiceToken: data?.data?.token,
       currency: "LKR",
       gateway: "mastercard",
-    }).unwrap();
+    }).then((res) => {
+
+      setSessionId(res?.data?.data?.paymentResponse?.sessionId);
+    });
   };
+
+
+
+  useEffect(() => {
+    if (sessionId) {
+      window.Checkout.configure({
+        session: {
+          id: sessionId
+          }
+      });
+      window.Checkout.showEmbeddedPage('#embed-target');
+    } 
+  }, [sessionId]);
+
+
+  
+
 
   const [formData, setFormData] = useState({
     cartType: "",
@@ -48,7 +71,7 @@ const Payment = () => {
   //   return <Redirect to={data?.data?.paymentLink} />;
   // }
 
-  console.log(formData);
+
 
   return (
     <div className="w-full">
@@ -279,6 +302,7 @@ const Payment = () => {
                     )}
                   </button>
                 </div>
+                  <div id="embed-target"></div>
                 <div className="flex justify-end mt-3">
                   <p className="text-black/50 text-[12px]">
                     Click the "Pay Now" button to complete your payment. By

@@ -22,9 +22,19 @@ const paymentSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    fetchCaptureContext: builder.mutation({
+      query: (data) => {
+
+        return {
+          url: `payment/capture-context`,
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
-export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation } = paymentSlice;
+export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation , useFetchCaptureContextMutation } = paymentSlice;
 
 export default paymentSlice;

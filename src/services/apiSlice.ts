@@ -5,7 +5,7 @@ import { RootState } from "@/app/store";
 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://162.251.164.114:8082/api",
+  baseUrl: "https://f0mv977jk7.execute-api.ap-southeast-1.amazonaws.com/api/",
   prepareHeaders: (headers, { getState }) => {
     // Get the token from the Redux store
     const token = (getState() as RootState).auth.token; // Assuming token is stored in auth state
@@ -24,6 +24,8 @@ const baseQuery = fetchBaseQuery({
     if (userId) {
       headers.set("user-Id", `${userId}`);
     }
+
+
 
     return headers;
   },

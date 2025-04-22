@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { useGanaratePaymentLinkMutation } from "@/services/invoiceSlice";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 const PayLinkDialog = ({
@@ -24,7 +24,10 @@ const PayLinkDialog = ({
   const [isExistingEmail, setIsExistingEmail] = useState(true);
 
   const [generatePaymentLink, { isLoading }] = useGanaratePaymentLinkMutation();
-  console.log(item);
+  
+  useEffect(() => {
+    setError("");
+  }, [isExistingEmail])
 
   const handleGeneratePaymentLink = async () => {
     if (!isExistingEmail) {

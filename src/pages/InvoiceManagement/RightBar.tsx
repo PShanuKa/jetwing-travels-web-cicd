@@ -32,6 +32,8 @@ const RightBar = ({
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("invoiceDetails");
 
+  
+
   const InvoiceDetails = [
     {
       title: "Invoice Number",

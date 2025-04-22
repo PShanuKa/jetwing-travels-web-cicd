@@ -16,7 +16,7 @@ const paymentSlice = apiSlice.injectEndpoints({
       query: (data) => {
         const { gateway , ...rest } = data;
         return {
-          url: `invoice/payment/initiate?gateway=${gateway}`,
+          url: `payment/initiate?gateway=${gateway}`,
           method: "POST",
           body: rest,
         };

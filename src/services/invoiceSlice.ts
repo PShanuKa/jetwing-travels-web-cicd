@@ -24,9 +24,15 @@ const invoiceSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getCurrency: builder.query({
+      query: ({organizationId}) => ({
+        url: `currency/organization/${organizationId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useCreateInvoiceMutation, useGetAllInvoicesQuery, useGanaratePaymentLinkMutation } = invoiceSlice;
+export const { useCreateInvoiceMutation, useGetAllInvoicesQuery, useGanaratePaymentLinkMutation, useGetCurrencyQuery } = invoiceSlice;
 
 export default invoiceSlice;

@@ -25,6 +25,8 @@ const Payment = () => {
 
   const [initiatePayment, { isLoading: isInitiating }] =
     useInitiatePaymentMutation();
+
+    
   const handleInitiatePayment = async () => {
     await initiatePayment({
       amount: data?.data?.balancePayment,

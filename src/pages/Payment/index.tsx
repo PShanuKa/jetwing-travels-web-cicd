@@ -27,17 +27,70 @@ const Payment = () => {
     useInitiatePaymentMutation();
 
     
-  const handleInitiatePayment = async () => {
-    await initiatePayment({
-      amount: data?.data?.balancePayment,
-      invoiceToken: data?.data?.token,
-      currency: "LKR",
-      gateway: "mastercard",
-    }).then((res) => {
-
-      setSessionId(res?.data?.data?.paymentResponse?.sessionId);
-    });
-  };
+    const handleInitiatePayment = async () => {
+      try {
+        // Step 1: Call the initiatePayment API
+        const res = await initiatePayment({
+          amount: data?.data?.balancePayment,
+          invoiceToken: data?.data?.token,
+          currency: "LKR",
+          gateway: "cybersource",
+        });
+    
+        console.log("Initiate Payment Response:", res);
+    
+        // Step 2: Extract necessary data from the response
+        const paymentResponse = res?.data?.data?.paymentResponse;
+    
+        if (!paymentResponse) {
+          throw new Error("Payment response is missing or invalid.");
+        }
+    
+        // Step 3: Construct the curl request payload
+        const curlRequestPayload = {
+          access_key: paymentResponse.access_key,
+          profile_id: paymentResponse.profile_id,
+          transaction_uuid: paymentResponse.transaction_uuid,
+          unsigned_field_names: paymentResponse.unsigned_field_names,
+          signed_date_time: paymentResponse.signed_date_time,
+          locale: paymentResponse.locale,
+          transaction_type: paymentResponse.transaction_type,
+          reference_number: paymentResponse.reference_number,
+          amount: paymentResponse.amount,
+          currency: paymentResponse.currency,
+          signed_field_names: paymentResponse.signed_field_names,
+          payment_method: paymentResponse.payment_method,
+          signature: paymentResponse.signature,
+          return_url: paymentResponse.return_url,
+          cancel_url: paymentResponse.cancel_url,
+          notify_url: paymentResponse.notify_url,
+        };
+    
+        console.log("Curl Request Payload:", curlRequestPayload);
+    
+        // Step 4: Make the curl request (simulated using fetch for demonstration)
+        const curlResponse = await fetch("https://testsecureacceptance.cybersource.com/pay", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Cookie: "__cfruid=a826bc607350ef3c14557710386ae12b7e6363e0-1745406252; _cfuvid=pN9zHLQ0QGMgJapx8ShFSduphgWhPbthMjZsz690SL0-1745406252602-0.0.1.1-604800000",
+          },
+          body: Object.entries(curlRequestPayload)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join("&"),
+        });
+    
+        // Step 5: Handle the response from the curl request
+        if (curlResponse.ok) {
+          const curlResponseData = await curlResponse.text();
+          console.log("Curl Response Data:", curlResponseData);
+        } else {
+          console.error("Curl Request Failed:", curlResponse.statusText);
+        }
+      } catch (error) {
+        console.error("Error during payment initiation:", error.message);
+      }
+    };
 
 
 

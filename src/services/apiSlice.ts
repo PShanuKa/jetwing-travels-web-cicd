@@ -25,6 +25,11 @@ const baseQuery = fetchBaseQuery({
       headers.set("user-Id", `${userId}`);
     }
 
+    headers.set("access-control-allow-origin", "*");
+    headers.set("access-control-allow-headers", "*");
+    headers.set("access-control-allow-methods", "*");
+    // headers.set("access-control-allow-credentials", "true");
+
 
 
     return headers;

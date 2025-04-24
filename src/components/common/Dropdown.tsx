@@ -24,7 +24,7 @@ const Dropdown = ({
     setIsOpen(!isOpen);
   };
 
-  const valueName = options.find((option) => option.value === value)?.name;
+  const valueName = options?.find((option) => option.value === value)?.name;
 
   return (
     <div className="relative w-full">

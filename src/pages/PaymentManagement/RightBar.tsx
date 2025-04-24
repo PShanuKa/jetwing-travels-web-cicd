@@ -19,46 +19,49 @@ import { PiCursorClick } from "react-icons/pi";
 import { TbMessageReport } from "react-icons/tb";
 
 
-const RightBar = ({ children }: { children: React.ReactNode }) => {
+const RightBar = ({ children , payment}: { children: React.ReactNode , payment: any }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("invoiceDetails");
+
+  const invoiceDetails = payment?.invoiceDto;
+  const customerDetails = payment?.customerDto;
 
   const InvoiceDetails = [
     {
       title: "Invoice Number",
-      value: "INV-001",
+      value: invoiceDetails?.id,
       icon: (
         <IoDocumentTextOutline className="text-[var(--iconGray)]" size={15} />
       ),
     },
     {
       title: "Customer Name",
-      value: "Nimal Eyo",
+      value: customerDetails?.firstName + " " + customerDetails?.lastName,
       icon: <SlUser className="text-[var(--iconGray)] " size={18} />,
     },
     {
       title: "Currency",
-      value: "LKR",
+      value: invoiceDetails?.currency,
       icon: <LiaCoinsSolid className="text-[var(--iconGray)]" size={20} />,
     },
     {
       title: "Amount",
-      value: "$1000.00",
+      value: invoiceDetails?.initialPayment,
       icon: <FaSortAmountUp className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Payment Type",
-      value: "One Time",
+      value: payment?.paymentMethod,
       icon: <SlWallet className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Invoice creator",
-      value: "Nimal Eyo",
+      value: payment?.invoiceCreator,
       icon: <TiPen className="text-[var(--iconGray)]" size={18} />,
     },
     {
       title: "Click Time",
-      value: "03",
+      value: invoiceDetails?.paymentLinkClickedTimes,
       icon: <PiCursorClick className="text-[var(--iconGray)]" size={20} />,
     },
     {
@@ -71,44 +74,44 @@ const RightBar = ({ children }: { children: React.ReactNode }) => {
   const userDetails = [
     {
       title: "Full Name",
-      value: "Nimal Eyo",
+      value: customerDetails?.firstName + " " + customerDetails?.lastName,
       icon: <SlUser className="text-[var(--iconGray)]" size={15} />,
     },
     {
       title: "Address",
-      value: "12, Galle Road, Colombo 03, Sri Lanka",
+      value: customerDetails?.address,
       icon: <MdOutlineMail className="text-[var(--iconGray)] " size={18} />,
     },
     {
       title: "Postal Code",
-      value: "123456",
+      value: customerDetails?.postalCode,
       icon: <BsMailbox className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Country",
-      value: "Sri Lanka",
+      value: customerDetails?.country,
       icon: <GrMapLocation className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Mobile Number",
-      value: "+94 77 123 4567",
+      value: customerDetails?.contactNumber,
       icon: <FiPhone className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Email",
-      value: "nimal@gmail.com",
+      value: customerDetails?.primaryEmail,
       icon: (
         <MdOutlineAlternateEmail className="text-[var(--iconGray)]" size={18} />
       ),
     },
     {
       title: "Currency",
-      value: "LKR",
+      value: invoiceDetails?.currency,
       icon: <LiaCoinsSolid className="text-[var(--iconGray)]" size={20} />,
     },
     {
       title: "NIC Number",
-      value: "1234567890",
+      value: customerDetails?.identityNumber,
       icon: <FaRegAddressCard className="text-[var(--iconGray)]" size={16} />,
     },
   ];

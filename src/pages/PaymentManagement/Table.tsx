@@ -2,8 +2,21 @@ import { CiMenuKebab } from "react-icons/ci";
 
 import RightBar from "./RightBar";
 import Pagination from "@/components/common/Pagination";
+import { useState } from "react";
+import { useGetAllPaymentQuery } from "@/services/paymentSlice";
 
-const Table = () => {
+const Table = ({ searchString = "" }: { searchString: string }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data } = useGetAllPaymentQuery({
+    searchText: searchString,
+    page: currentPage - 1,
+    size: 10,
+  });
+
+
+
+
   return (
     <div className="mt-5 rounded-lg border border-[var(--borderGray)]/50  ">
       <table className="w-full text-sm text-left text-[var(--primary)] dark:text-gray-400 ">
@@ -20,7 +33,7 @@ const Table = () => {
              Invoice No
             </th>
             <th scope="col" className="py-3 px-6 font-normal">
-              Reference No
+              Transaction No
             </th>
             <th scope="col" className="py-3 px-6 font-normal">
               Customer Name
@@ -43,55 +56,43 @@ const Table = () => {
             </th>
           </tr>
         </thead>
-        <tbody>
+        {data?.data?.content?.map((payment: any) => (
+          <tbody>
           <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border border-[var(--borderGray)]/50 text-[var(--primary)]/60 hover:bg-[var(--tableHeaderBg)] transition-all duration-150">
-            <td className="py-4 px-6">01</td>
-            <td className="py-4 px-6">2025-03-06 10:00:00</td>
-            <td className="py-4 px-6">JT-INV-1001</td>
-            <td className="py-4 px-6">REF-1234567890</td>
-            <td className="py-4 px-6">John Doe</td>
-            <td className="py-4 px-6">LKR</td>
-            <td className="py-4 px-6">$1,000.00</td>
-            <td className="py-4 px-6">Credit Card</td>
-           
-            <td className="py-4 px-6">
+            <td className="py-4 px-6">{payment.id}</td>
+            <td className="py-4 px-6">{payment?.transactionDate}</td>
+            <td className="py-4 px-6">{payment?.invoiceDto?.id}</td>
+            <td className="py-4 px-6">{payment?.transactionId}</td>
+            <td className="py-4 px-6">{payment?.customerDto?.firstName} {payment?.customerDto?.lastName}</td>
+            <td className="py-4 px-6">{payment?.invoiceDto?.currency}</td>
+            <td className="py-4 px-6">{payment?.amount}</td>
+            <td className="py-4 px-6">{payment?.paymentMethod}</td>
+            <td className="py-4 px-6">{payment?.status}</td>
+            {/* <td className="py-4 px-6">
               <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
                 Active
               </span>
-            </td>
+            </td> */}
         
             <td className="py-4 px-6">
-              <RightBar>
+              <RightBar payment={payment}>
                 <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline border border-[var(--borderGray)]/50 rounded-md p-2 hover:bg-gray-200 transition-all duration-150">
                   <CiMenuKebab />
                 </button>
               </RightBar>
             </td>
           </tr>
-          {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border border-[var(--borderGray)]/50 text-[var(--primary)]/60 hover:bg-[var(--tableHeaderBg)] transition-all duration-150">
-            <td className="py-4 px-6">01</td>
-            <td className="py-4 px-6">Jane Doe</td>
-            <td className="py-4 px-6">Jane Doe</td>
-            <td className="py-4 px-6">jane.doe@example.com</td>
-            <td className="py-4 px-6">070 123 4567</td>
-            <td className="py-4 px-6">12, Galle Road, Colombo 03, Sri Lanka</td>
-            <td className="py-4 px-6">LKR</td>
-            <td className="py-4 px-6">
-              <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                Active
-              </span>
-            </td>
-            <td className="py-4 px-6">
-              <RightBar>
-                <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline border border-[var(--borderGray)]/50 rounded-md p-2 hover:bg-gray-200 transition-all duration-150">
-                  <CiMenuKebab />
-                </button>
-              </RightBar>
-            </td>
-          </tr> */}
         </tbody>
+        ))}
+          
       </table>
-      <Pagination totalPages={10} currentPage={1} onPageChange={() => {}} />
+      <Pagination
+          totalPages={data?.data?.totalPages}
+          currentPage={currentPage}
+          onPageChange={(value) => {
+            setCurrentPage(value);
+          }}
+        />
     </div>
   );
 };

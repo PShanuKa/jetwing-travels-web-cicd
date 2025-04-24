@@ -2,6 +2,15 @@ import apiSlice from "./apiSlice";
 
 const paymentSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getAllPayment: builder.query({
+      query: (params) => {
+        const queryParams = new URLSearchParams(params).toString();
+        return {
+          url: `payment/payment-filter?${queryParams}`,
+          method: "GET",
+        };
+      },
+    }),
     getPaymentDetails: builder.query({
       query: (data) => {
         const { invoiceId, token } = data;
@@ -24,7 +33,6 @@ const paymentSlice = apiSlice.injectEndpoints({
     }),
     fetchCaptureContext: builder.mutation({
       query: (data) => {
-
         return {
           url: `payment/capture-context`,
           method: "POST",
@@ -35,6 +43,6 @@ const paymentSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation , useFetchCaptureContextMutation } = paymentSlice;
+export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation , useFetchCaptureContextMutation , useGetAllPaymentQuery } = paymentSlice;
 
 export default paymentSlice;

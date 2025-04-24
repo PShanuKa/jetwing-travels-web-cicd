@@ -8,11 +8,13 @@ import {
 import { GiDetour } from "react-icons/gi";
 import { BsCalendar2Date } from "react-icons/bs";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { MdOutlineErrorOutline } from "react-icons/md";
 
 const Payment = () => {
   const { id, token } = useParams();
+  const [searchParams] = useSearchParams();
+  const status = searchParams.get("status");
   const [formData, setFormData] = useState({
     cartType: "",
   });
@@ -26,7 +28,7 @@ const Payment = () => {
     useInitiatePaymentMutation();
 
   const handleInitiatePayment = async () => {
-    if(formData.cartType === "Master/Visa"){
+    if (formData.cartType === "Master/Visa") {
       await initiatePayment({
         amount: data?.data?.balancePayment,
         invoiceToken: data?.data?.token,
@@ -34,105 +36,114 @@ const Payment = () => {
         gateway: "mastercard",
       }).then((res) => {
         setSessionId(res?.data?.data?.paymentUrl?.sessionId);
+        if (res?.data?.data?.paymentUrl?.sessionId) {
+          window.Checkout.configure({
+            session: {
+              id: sessionId,
+            },
+          });
+          window.Checkout.showEmbeddedPage("#embed-target");
+        }
       });
     }
 
-    if(formData.cartType === "Amex"){
+    if (formData.cartType === "Amex") {
       try {
+        const res = await initiatePayment({
+          amount: data?.data?.balancePayment,
+          invoiceToken: data?.data?.token,
+          currency: "LKR",
+          gateway: "cybersource",
+        });
 
-            const res = await initiatePayment({
-              amount: data?.data?.balancePayment,
-              invoiceToken: data?.data?.token,
-              currency: "LKR",
-              gateway: "cybersource",
-            });
-      
-            console.log("Initiate Payment Response:", res);
-      
-            const paymentResponse = res?.data?.data?.paymentResponse;
-            const cyberSourceValues = res?.data?.data?.cyberSourceValues;
-      
-            if (!paymentResponse) {
-              throw new Error("Payment response is missing or invalid.");
-            }
-            const formData = {
-              // access_key: paymentResponse.access_key,
-              // profile_id: paymentResponse.profile_id,
-              // transaction_uuid: paymentResponse.transaction_uuid,
-              // unsigned_field_names: paymentResponse.unsigned_field_names,
-              // signed_date_time: paymentResponse.signed_date_time,
-              // signed_field_names: paymentResponse.signed_field_names,
-              // locale: paymentResponse.locale,
-              // transaction_type: paymentResponse.transaction_type,
-              // reference_number: paymentResponse.reference_number,
-              // amount: paymentResponse.amount,
-              // currency: paymentResponse.currency,
-              // signed_field_names: paymentResponse.signed_field_names,
-              // payment_method: paymentResponse.payment_method,
-              // signature: paymentResponse.signature,
-              // return_url: paymentResponse.return_url,
-              // cancel_url: paymentResponse.cancel_url,
-              // notify_url: paymentResponse.notify_url,
-            };
-      
-            Object.entries(cyberSourceValues).forEach(([key, value]) => {
-              formData[key] = value;
-            });
-      
-            console.log("Form Data Payload:", formData);
-      
-            const form = document.createElement("form");
-            form.method = "POST";
-            form.action = "https://testsecureacceptance.cybersource.com/pay";
-      
-            Object.entries(formData).forEach(([key, value]) => {
-              const input = document.createElement("input");
-              input.type = "hidden";
-              input.name = key;
-              input.value = value;
-              form.appendChild(input);
-            });
-      
-            document.body.appendChild(form);
-            form.submit();
-          } catch (error) {
-            console.error("Error during payment initiation:", error.message);
-          }
+        // console.log("Initiate Payment Response:", res);
+
+        const paymentResponse = res?.data?.data?.paymentResponse;
+        const cyberSourceValues = res?.data?.data?.cyberSourceValues        ;
+
+        console.log("CyberSource Values:", cyberSourceValues);
+
+        // if (!paymentResponse) {
+        //   throw new Error("Payment response is missing or invalid.");
+        // }
+        const formData = {
+          // access_key: paymentResponse.access_key,
+          // profile_id: paymentResponse.profile_id,
+          // transaction_uuid: paymentResponse.transaction_uuid,
+          // unsigned_field_names: paymentResponse.unsigned_field_names,
+          // signed_date_time: paymentResponse.signed_date_time,
+          // signed_field_names: paymentResponse.signed_field_names,
+          // locale: paymentResponse.locale,
+          // transaction_type: paymentResponse.transaction_type,
+          // reference_number: paymentResponse.reference_number,
+          // amount: paymentResponse.amount,
+          // currency: paymentResponse.currency,
+          // signed_field_names: paymentResponse.signed_field_names,
+          // payment_method: paymentResponse.payment_method,
+          // signature: paymentResponse.signature,
+          // return_url: paymentResponse.return_url,
+          // cancel_url: paymentResponse.cancel_url,
+          // notify_url: paymentResponse.notify_url,
+        };
+
+        Object.entries(cyberSourceValues).forEach(([key, value]) => {
+          formData[key] = value; 
+        });
+        
+        console.log("Form Data Payload:", formData);
+
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "https://testsecureacceptance.cybersource.com/pay";
+
+        Object.entries(formData).forEach(([key, value]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = value as string;
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+      } catch (error) {
+        console.error("Error during payment initiation:", error.message);
+      }
     }
   };
 
   console.log(sessionId);
 
-
-
-  useEffect(() => {
-    if (sessionId) {
-      window.Checkout.configure({
-        session: {
-          id: sessionId,
-        },
-      });
-      window.Checkout.showEmbeddedPage("#embed-target");
-    }
-  }, [sessionId]);
-
-
-
+  // useEffect(() => {
+  //   if (sessionId) {
+  //     window.Checkout.configure({
+  //       session: {
+  //         id: sessionId,
+  //       },
+  //     });
+  //     window.Checkout.showEmbeddedPage("#embed-target");
+  //   }
+  // }, [sessionId]);
 
   if (isLoading) {
     return <Loading />;
   }
-
+  
   if (!data?.data) {
     return <ExpirePayLink id={id} />;
   }
+
+  if (status == "success") {
+    return <PaymentSuccess id={id} />;
+  }
+
 
   // if (data?.data?.paymentLink) {
   //   return <Redirect to={data?.data?.paymentLink} />;
   // }
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-screen ">
       <div className="w-full  bg-[var(--publicBg)] pb-7 px-7">
         {/* header */}
         <div className="max-w-7xl w-full py-2 md:py-5  mx-auto flex items-center ">
@@ -152,7 +163,6 @@ const Payment = () => {
             </div>
             <div className="max-w-7xl w-full mt-10  mx-auto  items-center ">
               <h1 className="text-white text-[18px] font-normal">
-                ${" "}
                 <span className="text-[50px] font-semibold">
                   {data?.data?.balancePayment}
                 </span>{" "}
@@ -185,7 +195,7 @@ const Payment = () => {
                 Invoice Details
               </h1>
               <p className="text-black/50  text-[18px] font-normal">
-                ID: {data?.data?.id}
+                ID: #000{data?.data?.id}
               </p>
 
               <div className="flex items-center mt-5 gap-4">
@@ -220,35 +230,37 @@ const Payment = () => {
                 </h1>
               </div> */}
             </div>
-            <div className="mt-8">
-              <h1 className="text-black text-[24px] font-semibold">
-                Item Setup
-              </h1>
+            {data?.data?.itemList.length > 0 && (
+              <div className="mt-8">
+                <h1 className="text-black text-[24px] font-semibold">
+                  Item Setup
+                </h1>
 
-              <div className="flex flex-col gap-3 mt-5">
-                {data?.data?.itemList?.map((item: any) => (
-                  <div
-                    key={item?.itemId}
-                    className="flex flex-col gap-1 border border-black/30 rounded-lg p-2"
-                  >
-                    <p className="text-[15px] font-normal ">
-                      {item?.description}
-                    </p>
-                    <p className="text-[15px] font-bold text-end">
-                      ${item?.amount?.toFixed(2)}
-                    </p>
-                  </div>
-                ))}
+                <div className="flex flex-col gap-3 mt-5">
+                  {data?.data?.itemList?.map((item: any) => (
+                    <div
+                      key={item?.itemId}
+                      className="flex flex-col gap-1 border border-black/30 rounded-lg p-2"
+                    >
+                      <p className="text-[15px] font-normal ">
+                        {item?.description}
+                      </p>
+                      <p className="text-[15px] font-bold text-end">
+                        ${item?.amount?.toFixed(2)}
+                      </p>
+                    </div>
+                  ))}
 
-                <div className="flex justify-end gap-1 pb-2">
-                  <div className="flex flex-col gap-1 border-b border-black/30">
-                    <p className="text-[15px] font-normal text-end">
-                      TOTAL: {data?.data?.itemTotal?.toFixed(2)}
-                    </p>
+                  <div className="flex justify-end gap-1 pb-2">
+                    <div className="flex flex-col gap-1 border-b border-black/30">
+                      <p className="text-[15px] font-normal text-end">
+                        TOTAL: {data?.data?.itemTotal?.toFixed(2)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div>
@@ -361,7 +373,8 @@ const Payment = () => {
           </div>
         </div>
       </div>
-      <div className="w-full flex bg-[var(--publicBg)] py-4 px-7 justify-center items-center ">
+
+      <div className="w-full flex bg-[var(--publicBg)] py-4 px-7 justify-center items-center  relative bottom-0 left-0 right-0 ">
         <p className="text-white text-[12px]">
           Copyright © {new Date().getFullYear()} jetwing. All rights reserved.
         </p>
@@ -434,6 +447,79 @@ const Loading = () => {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const PaymentSuccess = () => {
+  return (
+    <div className="w-full ">
+      <div className="w-full bg-[var(--publicBg)] pb-7 px-7 min-h-screen">
+        {/* header */}
+        <div className="max-w-7xl w-full py-2 md:py-5 mx-auto flex items-center">
+          <img src={logo} alt="logo" className="h-[44px]" />
+        </div>
+
+        {/* main success content */}
+        <div className="max-w-7xl w-full mx-auto mt-10">
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-12 h-12 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <h1 className="text-3xl font-semibold text-gray-800 mb-4">
+              Payment Successful!
+            </h1>
+
+            <p className="text-gray-600 mb-6">
+              Thank you for your payment. Your transaction has been completed
+              successfully.
+            </p>
+
+            <div className="bg-gray-50 rounded-lg p-4 mb-6">
+              <p className="text-sm text-gray-500 mb-2">Transaction Details</p>
+              <p className="text-gray-800 font-medium">
+                A confirmation email has been sent to your registered email
+                address.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <button
+                className="bg-black text-white px-6 py-3 rounded-md hover:bg-black/80 transition-all duration-150"
+                onClick={() => (window.location.href = "/")}
+              >
+                Return to Home
+              </button>
+
+              <p className="text-sm text-gray-500">
+                If you have any questions, please contact our support team.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* footer */}
+      <div className="w-full flex bg-[var(--publicBg)] py-4 px-7 justify-center items-center relative bottom-0 left-0 right-0">
+        <p className="text-white text-[12px]">
+          Copyright © {new Date().getFullYear()} jetwing. All rights reserved.
+        </p>
       </div>
     </div>
   );

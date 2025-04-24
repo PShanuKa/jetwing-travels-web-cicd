@@ -1,6 +1,6 @@
 import Input from "@/components/common/Input";
 import SearchInput from "@/components/common/SearchInput";
-import { useCreateInvoiceMutation } from "@/services/invoiceSlice";
+import { useCreateInvoiceMutation, useGetCurrencyQuery } from "@/services/invoiceSlice";
 import { useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa6";
@@ -73,6 +73,7 @@ const paymentPercentageOptions = [
   },
 ];
 
+
 const paymentCurrencyOptions = [
   {
     name: "LKR",
@@ -123,6 +124,12 @@ const AddNewInvoice = () => {
       items: [...formData.items, { description: "", amount: "" }],
     });
   };
+
+
+
+const { data: currencyData } = useGetCurrencyQuery({
+  organizationId: companyId,
+});
 
   // console.log(formData);
 
@@ -501,7 +508,12 @@ const AddNewInvoice = () => {
                 <div className="mt-1 w-[100px]">
                   <Dropdown
                     // placeholder="Select currency"
-                    options={paymentCurrencyOptions}
+                    options={currencyData?.data?.map((item:any) => {
+                      return {
+                        name: item.currency,
+                        value: item.currency,
+                      };
+                    })}
                     value={formData.currency}
                     onChangeHandler={handleChange}
                     name="currency"

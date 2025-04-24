@@ -352,7 +352,7 @@ const RightBar = ({
                     </p>
                     <button
                       onClick={handleCopy}
-                      className="bg-[#04334D] w-[200px] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 h-[24px] rounded-md font-normal flex items-center gap-2   transition-all duration-150 outline-none justify-center text-[9px]">
+                      className="bg-[#04334D] w-[220px] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 h-[24px] rounded-md font-normal flex items-center gap-2   transition-all duration-150 outline-none justify-center text-[9px]">
                       {copied ? "Copied" : "Copy Link"}
                     </button>
                   </div>

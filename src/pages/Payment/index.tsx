@@ -13,6 +13,10 @@ import { MdOutlineErrorOutline } from "react-icons/md";
 
 const Payment = () => {
   const { id, token } = useParams();
+  const [formData, setFormData] = useState({
+    cartType: "",
+  });
+
   const { data, isLoading } = useGetPaymentDetailsQuery({
     invoiceId: id,
     token: token,
@@ -21,92 +25,83 @@ const Payment = () => {
   const [initiatePayment, { isLoading: isInitiating }] =
     useInitiatePaymentMutation();
 
-
-    const handleInitiatePayment = async () => {
+  const handleInitiatePayment = async () => {
+    if(formData.cartType === "Master/Visa"){
       await initiatePayment({
         amount: data?.data?.balancePayment,
         invoiceToken: data?.data?.token,
         currency: "LKR",
         gateway: "mastercard",
       }).then((res) => {
- 
-  
         setSessionId(res?.data?.data?.paymentUrl?.sessionId);
       });
-    };
+    }
 
-    console.log(sessionId);
+    if(formData.cartType === "Amex"){
+      try {
 
-    
+            const res = await initiatePayment({
+              amount: data?.data?.balancePayment,
+              invoiceToken: data?.data?.token,
+              currency: "LKR",
+              gateway: "cybersource",
+            });
+      
+            console.log("Initiate Payment Response:", res);
+      
+            const paymentResponse = res?.data?.data?.paymentResponse;
+            const cyberSourceValues = res?.data?.data?.cyberSourceValues;
+      
+            if (!paymentResponse) {
+              throw new Error("Payment response is missing or invalid.");
+            }
+            const formData = {
+              // access_key: paymentResponse.access_key,
+              // profile_id: paymentResponse.profile_id,
+              // transaction_uuid: paymentResponse.transaction_uuid,
+              // unsigned_field_names: paymentResponse.unsigned_field_names,
+              // signed_date_time: paymentResponse.signed_date_time,
+              // signed_field_names: paymentResponse.signed_field_names,
+              // locale: paymentResponse.locale,
+              // transaction_type: paymentResponse.transaction_type,
+              // reference_number: paymentResponse.reference_number,
+              // amount: paymentResponse.amount,
+              // currency: paymentResponse.currency,
+              // signed_field_names: paymentResponse.signed_field_names,
+              // payment_method: paymentResponse.payment_method,
+              // signature: paymentResponse.signature,
+              // return_url: paymentResponse.return_url,
+              // cancel_url: paymentResponse.cancel_url,
+              // notify_url: paymentResponse.notify_url,
+            };
+      
+            Object.entries(cyberSourceValues).forEach(([key, value]) => {
+              formData[key] = value;
+            });
+      
+            console.log("Form Data Payload:", formData);
+      
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "https://testsecureacceptance.cybersource.com/pay";
+      
+            Object.entries(formData).forEach(([key, value]) => {
+              const input = document.createElement("input");
+              input.type = "hidden";
+              input.name = key;
+              input.value = value;
+              form.appendChild(input);
+            });
+      
+            document.body.appendChild(form);
+            form.submit();
+          } catch (error) {
+            console.error("Error during payment initiation:", error.message);
+          }
+    }
+  };
 
-    // const handleInitiatePayment = async () => {
-    //   try {
-
-    //     const res = await initiatePayment({
-    //       amount: data?.data?.balancePayment,
-    //       invoiceToken: data?.data?.token,
-    //       currency: "LKR",
-    //       gateway: "cybersource",
-    //     });
-    
-    //     console.log("Initiate Payment Response:", res);
-    
-        
-    //     const paymentResponse = res?.data?.data?.paymentResponse;
-    //     const cyberSourceValues = res?.data?.data?.cyberSourceValues;
-
-    
-    //     if (!paymentResponse) {
-    //       throw new Error("Payment response is missing or invalid.");
-    //     }
-    //     const formData = {
-    //       access_key: paymentResponse.access_key,
-    //       // profile_id: paymentResponse.profile_id,
-    //       transaction_uuid: paymentResponse.transaction_uuid,
-    //       // unsigned_field_names: paymentResponse.unsigned_field_names,
-    //       signed_date_time: paymentResponse.signed_date_time,
-    //       signed_field_names: paymentResponse.signed_field_names,
-     
-    //       // locale: paymentResponse.locale,
-    //       transaction_type: paymentResponse.transaction_type,
-    //       reference_number: paymentResponse.reference_number,
-    //       amount: paymentResponse.amount,
-    //       // currency: paymentResponse.currency,
-    //       // signed_field_names: paymentResponse.signed_field_names,
-    //       // payment_method: paymentResponse.payment_method,
-    //       // signature: paymentResponse.signature,
-    //       // return_url: paymentResponse.return_url,
-    //       // cancel_url: paymentResponse.cancel_url,
-    //       // notify_url: paymentResponse.notify_url,
-    //     };
-
-    //     Object.entries(cyberSourceValues).forEach(([key, value]) => {
-    //       formData[key] = value; 
-    //     });
-    
-    //     console.log("Form Data Payload:", formData);
-    
-       
-    //     const form = document.createElement("form");
-    //     form.method = "POST";
-    //     form.action = "https://testsecureacceptance.cybersource.com/pay";
-    
-        
-    //     Object.entries(formData).forEach(([key, value]) => {
-    //       const input = document.createElement("input");
-    //       input.type = "hidden";
-    //       input.name = key;
-    //       input.value = value;
-    //       form.appendChild(input);
-    //     });
-    
-        
-    //     document.body.appendChild(form);
-    //     form.submit();
-    //   } catch (error) {
-    //     console.error("Error during payment initiation:", error.message);
-    //   }
-    // };
+  console.log(sessionId);
 
 
 
@@ -114,35 +109,27 @@ const Payment = () => {
     if (sessionId) {
       window.Checkout.configure({
         session: {
-          id: sessionId
-          }
+          id: sessionId,
+        },
       });
-      window.Checkout.showEmbeddedPage('#embed-target');
-    } 
+      window.Checkout.showEmbeddedPage("#embed-target");
+    }
   }, [sessionId]);
 
 
-  
 
-
-  const [formData, setFormData] = useState({
-    cartType: "",
-  });
 
   if (isLoading) {
     return <Loading />;
   }
 
-    if(!data?.data){
-      return <ExpirePayLink id={id}  />
-    }
-
+  if (!data?.data) {
+    return <ExpirePayLink id={id} />;
+  }
 
   // if (data?.data?.paymentLink) {
   //   return <Redirect to={data?.data?.paymentLink} />;
   // }
-
-
 
   return (
     <div className="w-full">
@@ -320,45 +307,26 @@ const Payment = () => {
                     Select Your Card Type
                   </p>
                   <div className="flex flex-row gap-5">
-                    {/* Visa/Master Radio Button */}
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="payment"
-                        id="visa"
-                        value="visa"
-                        checked={formData.cartType === "visa"} // Bind the checked state
-                        onChange={() =>
-                          setFormData({ ...formData, cartType: "visa" })
-                        } // Update state on change
-                      />
-                      <label
-                        htmlFor="visa"
-                        className="text-[13px] font-semibold"
-                      >
-                        Visa/Master
-                      </label>
-                    </div>
-
-                    {/* AMEX Radio Button */}
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="payment"
-                        id="amex"
-                        value="amex"
-                        checked={formData.cartType === "amex"} // Bind the checked state
-                        onChange={() =>
-                          setFormData({ ...formData, cartType: "amex" })
-                        } // Update state on change
-                      />
-                      <label
-                        htmlFor="amex"
-                        className="text-[13px] font-semibold"
-                      >
-                        AMEX
-                      </label>
-                    </div>
+                    {data.data.paymentGatewayDetailsDtoList.map((item: any) => (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="payment"
+                          id={item?.name}
+                          value={item?.name}
+                          checked={formData.cartType === item?.name} // Bind the checked state
+                          onChange={() =>
+                            setFormData({ ...formData, cartType: item?.name })
+                          } // Update state on change
+                        />
+                        <label
+                          htmlFor="visa"
+                          className="text-[13px] font-semibold"
+                        >
+                          {item?.name}
+                        </label>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 <div className="flex md:flex-row flex-col justify-end mt-2">
@@ -373,7 +341,7 @@ const Payment = () => {
                     )}
                   </button>
                 </div>
-                  <div id="embed-target"></div>
+                <div id="embed-target"></div>
                 <div className="flex justify-end mt-3">
                   <p className="text-black/50 text-[12px]">
                     Click the "Pay Now" button to complete your payment. By
@@ -471,9 +439,7 @@ const Loading = () => {
   );
 };
 
-
-
-const ExpirePayLink = ({id}: {id: string | undefined}) => {
+const ExpirePayLink = ({ id }: { id: string | undefined }) => {
   return (
     <div className="min-h-screen bg-[var(--publicBg)] flex flex-col">
       {/* Header */}
@@ -489,19 +455,18 @@ const ExpirePayLink = ({id}: {id: string | undefined}) => {
           <div className="flex justify-center mb-6">
             <MdOutlineErrorOutline className="text-red-500 text-6xl" />
           </div>
-          
+
           <h1 className="text-sm font-semibold text-gray-800 mb-3">
             Invoice ID: #000{id}
           </h1>
           <h1 className="text-2xl font-semibold text-gray-800 mb-3">
             Payment Link Expired
           </h1>
-          
-          <p className="text-gray-600 mb-6">
-            Sorry, this payment link has expired or is no longer valid. Please contact our support team or check your email for a new payment link.
-          </p>
 
-      
+          <p className="text-gray-600 mb-6">
+            Sorry, this payment link has expired or is no longer valid. Please
+            contact our support team or check your email for a new payment link.
+          </p>
         </div>
       </div>
 

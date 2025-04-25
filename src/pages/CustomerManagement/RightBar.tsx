@@ -146,13 +146,13 @@ const RightBar = ({
 
           <div className="flex gap-2 mt-5">
             <Link
-              to="invoices"
+              to={`/admin/invoice?searchString=${item.primaryEmail}`}
               className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] w-full transition-all duration-150 outline-none justify-center text-[14px]"
             >
               View Invoices
             </Link>
             <Link
-              to="payment"
+              to={`/admin/payment?searchString=${item.primaryEmail}`}
               className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] w-full transition-all duration-150 outline-none justify-center text-[14px]"
             >
               View Payment

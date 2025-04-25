@@ -18,6 +18,15 @@ const CompanySelector = () => {
 
   const dispatch = useDispatch();
 
+  const selectedHandler = (company: any) => {
+    dispatch(setCompanySelected(company));
+    setTimeout(() => {
+      // set full reload
+      window.location.reload();
+    }, 200);
+ 
+  }
+
 
   return (
     <>
@@ -68,7 +77,7 @@ const CompanySelector = () => {
             <div className="grid grid-cols-4 gap-6 mt-10">
               {companies?.data?.content?.map((company: any) => (
                 <div
-                  onClick={() => dispatch(setCompanySelected(company.id))}
+                  onClick={() => selectedHandler(company)}
                   className="w-full aspect-square  flex-col  gap-4 rounded-lg bg-[#225451] relative overflow-hidden border border-[#225451] flex justify-center items-center hover:scale-105 transition-all duration-150 "
                 >
                   <div className="w-[70%] h-[70%] p-5 bg-white rounded-full flex justify-center items-center absolute top-[-40px] left-[-10px]">

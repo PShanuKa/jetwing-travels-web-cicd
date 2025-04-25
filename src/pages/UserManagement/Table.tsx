@@ -18,7 +18,8 @@ const Table = ({ role, organizationId, searchString }: { role: string, organizat
   });
 
   return (
-    <div className="mt-5  rounded-lg  border border-[var(--borderGray)]/50 w-[100%] overflow-x-auto ">
+    <div className="mt-5  rounded-lg  border border-[var(--borderGray)]/50 w-full overflow-x-auto ">
+      
       <table className="w-full text-sm text-left text-[var(--primary)] dark:text-gray-400 ">
         <thead className="text-[14px]   bg-[var(--tableHeaderBg)] dark:bg-gray-700 dark:text-gray-400 font-normal  ">
           <tr>
@@ -44,6 +45,7 @@ const Table = ({ role, organizationId, searchString }: { role: string, organizat
               Action
             </th>
           </tr>
+
         </thead>
         {data?.data?.content?.map((user: any) => (
           <tbody>

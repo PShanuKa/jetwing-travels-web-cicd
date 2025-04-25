@@ -9,7 +9,7 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     // Get the token from the Redux store
     const token = (getState() as RootState).auth.token; // Assuming token is stored in auth state
-    const companyId = (getState() as RootState).meta.companySelected;
+    const companyId = (getState() as RootState).meta.companySelected?.id;
     const userId = (getState() as RootState).auth.userInfo?.id;
 
     // If token exists, add it to the Authorization header

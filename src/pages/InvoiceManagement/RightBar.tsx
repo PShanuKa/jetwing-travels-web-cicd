@@ -239,12 +239,12 @@ const RightBar = ({
                       2025-03-06 08:45 AM
                     </p>
                   </div>
-                  <Link
-                    to="edit/45451"
+                  <div
+                    // onClick={() => navigate(`/admin/invoice/edit/${item.id}`)}
                     className="w-[40px] h-[40px] rounded-full flex items-center justify-center hover:bg-[#293446]/10 transition-all duration-150"
                   >
-                    <BiSolidEdit color="#293446" size={21} />
-                  </Link>
+                    {/* <BiSolidEdit color="#293446" size={21} /> */}
+                  </div>
                 </div>
               </div>
             </div>

@@ -8,10 +8,14 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import { setIsSidebarOpen } from "@/features/metaSlice";
 import { Link } from "react-router-dom";
 import { logout } from "@/features/authSlice";
+import { useLocation } from "react-router-dom";
+
 
 
 const LeftSidebar = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+const currentPath = location.pathname;
   const isSidebarOpen = useSelector((state: RootState) => state.meta.isSidebarOpen);
   const user = useSelector((state: RootState) => state.auth.userInfo);
   return (
@@ -29,19 +33,23 @@ const LeftSidebar = () => {
 
       <div className="w-full  px-4 mt-5 flex-1 flex  flex-col gap-2 ">
         <div className="w-full flex-1  flex-col  gap-2">
-          {MenuItems.map((item) => (
-            <Link to={item.path} key={item.name}>
-
-            <div className="w-full h-[47px]  hover:bg-[#293446] rounded-[10px] flex items-center gap-3 px-4 transition-all duration-150">
-              <div className="w-[24px] h-[24px] flex items-center justify-center">
-                {item.icon}
-              </div>
-              <p className="text-[14px] text-[#98A2B3] font-normal">
-                {item.name}
-              </p>
-            </div>
-            </Link>
-          ))}
+        {MenuItems.map((item) => {
+            const isActive = currentPath === item.path; 
+            return (
+              <Link to={item.path} key={item.name}>
+                <div
+                  className={`w-full h-[47px] rounded-[10px] flex items-center gap-3 px-4 transition-all duration-150 ${
+                    isActive ? "bg-[#2a303a]" : "hover:bg-[#293446]"
+                  }`} 
+                >
+                  <div className="w-[24px] h-[24px] flex items-center justify-center">
+                    {item.icon}
+                  </div>
+                  <p className="text-[14px] text-[#98A2B3] font-normal">{item.name}</p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
         <div className="w-full ">
           <Link to="/admin/settings" className="w-full h-[47px]  hover:bg-[#293446] rounded-[10px] flex items-center gap-3 px-4 transition-all duration-150">

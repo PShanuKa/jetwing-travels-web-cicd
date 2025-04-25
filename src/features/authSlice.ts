@@ -4,6 +4,7 @@ const initialState = {
   userInfo: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "{}") : null,
   token: localStorage.getItem("token") ? localStorage.getItem("token") : null,
 
+
 };
 
 export const authSlice = createSlice({
@@ -24,6 +25,7 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.userInfo = null;
       state.token = null;
+      localStorage.removeItem("companySelected");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
     },

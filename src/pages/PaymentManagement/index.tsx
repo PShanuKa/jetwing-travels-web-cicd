@@ -3,21 +3,34 @@ import { GiSettingsKnobs } from "react-icons/gi";
 import Input from "@/components/common/SearchInput";
 import { SelectNative } from "@/components/ui/select-native";
 import Table from "./Table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setPageHeader } from "@/features/metaSlice";
 
 const PaymentManagement = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageHeader("Payment Management"));
   const [filterIsOpen, setFilterIsOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("searchString");
 
+  
+    const [formData, setFormData] = useState({
+      status: "",
+      currency: "",
+      text: "",
+      company: "",
+      paymentType: "",
+    });
+
+  useEffect(() => {
+    if (search) {
+      setFormData({ ...formData, text: search });
+    }
+  }, [search]);
 
 ;
-
-  const [formData, setFormData] = useState({
-    status: "",
-    currency: "",
-    text: "",
-    company: "",
-    paymentType: "",
-  });
 
   return (
     <div className="md:p-4 p-2 border-[var(--borderGray)] bg-white md:border rounded-lg w-full flex flex-col gap-4">

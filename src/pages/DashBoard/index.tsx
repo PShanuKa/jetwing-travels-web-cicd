@@ -9,6 +9,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { GrMoney } from "react-icons/gr";
+import { useDispatch } from "react-redux";
+import { setPageHeader } from "@/features/metaSlice";
 
 
 const monthlyPayments = [
@@ -77,6 +79,8 @@ const yearSummaryData = [
 
 
 const DashBoard = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageHeader("DashBoard"));
   return (
     <div className="md:p-5">
       {/* Overall Summary */}

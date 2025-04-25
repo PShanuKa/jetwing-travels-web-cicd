@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
+import { setPageHeader } from "@/features/metaSlice";
+import { useDispatch } from "react-redux";
 
 const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
@@ -38,9 +40,15 @@ const validationSchema = Yup.object({
 });
 
 const AddNewCustomer = () => {
+  const dispatch = useDispatch();
   const { id, encodedItem } = useParams();
   const navigate = useNavigate();
   const type = id && encodedItem ? "edit" : "view";
+  if (type === "edit") {
+    dispatch(setPageHeader("Edit Customer Details"));
+  } else {
+    dispatch(setPageHeader("Add New Customer"));
+  }
   const decodedItem = decodeURIComponent(encodedItem || "");
   const parsedItem = JSON.parse(decodedItem || "{}");
 
@@ -301,9 +309,10 @@ const AddNewCustomer = () => {
             onClick={handleSubmit}
             className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white  py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"
           >
-            {isLoading || isEditLoading && (
-              <AiOutlineLoading3Quarters className="animate-spin" />
-            )}
+            {isLoading ||
+              (isEditLoading && (
+                <AiOutlineLoading3Quarters className="animate-spin" />
+              ))}
             {type === "edit" ? "Update" : "Save"}
           </button>
         </div>

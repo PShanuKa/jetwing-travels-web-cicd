@@ -8,6 +8,8 @@ import { useCreateUserMutation, useUpdateUserMutation } from "@/services/userSli
 import { useGetAllOrganizationsQuery } from "@/services/organizationSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { BiLoaderAlt } from "react-icons/bi";
+import { useDispatch } from "react-redux";
+import { setPageHeader } from "@/features/metaSlice";
 
 const initialFormData: {
   fullName: string;
@@ -35,6 +37,8 @@ const initialFormData: {
 
 
 const AddNewUser = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageHeader("Add New User"));
   const [formData, setFormData] = useState(initialFormData);
   const [formErrors, setFormErrors] = useState<any>({});
   const navigate = useNavigate();
@@ -56,7 +60,9 @@ const AddNewUser = () => {
     email: Yup.string()
       .email("Invalid email format")
       .required("Email is required"),
-    // password: Yup.string().required("Password is required"),
+    password: Yup.string().test("password", "Password is required", function(value) {
+      return type === "edit" ? true : value?.length > 0;
+    }),
     nicOrPassportNumber: Yup.string()
     .nullable() // Allows null or undefined values
     .min(6, "NIC or Passport Number must be at least 6 characters"), 
@@ -74,7 +80,7 @@ const AddNewUser = () => {
         mobileNumber: parsedItem.contactNumber,
         nicOrPassportNumber: parsedItem.identityNumber,
         roleName: parsedItem.roleName,
-        organizationIds: parsedItem.organizationIds,
+        organizationIds: parsedItem?.organizationsList?.map((item: any) => item.id),
         // password: parsedItem.password,
       });
 

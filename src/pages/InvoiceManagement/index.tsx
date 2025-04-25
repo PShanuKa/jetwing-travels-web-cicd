@@ -5,13 +5,41 @@ import { SelectNative } from "@/components/ui/select-native";
 import { FaPlus } from "react-icons/fa6";
 import Table from "./Table";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import SearchInput from "@/components/common/SearchInput";
+import { useDispatch } from "react-redux";
+import { setPageHeader } from "@/features/metaSlice";
 
 const InvoiceManagement = () => {
+
+  const dispatch = useDispatch();
+  dispatch(setPageHeader("Invoice Management"));
+
   const [filterIsOpen, setFilterIsOpen] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("searchString");
+
+  
+
   const [searchIsOpen, setSearchIsOpen] = useState(false);
   const [searchString, setSearchString] = useState("");
+
+
+
+
+  useEffect(() => {
+    if (search) {
+      setSearchString(search);
+    }
+  }, [search]);
+
+
+
+
+
+
+
   return (
     <div className="md:p-4 p-2 border-[var(--borderGray)]  md:border rounded-lg w-full flex flex-col gap-4 bg-white ">
       <div className="flex  items-center justify-between">

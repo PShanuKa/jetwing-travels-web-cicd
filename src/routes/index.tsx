@@ -13,6 +13,8 @@ import Report from "@/pages/Report";
 import AddInvoice from "@/pages/InvoiceManagement/AddInvoice";
 import Settings from "@/pages/Settings";
 import Payment from "@/pages/Payment";
+import PaymentSuccess from "@/pages/Payment/PaymentSuccess";
+import PaymentFailed from "@/pages/Payment/PaymentFailed";
 
 export interface IRoute {
   path: string;
@@ -119,6 +121,16 @@ const publicRoutes: IRoute[] = [
     path: "/payment/:id/:token",
     element: <Payment />,
     name: "Payment",
+  },
+  {
+    path: "/payment/success",
+    element: <PaymentSuccess />,
+    name: "Payment Success",
+  },
+  {
+    path: "/payment/failed",
+    element: <PaymentFailed />,
+    name: "Payment Failed",
   },
   
 ];

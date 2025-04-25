@@ -12,6 +12,13 @@ const Navbar = () => {
     (state: RootState) => state.meta.isSidebarOpen
   );
 
+  const company = useSelector(
+    (state: RootState) => state.meta.companySelected
+  );
+  const pageHeader = useSelector(
+    (state: RootState) => state.meta.pageHeader
+  );
+
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -39,11 +46,17 @@ const Navbar = () => {
           <HiMenuAlt2 size={28} color="#101928" />
         </button>
         <div>
-          <h1 className="text-[24px] font-medium hidden md:block">
-            Welcome Elison Eyo
-          </h1>
+          {company?.name ? (
+            <h1 className="text-[24px] font-medium hidden md:block">
+              Welcome To {company?.name}
+            </h1>
+          ) : (
+            <h1 className="text-[24px] font-medium hidden md:block">
+              Welcome {user?.name}
+            </h1>
+          )}
           <h1 className="text-[22px] md:text-[14px] font-medium md:font-normal md:text-[var(--textBlue)]">
-            Dashboard
+            {pageHeader}
           </h1>
         </div>
       </div>
@@ -72,7 +85,7 @@ const Navbar = () => {
           <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
             <ul className="py-2">
               <li className="px-4 py-2 cursor-pointer font-semibold">
-                Elison Eyo
+                {company?.name}
               </li>
               <li onClick={() =>{ dispatch(clearCompanySelected()); setIsDropdownOpen(false)}} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                 Change Company

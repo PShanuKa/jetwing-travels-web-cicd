@@ -1,11 +1,15 @@
+import { setPageHeader } from "@/features/metaSlice";
 import {
   useGetSettingQuery,
   useUpdateSettingMutation,
 } from "@/services/settingSlice";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 const Settings = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageHeader("Settings"));
   const [formData, setFormData] = useState({
     masterVisa: 0,
     amex: 0,
@@ -23,6 +27,7 @@ const Settings = () => {
   
 
   const handleUpdateSetting = async () => {
+
     await updateSetting({
       masterOrVisaRate: Number(formData.masterVisa),
       amexRate: Number(formData.amex),

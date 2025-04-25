@@ -10,7 +10,8 @@ import { toast } from "react-toastify";
 import { IoClose } from "react-icons/io5";
 // import DeleteDialog from "./DeleteDialog";
 import * as Yup from "yup";
-import { useSelector } from "react-redux";
+    import { useDispatch, useSelector } from "react-redux";
+import { setPageHeader } from "@/features/metaSlice";
 import Dropdown from "@/components/common/Dropdown";
 import SearchDropDown from "@/components/common/SearchDropDown";
 import { title } from "process";
@@ -89,6 +90,8 @@ const validationSchema = Yup.object({
 });
 
 const AddNewInvoice = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageHeader("Add New Invoice"));
   const { id, encodedItem } = useParams();
   const type = id && encodedItem ? "edit" : "view";
   const [formData, setFormData] = useState<any>(initialFormData);

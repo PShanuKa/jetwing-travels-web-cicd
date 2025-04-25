@@ -1,11 +1,29 @@
+import { useGetReportDataQuery } from "@/services/reportSlice";
 
 
 const Table = () => {
+
+  // const {data: reportData} = useGetReportDataQuery({
+  //   name: "Payment-Report",
+  //   query: {
+  //     page: 0,
+  //     size: 10,
+  //   },
+  // });
+
+  // console.log(reportData.headers  );
+
+
+
+
+
+
   return (
-    <div className="mt-5  rounded-lg  border border-[var(--borderGray)]/50  ">
+    <div className="mt-5  rounded-lg  border border-[var(--borderGray)]/50  w-full">
       <table className="w-full text-sm text-left text-[var(--primary)] dark:text-gray-400 ">
-        <thead className="text-[14px]   bg-[var(--tableHeaderBg)] dark:bg-gray-700 dark:text-gray-400 font-normal  ">
+        <thead className="text-[14px] w-full  bg-[var(--tableHeaderBg)] dark:bg-gray-700 dark:text-gray-400 font-normal  ">
           <tr>
+            {/* {reportData.headers.map} */}
             <th scope="col" className="py-3 px-6 font-normal">
               No
             </th>    
@@ -32,7 +50,7 @@ const Table = () => {
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody >
           <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border border-[var(--borderGray)]/50 text-[var(--primary)]/60 hover:bg-[var(--tableHeaderBg)] transition-all duration-150">
             <td className="py-4 px-6">01</td>
             <td className="py-4 px-6">JT-INV-1001</td>

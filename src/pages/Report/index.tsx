@@ -5,6 +5,8 @@ import Input from "@/components/common/SearchInput";
 import Table from "./Table";
 import { useState } from "react";
 import { CiExport } from "react-icons/ci";
+import { useDispatch } from "react-redux";
+import { setPageHeader } from "@/features/metaSlice";
 // import DynamicFilter from "@/components/common/DynamicFilter";
 // import { useGetReportDataQuery, useGetFiltersSchemaQuery } from "@/services/reportSlice";
 
@@ -36,6 +38,8 @@ import { CiExport } from "react-icons/ci";
 // ];
 
 const Report = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageHeader("Report"));
   const [filterIsOpen, setFilterIsOpen] = useState(false);
   // const [filters, setFilters] = useState({});
 
@@ -174,7 +178,7 @@ const Report = () => {
     </div>
   </div>
 
-  <div className="w-full overflow-x-auto">
+  <div className="w-full overflow-x-auto ">
     <div className="w-full"><Table /></div>
   </div>
 </div>;

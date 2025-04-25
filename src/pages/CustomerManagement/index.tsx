@@ -5,8 +5,13 @@ import Table from "./Table";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import SearchInput from "@/components/common/SearchInput";
+import { useDispatch } from "react-redux";
+import { setPageHeader } from "@/features/metaSlice";
 
 const CustomerManagement = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageHeader("Customer Management"));
+
   const [filterIsOpen
     // , setFilterIsOpen
   ] = useState(false);

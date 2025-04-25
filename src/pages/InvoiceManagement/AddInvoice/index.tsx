@@ -12,6 +12,7 @@ import { IoClose } from "react-icons/io5";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
 import Dropdown from "@/components/common/Dropdown";
+import SearchDropDown from "@/components/common/SearchDropDown";
 
 const initialFormData = {
   title: "",
@@ -74,20 +75,7 @@ const paymentPercentageOptions = [
 ];
 
 
-const paymentCurrencyOptions = [
-  {
-    name: "LKR",
-    value: "LKR",
-  },
-  {
-    name: "USD",
-    value: "USD",
-  },
-  {
-    name: "EUR",
-    value: "EUR",
-  },
-];
+
 
 const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
@@ -233,6 +221,23 @@ const { data: currencyData } = useGetCurrencyQuery({
     }
   };
 
+
+  const sampleData = [
+    {
+      name: "John Doe",
+      email: "john.doe@example.com",
+    },
+    {
+      name: "Jane Doe",
+      email: "jane.doe@example.com",
+    },
+    {
+      name: "John Smith",
+      email: "john.smith@example.com",
+    },
+    
+  ];
+
   return (
     <div className="grid md:grid-cols-2 gap-5 ">
       <div className="mt-5  rounded-lg  md:border border-[var(--borderGray)]/50 md:p-10 bg-[#fff]">
@@ -247,7 +252,7 @@ const { data: currencyData } = useGetCurrencyQuery({
             <p className="text-[14px] font-medium text-[var(--primary)] text-start mb-2">
               Search Existing Customer Using Customer Name Or Email
             </p>
-            <SearchInput value={""} name="searchString" onChange={() => {}} />
+            <SearchDropDown value={""} name="searchString"  onChange={() => {}} />
           </div>
           <div className="grid grid-cols-2 gap-5">
             <div>

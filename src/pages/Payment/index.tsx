@@ -39,7 +39,7 @@ const Payment = () => {
         if (res?.data?.data?.paymentUrl?.sessionId) {
           window.Checkout.configure({
             session: {
-              id: sessionId,
+              id: sessionId || res?.data?.data?.paymentUrl?.sessionId,
             },
           });
           window.Checkout.showEmbeddedPage("#embed-target");

@@ -32,9 +32,15 @@ const invoiceSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    existingCustomer: builder.query({
+      query: ({searchString}) => ({
+        url: `invoice/existing-customer/${searchString}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useCreateInvoiceMutation, useGetAllInvoicesQuery, useGanaratePaymentLinkMutation, useGetCurrencyQuery } = invoiceSlice;
+export const { useCreateInvoiceMutation, useGetAllInvoicesQuery, useGanaratePaymentLinkMutation, useGetCurrencyQuery, useExistingCustomerQuery } = invoiceSlice;
 
 export default invoiceSlice;

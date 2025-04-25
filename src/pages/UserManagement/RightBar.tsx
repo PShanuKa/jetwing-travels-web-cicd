@@ -46,7 +46,7 @@ const RightBar = ({ trigger , item }: { trigger: React.ReactNode , item: any }) 
     // },
     {
       title: "Mobile Number",
-      value: item?.mobileNumber || "-",
+      value: item?.contactNumber || "-",
       icon: <FiPhone className="text-[var(--iconGray)]" size={16} />,
     },
     {
@@ -58,7 +58,7 @@ const RightBar = ({ trigger , item }: { trigger: React.ReactNode , item: any }) 
     },
     {
       title: "NIC Number",
-      value: item?.nicNumber || "-",
+      value: item?.identityNumber || "-",
       icon: <FaRegAddressCard className="text-[var(--iconGray)]" size={16} />,
     },
   ];
@@ -95,13 +95,13 @@ const RightBar = ({ trigger , item }: { trigger: React.ReactNode , item: any }) 
 
           <div className="w-full">
             <div className="w-full h-[70px] rounded-[10px] flex items-center gap-3 px-4 ">
-              <div>
+              {/* <div>
                 <img
                   src="https://res.cloudinary.com/dldtrjalo/image/upload/v1732767281/oav7dzuhqxvouhciglcd.jpg"
                   alt=""
                   className="w-[50px] h-[50px] rounded-full object-cover"
                 />
-              </div>
+              </div> */}
               <div className="flex justify-between w-full items-center">
                 <div>
                   <p className="text-[20px] text-[#101928] font-semibold ">
@@ -118,8 +118,8 @@ const RightBar = ({ trigger , item }: { trigger: React.ReactNode , item: any }) 
             </div>
           </div>
           <div className="w-full flex flex-col gap-5">
-            {userDetails.map((detail) => (
-              <div className="w-full pl-5">
+            {(userDetails || []).map((detail , index) => (
+              <div className="w-full pl-5" key={index}>
                 <div className="flex items-center gap-5 ">
                   <div className="w-[24px] h-[24px] flex items-center justify-center">
                     {detail.icon}
@@ -167,12 +167,12 @@ const RightBar = ({ trigger , item }: { trigger: React.ReactNode , item: any }) 
                 />
               </div>
               <div>
-                {item?.permissionNames?.map((company: any) => (
+                {(item?.organizationsList || []).map((company: any) => (
                   <p className="text-[14px] text-[#101928] font-medium">
-                    {company}
+                    {company.name}
                   </p>
                 ))}
-                {item?.permissionNames?.length === 0 && (
+                {item?.organizationsList?.length === 0 && (
                   <p className="text-[14px] text-[#101928]/50 font-medium">
                     No companies assigned
                   </p>
@@ -183,9 +183,9 @@ const RightBar = ({ trigger , item }: { trigger: React.ReactNode , item: any }) 
 
           <div className="flex gap-2 mt-5 justify-end">
             <ResetPassword>
-              <button className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] transition-all duration-150 outline-none justify-center text-[14px]">
+              <div className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] transition-all duration-150 outline-none justify-center text-[14px]">
                 Reset Password
-              </button>
+              </div>
             </ResetPassword>
           </div>
         </div>

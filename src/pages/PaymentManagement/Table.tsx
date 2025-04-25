@@ -5,13 +5,16 @@ import Pagination from "@/components/common/Pagination";
 import { useState } from "react";
 import { useGetAllPaymentQuery } from "@/services/paymentSlice";
 
-const Table = ({ searchString = "" }: { searchString: string }) => {
+const Table = ({ searchString = "", status = "", currency = "", paymentType = "" }: { searchString: string, status: string, currency: string, paymentType: string }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data } = useGetAllPaymentQuery({
-    searchText: searchString,
+    text: searchString,
     page: currentPage - 1,
     size: 10,
+    ...(status && { status: status }),
+    ...(currency && { currency: currency }),
+    ...(paymentType && { paymentType: paymentType }),
   });
 
 

@@ -105,8 +105,8 @@ const RightBar = ({ children }: { children: React.ReactNode }) => {
             </div>
           </div>
           <div className="w-full flex flex-col gap-5">
-            {userDetails.map((detail) => (
-              <div className="w-full pl-5">
+            {(userDetails || []).map((detail , index) => (
+              <div className="w-full pl-5" key={index}>
                 <div className="flex items-center gap-5 ">
                   <div className="w-[24px] h-[24px] flex items-center justify-center">
                     {detail.icon}

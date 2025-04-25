@@ -4,18 +4,14 @@ import { useState, useRef, useEffect } from "react";
 import { IoSearchOutline, IoChevronDown } from "react-icons/io5";
 
 interface SearchDropDownProps {
-  value: string;
-  name: string;
-  data: Array<{ name: string; value: string }>;
+
+
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
 }
 
 const SearchDropDown = ({
-  value,
-  name,
-  
   onChange,
   placeholder = "Search here...",
   className = "",
@@ -26,25 +22,10 @@ const SearchDropDown = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
 
-  const data = [
-    {
-      name: "John Doe",
-      email: "john.doe@example.com",
-    },
-    {
-      name: "Jane Doe",
-      email: "jane.doe@example.com",
-    },
-    {
-      name: "John Smith",
-      email: "john.smith@example.com",
-    },
-    
-  ];
 
-  const { data: existingCustomerData, isFetching: isExistingCustomerLoading } = useExistingCustomerQuery({ searchString: searchString });
+  const { data: existingCustomerData, isFetching: isExistingCustomerLoading } = useExistingCustomerQuery({ searchString: searchString } ,{skip: !searchString});
 
-  console.log(existingCustomerData?.data);
+
 
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -86,7 +67,6 @@ const SearchDropDown = ({
         <IoSearchOutline className="text-gray-400" />
         <input
           type="text"
-          name={name}
           value={searchValue }
           onChange={handleChange}
           className="h-full w-full outline-none"
@@ -104,7 +84,7 @@ const SearchDropDown = ({
               <div
                 key={item.value}
                 className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${
-                  value === item.value ? "bg-gray-100" : ""
+                  searchValue === item.firstName + " " + item.lastName ? "bg-gray-100" : ""
                 }`}
                 onClick={() => handleSelect(item)}
               >

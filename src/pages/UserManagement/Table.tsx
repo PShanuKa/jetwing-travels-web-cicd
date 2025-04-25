@@ -51,19 +51,22 @@ const Table = ({ role, organizationId, searchString }: { role: string, organizat
               <td className="py-4 px-6">{user.id}</td>
               <td className="py-4 px-6">{user.name}</td>
               <td className="py-4 px-6"> {user.email}</td>
-              <td className="py-4 px-6">{user.name}</td>
+              <td className="py-4 px-6">{user.roleName}</td>
               <td className="py-4 px-6">
-                {user?.permissionNames?.map((name: any) => `[${name}]`).join(" ")}
+                {user?.organizationsList?.map((organizations: any) => `${organizations.name}`).join(",")}
               </td>
 
               <td className="py-4 px-6">
-                <span
+                {user.isEnabled ?  <span
                   className={`bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded ${
                     user.isEnabled === true ? "bg-green-100" : "bg-red-100"
                   }`}
                 >
                   {user.isEnabled ? "Active" : "Inactive"}
-                </span>
+                </span> : <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                  Inactive
+                </span>}
+                
               </td>
 
               <td className="py-4 px-6">

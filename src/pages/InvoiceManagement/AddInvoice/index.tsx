@@ -13,6 +13,7 @@ import * as Yup from "yup";
 import { useSelector } from "react-redux";
 import Dropdown from "@/components/common/Dropdown";
 import SearchDropDown from "@/components/common/SearchDropDown";
+import { title } from "process";
 
 const initialFormData = {
   title: "",
@@ -222,21 +223,23 @@ const { data: currencyData } = useGetCurrencyQuery({
   };
 
 
-  const sampleData = [
-    {
-      name: "John Doe",
-      email: "john.doe@example.com",
-    },
-    {
-      name: "Jane Doe",
-      email: "jane.doe@example.com",
-    },
-    {
-      name: "John Smith",
-      email: "john.smith@example.com",
-    },
-    
-  ];
+
+
+  const SearchDropDownHandler = (value: any) => {
+    setFormData({
+      ...formData,
+      title: value.title || "",
+      firstName: value.firstName || "",
+      lastName: value.lastName || "",
+      primaryEmail: value.primaryEmail || "",
+      secondaryEmail: value.secondaryEmail || "",
+      ccEmail: value.ccEmail || "",
+      address: value.address || "",
+      country: value.country || "",
+      postalCode: value.postalCode || "",
+      contactNumber: value.contactNumber || "",
+    })
+  }
 
   return (
     <div className="grid md:grid-cols-2 gap-5 ">
@@ -252,7 +255,7 @@ const { data: currencyData } = useGetCurrencyQuery({
             <p className="text-[14px] font-medium text-[var(--primary)] text-start mb-2">
               Search Existing Customer Using Customer Name Or Email
             </p>
-            <SearchDropDown value={""} name="searchString"  onChange={() => {}} />
+            <SearchDropDown  onChange={SearchDropDownHandler} />
           </div>
           <div className="grid grid-cols-2 gap-5">
             <div>

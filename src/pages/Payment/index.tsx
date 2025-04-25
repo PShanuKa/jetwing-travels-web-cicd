@@ -10,6 +10,7 @@ import { BsCalendar2Date } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { MdOutlineErrorOutline } from "react-icons/md";
+import { useGetFiltersSchemaQuery } from "@/services/reportSlice";
 
 const Payment = () => {
   const { id, token } = useParams();
@@ -18,6 +19,7 @@ const Payment = () => {
   const [formData, setFormData] = useState({
     cartType: "",
   });
+
 
   const { data, isLoading } = useGetPaymentDetailsQuery({
     invoiceId: id,
@@ -32,7 +34,7 @@ const Payment = () => {
       await initiatePayment({
         amount: data?.data?.balancePayment,
         invoiceToken: data?.data?.token,
-        currency: "LKR",
+        currency: data?.data?.currency,
         gateway: "mastercard",
       }).then((res) => {
         setSessionId(res?.data?.data?.paymentUrl?.sessionId);
@@ -52,7 +54,7 @@ const Payment = () => {
         const res = await initiatePayment({
           amount: data?.data?.balancePayment,
           invoiceToken: data?.data?.token,
-          currency: "LKR",
+          currency: data?.data?.currency,
           gateway: "cybersource",
         });
 

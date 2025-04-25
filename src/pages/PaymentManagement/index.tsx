@@ -7,30 +7,49 @@ import { useState } from "react";
 
 const PaymentManagement = () => {
   const [filterIsOpen, setFilterIsOpen] = useState(false);
+
+
+;
+
+  const [formData, setFormData] = useState({
+    status: "",
+    currency: "",
+    text: "",
+    company: "",
+    paymentType: "",
+  });
+
   return (
     <div className="md:p-4 p-2 border-[var(--borderGray)] bg-white md:border rounded-lg w-full flex flex-col gap-4">
       <div className="flex  items-center justify-between">
         <div className=" items-center gap-2 hidden md:flex">
-          <Input value={""} name={""} onChange={() => {}} />
+          <Input value={formData.text} name={"text"} onChange={(e) => setFormData({ ...formData, text: e.target.value })} />
+
           <div>
-            <SelectNative className="w-40">
-              <option value="1">Payment Status</option>
-              <option value="admin">Paid</option>
-              <option value="executive">Unpaid</option>
+            <SelectNative className="w-40" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
+              <option value="">Payment Status</option>
+              <option value="PAID">Paid</option>
+              <option value="PARTIALLY_PAID">Partially Paid</option>
+              <option value="FAILED">Failed</option>
+              <option value="CANCELLED">Cancelled</option>
             </SelectNative>
           </div>
           <div>
-            <SelectNative className="w-40">
-              <option value="1">Currency</option>
-              <option value="admin">Credit Card</option>
-              <option value="executive">Debit Card</option>
+            <SelectNative className="w-40" value={formData.currency} onChange={(e) => setFormData({ ...formData, currency: e.target.value })}>
+              <option value="">Currency</option>
+              <option value="USD">USD</option>
+              <option value="LKR">LKR</option>
+              <option value="GBP">GBP</option>
+              <option value="EURO">EURO</option>
             </SelectNative>
           </div>
           <div>
-            <SelectNative className="w-40">
-              <option value="1">Payment Type</option>
-              <option value="admin">Yes</option>
-              <option value="executive">No</option>
+            <SelectNative className="w-40" value={formData.paymentType} onChange={(e) => setFormData({ ...formData, paymentType: e.target.value })}>
+              <option value="">Payment Type</option>
+              <option value="CyberSource">CyberSource</option>
+              <option value="Master/Visa">Master/Visa</option>
+              <option value="Amex">Amex</option>
+              {/* <option value="executive">No</option> */}
             </SelectNative>
           </div>
         </div>
@@ -79,7 +98,7 @@ const PaymentManagement = () => {
 
       <div className="w-full overflow-x-auto">
         <div className="w-full">
-          <Table />
+          <Table searchString={formData.text} status={formData.status} currency={formData.currency} paymentType={formData.paymentType} />
         </div>
       </div>
     </div>

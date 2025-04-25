@@ -46,18 +46,21 @@ const AddNewUser = () => {
   // console.log(parsedItem);
 
   
-const validationSchema = Yup.object({
-  fullName: Yup.string().required("Full name is required"),
-  address: Yup.string().required("Address is required"),
-  mobileNumber: Yup.string().required("Mobile number is required"),
-  email: Yup.string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  // password: Yup.string().required("Password is required"),
-  nicOrPassportNumber: Yup.string().required(
-    "NIC or Passport Number is required"
-  ),
-});
+  const validationSchema = Yup.object({
+    fullName: Yup.string().required("Full name is required"),
+    // address: Yup.string().required("Address is required"),
+    mobileNumber: Yup.string()
+      .required("Mobile number is required")
+      .matches(/^\d{10,}$/, "Mobile number must be at least 10 digits and contain only numbers")
+      .min(10, "Mobile number must be at least 10 digits"),
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
+    // password: Yup.string().required("Password is required"),
+    nicOrPassportNumber: Yup.string()
+    .nullable() // Allows null or undefined values
+    .min(6, "NIC or Passport Number must be at least 6 characters"), 
+  });
 
 
 
@@ -68,14 +71,14 @@ const validationSchema = Yup.object({
         fullName: parsedItem.name,
         email: parsedItem.email,
         address: parsedItem.address,
-        mobileNumber: parsedItem.mobileNumber,
+        mobileNumber: parsedItem.contactNumber,
         nicOrPassportNumber: parsedItem.identityNumber,
         roleName: parsedItem.roleName,
         organizationIds: parsedItem.organizationIds,
         // password: parsedItem.password,
       });
 
-      console.log("formData", parsedItem.name);
+
     }
   }, [type]);
 
@@ -115,11 +118,13 @@ const validationSchema = Yup.object({
     });
   };
 
-  console.log(formData);
+
 
   const handleSubmit = async () => {
     try {
-      await validationSchema.validate(formData, { abortEarly: false });
+      await validationSchema.validate({...formData ,nicOrPassportNumber: formData.nicOrPassportNumber|| undefined}, { abortEarly: false });
+      console.log(formData);
+
       if (type == "edit") {
         await updateUser({
           id: parsedItem.id,
@@ -127,7 +132,7 @@ const validationSchema = Yup.object({
           name: formData.fullName,
           address: formData.address,
           identityNumber: formData.nicOrPassportNumber,
-          mobileNumber: formData.mobileNumber,
+          contactNumber: formData.mobileNumber,
           organizationIds: formData.organizationIds,
           roleName: formData.roleName,
           password: undefined,
@@ -147,7 +152,7 @@ const validationSchema = Yup.object({
           name: formData.fullName,
           address: formData.address,
           identityNumber: formData.nicOrPassportNumber,
-          mobileNumber: formData.mobileNumber,
+          contactNumber: formData.mobileNumber,
           organizationIds: formData.organizationIds,
           roleName: formData.roleName,
           password: formData.password,
@@ -180,7 +185,7 @@ const validationSchema = Yup.object({
     }));
   };
 
-  console.log(formData);
+  
 
   return (
     <div className="grid md:grid-cols-2 gap-5">
@@ -219,7 +224,7 @@ const validationSchema = Yup.object({
               label="Address"
               placeholder="Enter address"
               name="address"
-              required
+              // required
               value={formData.address}
               onChangeHandler={handleChange}
               errors={formErrors.address}
@@ -231,7 +236,7 @@ const validationSchema = Yup.object({
                 label="Mobile Number"
                 placeholder="Enter mobile number"
                 name="mobileNumber"
-                required
+                // required
                 value={formData.mobileNumber}
                 onChangeHandler={handleChange}
                 errors={formErrors.mobileNumber}
@@ -266,7 +271,7 @@ const validationSchema = Yup.object({
                 label="NIC or Passport Number"
                 placeholder="Enter NIC or Passport Number"
                 name="nicOrPassportNumber"
-                required
+                // required
                 value={formData.nicOrPassportNumber}
                 onChangeHandler={handleChange}
                 errors={formErrors.nicOrPassportNumber}
@@ -357,9 +362,12 @@ const validationSchema = Yup.object({
 
         <div className="flex justify-end mt-10 gap-3">
           <RightBar>
-            <button className="border-[var(--primary)]/20 border hover:opacity-80 focus:opacity-90 active:scale-95 text-[var(--primary)]/60 px-10 py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36x] h-[36px] transition-all duration-150 outline-none">
+
+
+            <div className="border-[var(--primary)]/20 border hover:opacity-80 focus:opacity-90 active:scale-95 text-[var(--primary)]/60 px-10 py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36x] h-[36px] transition-all duration-150 outline-none">
               Cancel
-            </button>
+            </div>
+        
           </RightBar>
           <button
             className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"

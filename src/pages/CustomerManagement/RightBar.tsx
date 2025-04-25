@@ -37,39 +37,39 @@ const RightBar = ({
     },
     {
       title: "Address",
-      value: item.address || "N/A",
+      value: item.address || "-",
       icon: <MdOutlineMail className="text-[var(--iconGray)] " size={18} />,
     },
     {
       title: "Postal Code",
-      value: item.postalCode || "N/A",
+      value: item.postalCode || "-",
       icon: <BsMailbox className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Country",
-      value: item.country || "N/A",
+      value: item.country || "-",
       icon: <GrMapLocation className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Mobile Number",
-      value: item.contactNumber || "N/A",
+      value: item.contactNumber || "-",
       icon: <FiPhone className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Email",
-      value: item.primaryEmail,
+      value: item.primaryEmail || "-",
       icon: (
         <MdOutlineAlternateEmail className="text-[var(--iconGray)]" size={18} />
       ),
     },
-    {
-      title: "Currency",
-      value: item.currency || "LKR",
-      icon: <LiaCoinsSolid className="text-[var(--iconGray)]" size={20} />,
-    },
+    // {
+    //   title: "Currency",
+    //   value: item.currency || "-",
+    //   icon: <LiaCoinsSolid className="text-[var(--iconGray)]" size={20} />,
+    // },
     {
       title: "NIC Number",
-      value: item.identityNumber || "N/A",
+      value: item.identityNumber || "-",
       icon: <FaRegAddressCard className="text-[var(--iconGray)]" size={16} />,
     },
   ];
@@ -108,7 +108,7 @@ const RightBar = ({
               <div className="flex justify-between w-full items-center">
                 <div>
                   <p className="text-[20px] text-[#101928] font-semibold ">
-                    Alison Eyo
+                    {item.firstName} {item.lastName}
                   </p>
                   <p className="text-[14px] text-[var(--primary)]/60 font-normal">
                     {item.primaryEmail}

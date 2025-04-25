@@ -33,9 +33,9 @@ const Table = ({ searchString }: { searchString: string }) => {
             <th scope="col" className="py-3 px-6 font-normal">
               Address
             </th>
-            <th scope="col" className="py-3 px-6 font-normal">
+            {/* <th scope="col" className="py-3 px-6 font-normal">
               Currency
-            </th>
+            </th> */}
             <th scope="col" className="py-3 px-6 font-normal">
               Status
             </th>
@@ -53,7 +53,7 @@ const Table = ({ searchString }: { searchString: string }) => {
               <td className="py-4 px-6">{customer.primaryEmail}</td>
               <td className="py-4 px-6">{customer.contactNumber}</td>
               <td className="py-4 px-6">{customer.address}</td>
-              <td className="py-4 px-6">LKR</td>
+              {/* <td className="py-4 px-6">{customer.currency}</td> */}
               <td className="py-4 px-6">
                 {customer.status !== "ACTIVE" ? (
                   <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">

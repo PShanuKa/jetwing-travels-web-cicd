@@ -3,6 +3,7 @@ import payment from "../../assets/paymentimg.png";
 import paymentlogo from "../../assets/visa.png";
 import {
   useGetPaymentDetailsQuery,
+  useInitiatePaymentAmexMutation,
   useInitiatePaymentMutation,
 } from "../../services/paymentSlice";
 import { GiDetour } from "react-icons/gi";
@@ -15,11 +16,10 @@ import { useGetFiltersSchemaQuery } from "@/services/reportSlice";
 const Payment = () => {
   const { id, token } = useParams();
   // const [searchParams] = useSearchParams();
- 
+
   const [formData, setFormData] = useState({
     cartType: "",
   });
-
 
   const { data, isLoading } = useGetPaymentDetailsQuery({
     invoiceId: id,
@@ -28,9 +28,11 @@ const Payment = () => {
   const [sessionId, setSessionId] = useState(null);
   const [initiatePayment, { isLoading: isInitiating }] =
     useInitiatePaymentMutation();
+  const [initiatePaymentAmex, { isLoading: isInitiatingAmex }] =
+    useInitiatePaymentAmexMutation();
 
   const handleInitiatePayment = async () => {
-    console.log(formData.cartType)
+    console.log(formData.cartType);
     if (formData.cartType == "Master/Visa") {
       await initiatePayment({
         amount: data?.data?.balancePayment,
@@ -38,7 +40,7 @@ const Payment = () => {
         currency: data?.data?.currency,
         gateway: "mastercard",
       }).then((res) => {
-        console.log(res)
+        console.log(res);
         setSessionId(res?.data?.data?.paymentUrl?.sessionId);
         if (res?.data?.data?.paymentUrl?.sessionId) {
           window.Checkout.configure({
@@ -63,7 +65,7 @@ const Payment = () => {
         // console.log("Initiate Payment Response:", res);
 
         // const paymentResponse = res?.data?.data?.paymentResponse;
-        const cyberSourceValues = res?.data?.data?.cyberSourceValues        ;
+        const cyberSourceValues = res?.data?.data?.cyberSourceValues;
 
         console.log("CyberSource Values:", cyberSourceValues);
 
@@ -88,9 +90,9 @@ const Payment = () => {
         };
 
         Object.entries(cyberSourceValues).forEach(([key, value]) => {
-          formData[key] = value; 
+          formData[key] = value;
         });
-        
+
         console.log("Form Data Payload:", formData);
 
         const form = document.createElement("form");
@@ -112,43 +114,52 @@ const Payment = () => {
       }
     }
 
+    // if( formData.cartType == "Amex") {
+    //   await initiatePayment({
+    //     amount: data?.data?.balancePayment,
+    //     invoiceToken: data?.data?.token,
+    //     currency: data?.data?.currency,
+    //     gateway: "directpay",
+    //   }).then((res) => {
+    //     const dp = new DirectPayIpg.Init({
+    //       signature: res?.data?.data?.paymentUrl.signature.signature,
+    //       dataString: res?.data?.data?.paymentUrl.signature.payload,
+    //       stage: res?.data?.data?.paymentUrl.stage,
+    //     });
+    //     dp.doInAppCheckout()
+    //   });
+    // }
 
-
-    if( formData.cartType == "Amex") {
-      await initiatePayment({
-        amount: data?.data?.balancePayment,
-        invoiceToken: data?.data?.token,
-        currency: data?.data?.currency,
-        gateway: "directpay",
+    if (formData.cartType == "Amex") {
+      await initiatePaymentAmex({
+        clientId: data?.data?.primaryEmail,
+        transactionAmount: {
+          totalAmount: data?.data?.balancePayment,
+          paymentAmount: data?.data?.balancePayment,
+          serviceFeeAmount: 50.0,
+          currency: data?.data?.currency,
+        },
+        comment: "Test payment",
       }).then((res) => {
-        const dp = new DirectPayIpg.Init({
-          signature: res?.data?.data?.paymentUrl.signature.signature,
-          dataString: res?.data?.data?.paymentUrl.signature.payload, 
-          stage: res?.data?.data?.paymentUrl.stage,
-        });
-        dp.doInAppCheckout()
+        console.log(res);
+        const paymentPageUrl = res?.data?.responseData?.paymentPageUrl;
+
+        if (paymentPageUrl) {
+          window.location.href = paymentPageUrl;
+        } else {
+          console.error("Payment page URL not found in the response.");
+        }
       });
     }
   };
 
-
-
- 
-
-  
-
-
-
   if (isLoading) {
     return <Loading />;
   }
-  
+
   if (!data?.data) {
     return <ExpirePayLink id={id} />;
   }
-
-
-
 
   // if (data?.data?.paymentLink) {
   //   return <Redirect to={data?.data?.paymentLink} />;
@@ -463,7 +474,6 @@ const Loading = () => {
     </div>
   );
 };
-
 
 const ExpirePayLink = ({ id }: { id: string | undefined }) => {
   return (

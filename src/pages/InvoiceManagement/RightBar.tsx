@@ -10,7 +10,7 @@ import { LiaCoinsSolid } from "react-icons/lia";
 import { FaRegAddressCard } from "react-icons/fa6";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
-import { AiOutlineDownload } from "react-icons/ai";
+import { AiOutlineDownload, AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { FaSortAmountUp } from "react-icons/fa";
@@ -20,6 +20,7 @@ import { PiCursorClick } from "react-icons/pi";
 import { TbMessageReport } from "react-icons/tb";
 import { FaFilePdf } from "react-icons/fa6";
 import PayLinkDialog from "./PayLinkDialog";
+import { useDownloadInvoiceMutation } from "@/services/invoiceSlice";
 
 const RightBar = ({
   children,
@@ -31,6 +32,37 @@ const RightBar = ({
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("invoiceDetails");
+
+
+
+
+  const [downloadInvoice, { isLoading }] = useDownloadInvoiceMutation();
+
+  const handleDownload = async () => {
+    try {
+      const response = await downloadInvoice({
+        invoiceId: item.id,
+      });
+
+      if (response.data) {
+        const blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+        const url = window.URL.createObjectURL(blob);
+
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `incoice-${item.id}.pdf`); 
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Error downloading report:', error);
+    }
+  };
 
   
 
@@ -304,14 +336,14 @@ const RightBar = ({
                     <div className="flex items-center justify-between w-full">
                       <div>
                         <p className="text-[12px] text-[#475467] font-normal">
-                          Name of document.pdf
+                          incoice-{item.id}.pdf
                         </p>
                         <p className="text-[11px] text-[#475467]/50 font-normal">
-                          11 Sep, 2023 | 12:24pm . 13MB
+                          {item.createdAt}
                         </p>
                       </div>
-                      <button className="w-[30px] h-[30px] rounded-full flex items-center justify-center hover:bg-[#293446]/10 transition-all duration-150">
-                        <AiOutlineDownload color="#293446" size={20} />
+                      <button onClick={handleDownload} className="w-[30px] h-[30px] rounded-full flex items-center justify-center hover:bg-[#293446]/10 transition-all duration-150">
+                        {isLoading ? <AiOutlineLoading3Quarters className="animate-spin" size={20} /> : <AiOutlineDownload color="#293446" size={20} />}
                       </button>
                     </div>
                   </div>

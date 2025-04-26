@@ -9,7 +9,7 @@ const Table = ({ searchString }: { searchString: string }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data } = useGetAllCustomersQuery({
-    searchText: searchString,
+    ...(searchString && { searchText: searchString }),
     page: currentPage - 1,
     size: 10,
   });

@@ -19,7 +19,7 @@ const Table = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data } = useGetAllPaymentQuery({
-    text: searchString,
+    ...(searchString && { searchText: searchString }),
     page: currentPage - 1,
     size: 10,
     ...(status && { status: status }),

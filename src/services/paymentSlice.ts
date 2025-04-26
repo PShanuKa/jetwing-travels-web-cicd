@@ -31,6 +31,16 @@ const paymentSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    initiatePaymentAmex: builder.mutation({
+      query: (data) => {
+        const {  ...rest } = data;
+        return {
+          url: `payments/initiate?gateway=amex`,
+          method: "POST",
+          body: rest,
+        };
+      },
+    }),
     fetchCaptureContext: builder.mutation({
       query: (data) => {
         return {
@@ -43,6 +53,6 @@ const paymentSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation , useFetchCaptureContextMutation , useGetAllPaymentQuery } = paymentSlice;
+export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation , useFetchCaptureContextMutation , useGetAllPaymentQuery , useInitiatePaymentAmexMutation } = paymentSlice;
 
 export default paymentSlice;

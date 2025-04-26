@@ -38,9 +38,18 @@ const invoiceSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    downloadInvoice: builder.mutation({
+      query: ({invoiceId}) => ({
+        url: `/invoice/download/${invoiceId}`,
+        method: "GET",
+        responseHandler: (response: any) => {
+          return response.blob();
+        },
+      }),
+    }),
   }),
 });
 
-export const { useCreateInvoiceMutation, useGetAllInvoicesQuery, useGanaratePaymentLinkMutation, useGetCurrencyQuery, useExistingCustomerQuery } = invoiceSlice;
+export const { useCreateInvoiceMutation, useGetAllInvoicesQuery, useGanaratePaymentLinkMutation, useGetCurrencyQuery, useExistingCustomerQuery, useDownloadInvoiceMutation } = invoiceSlice;
 
 export default invoiceSlice;

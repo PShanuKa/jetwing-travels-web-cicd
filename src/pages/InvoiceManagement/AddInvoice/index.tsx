@@ -1,7 +1,7 @@
 import Input from "@/components/common/Input";
 import SearchInput from "@/components/common/SearchInput";
 import { useCreateInvoiceMutation, useGetCurrencyQuery } from "@/services/invoiceSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa6";
 import { RiDeleteBin5Line } from "react-icons/ri";
@@ -79,6 +79,8 @@ const paymentPercentageOptions = [
 
 
 
+
+
 const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
   tourNumber: Yup.string().required("Tour number is required"),
@@ -117,13 +119,20 @@ const AddNewInvoice = () => {
     });
   };
 
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      balancePayment: Number(formData.initialPayment) - (Number(formData.initialPayment) * Number(formData.paymentPercentage) / 100),
+    });
+  }, [formData.initialPayment, formData.paymentPercentage]);
+
 
 
 const { data: currencyData } = useGetCurrencyQuery({
   organizationId: companyId,
 });
 
-  // console.log(formData);
+  console.log(formData);
 
   const handleDeleteItem = (index: number) => {
     const updatedItems = formData.items.filter(

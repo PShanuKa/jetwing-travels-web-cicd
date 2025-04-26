@@ -14,7 +14,7 @@ import { useGetFiltersSchemaQuery } from "@/services/reportSlice";
 
 const Payment = () => {
   const { id, token } = useParams();
-  const [searchParams] = useSearchParams();
+  // const [searchParams] = useSearchParams();
  
   const [formData, setFormData] = useState({
     cartType: "",
@@ -30,13 +30,15 @@ const Payment = () => {
     useInitiatePaymentMutation();
 
   const handleInitiatePayment = async () => {
-    if (formData.cartType === "Master/Visa") {
+    console.log(formData.cartType)
+    if (formData.cartType == "Master/Visa") {
       await initiatePayment({
         amount: data?.data?.balancePayment,
         invoiceToken: data?.data?.token,
         currency: data?.data?.currency,
         gateway: "mastercard",
       }).then((res) => {
+        console.log(res)
         setSessionId(res?.data?.data?.paymentUrl?.sessionId);
         if (res?.data?.data?.paymentUrl?.sessionId) {
           window.Checkout.configure({
@@ -49,7 +51,7 @@ const Payment = () => {
       });
     }
 
-    if (formData.cartType === "cybersource") {
+    if (formData.cartType == "CyberSource") {
       try {
         const res = await initiatePayment({
           amount: data?.data?.balancePayment,
@@ -112,7 +114,7 @@ const Payment = () => {
 
 
 
-    if( formData.cartType !== "directpay") {
+    if( formData.cartType == "Amex") {
       await initiatePayment({
         amount: data?.data?.balancePayment,
         invoiceToken: data?.data?.token,
@@ -122,7 +124,7 @@ const Payment = () => {
         const dp = new DirectPayIpg.Init({
           signature: res?.data?.data?.paymentUrl.signature.signature,
           dataString: res?.data?.data?.paymentUrl.signature.payload, 
-          stage: "DEV",
+          stage: res?.data?.data?.paymentUrl.stage,
         });
         dp.doInAppCheckout()
       });
@@ -135,16 +137,7 @@ const Payment = () => {
 
   
 
-  // useEffect(() => {
-  //   if (sessionId) {
-  //     window.Checkout.configure({
-  //       session: {
-  //         id: sessionId,
-  //       },
-  //     });
-  //     window.Checkout.showEmbeddedPage("#embed-target");
-  //   }
-  // }, [sessionId]);
+
 
   if (isLoading) {
     return <Loading />;

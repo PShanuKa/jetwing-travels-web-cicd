@@ -97,7 +97,7 @@ const AddNewInvoice = () => {
   const [formData, setFormData] = useState<any>(initialFormData);
   const [formErrors, setFormErrors] = useState<any>({});
   const navigate = useNavigate();
-  const companyId = useSelector((state: any) => state.meta.companySelected);
+  const companyId = useSelector((state: any) => state.meta.companySelected.id);
 
   const handleChange = (e: any) => {
     setFormData({
@@ -245,7 +245,7 @@ const { data: currencyData } = useGetCurrencyQuery({
   }
 
   return (
-    <div className="grid md:grid-cols-2 gap-5 ">
+    <div className="grid md:grid-cols-2 gap-5 p-3">
       <div className="mt-5  rounded-lg  md:border border-[var(--borderGray)]/50 md:p-10 bg-[#fff]">
         <div className="flex justify-between items-center">
           <h1 className="text-[24px] font-medium text-[var(--primary)] mb-5">
@@ -627,7 +627,7 @@ const { data: currencyData } = useGetCurrencyQuery({
             <button
               disabled={isLoading}
               onClick={handleSubmit}
-              className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white  py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"
+              className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white  py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none md:px-10 px-5"
             >
               {isLoading && (
                 <AiOutlineLoading3Quarters className="animate-spin" />

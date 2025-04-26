@@ -14,8 +14,8 @@ const Table = ({ searchString = "" }: { searchString: string }) => {
 
   return (
     <div className="mt-5 rounded-lg border border-[var(--borderGray)]/50 overflow-x-auto w-[100%] ">
-      {/* Wrapper for horizontal scrolling */}
-      <div className="min-w-full inline-block">
+
+      <div className="mt-5 rounded-lg border border-[var(--borderGray)]/50 overflow-x-auto w-[100%] ">
         <table className="w-full text-sm text-left text-[var(--primary)] dark:text-gray-400">
           <thead className="text-[14px] bg-[var(--tableHeaderBg)] dark:bg-gray-700 dark:text-gray-400 font-normal">
             <tr>
@@ -99,6 +99,7 @@ const Table = ({ searchString = "" }: { searchString: string }) => {
             </tbody>
           ))}
         </table>
+      </div>
         <Pagination
           totalPages={data?.data?.totalPages}
           currentPage={currentPage}
@@ -106,7 +107,6 @@ const Table = ({ searchString = "" }: { searchString: string }) => {
             setCurrentPage(value);
           }}
         />
-      </div>
     </div>
   );
 };

@@ -26,18 +26,11 @@ const InvoiceManagement = () => {
   const [searchString, setSearchString] = useState("");
 
 
-
-
   useEffect(() => {
     if (search) {
       setSearchString(search);
     }
   }, [search]);
-
-
-
-
-
 
 
   return (
@@ -59,14 +52,13 @@ const InvoiceManagement = () => {
           >
             <IoSearchOutline size={20} />
           </div>
-          <button
+          {/* <button
             onClick={() => setFilterIsOpen(!filterIsOpen)}
             className="border-[var(--borderGray)] border rounded-md p-2 cursor-pointer active:scale-95 transition-all duration-150 hover:bg-gray-100"
           >
             <GiSettingsKnobs className="-rotate-90" size={20} />
-          </button>
+          </button> */}
         </div>
-
 
         <div>
           <Link
@@ -85,8 +77,7 @@ const InvoiceManagement = () => {
         value={searchString}
         filterIsOpen={searchIsOpen}
       />
-
-      <MobileFilter filterIsOpen={filterIsOpen} />
+      {/* <MobileFilter filterIsOpen={filterIsOpen} /> */}
 
       <div>
         <Table searchString={searchString} />
@@ -108,7 +99,7 @@ const MobileSearch = ({
 }) => {
   return (
     <div
-      className={`flex w-full flex-col  overflow-hidden transition-all duration-150 ${
+      className={`flex md:hidden w-full flex-col  overflow-hidden transition-all duration-150 ${
         filterIsOpen ? "h-[45px]" : "h-0"
       }`}
     >
@@ -132,7 +123,7 @@ const MobileFilter = ({ filterIsOpen }: { filterIsOpen: boolean }) => {
 
   return (
     <div
-      className={`flex w-full flex-col gap-5 overflow-hidden transition-all duration-300`}
+      className={`flex w-full flex-col gap-5 overflow-hidden transition-all duration-300 md:hidden`}
       style={{ height: height !== null ? `${height}px` : undefined }}
     >
       <div ref={contentRef} className="w-full flex flex-col items-center gap-2">

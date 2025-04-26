@@ -1,96 +1,57 @@
+import Pagination from "@/components/common/Pagination";
 import { useGetReportDataQuery } from "@/services/reportSlice";
-
+import { useState } from "react";
 
 const Table = () => {
-
-  // const {data: reportData} = useGetReportDataQuery({
-  //   name: "Payment-Report",
-  //   query: {
-  //     page: 0,
-  //     size: 10,
-  //   },
-  // });
-
-  // console.log(reportData.headers  );
-
-
-
+  const { data: reportData } = useGetReportDataQuery({
+    name: "Payment-Report",
+    query: {
+      page: 0,
+      size: 10,
+    },
+  });
+  const [currentPage, setCurrentPage] = useState(0);
 
 
 
   return (
-    <div className="mt-5  rounded-lg  border border-[var(--borderGray)]/50  w-full">
+    <div>
+    <div className="mt-5  rounded-lg  border border-[var(--borderGray)]/50  w-full overflow-x-scroll">
       <table className="w-full text-sm text-left text-[var(--primary)] dark:text-gray-400 ">
         <thead className="text-[14px] w-full  bg-[var(--tableHeaderBg)] dark:bg-gray-700 dark:text-gray-400 font-normal  ">
           <tr>
-            {/* {reportData.headers.map} */}
-            <th scope="col" className="py-3 px-6 font-normal">
-              No
-            </th>    
-            <th scope="col" className="py-3 px-6 font-normal">
-             Invoice No
-            </th>
-            <th scope="col" className="py-3 px-6 font-normal">
-              Reference No
-            </th>
-            <th scope="col" className="py-3 px-6 font-normal">
-              Cust Name
-            </th>
-            <th scope="col" className="py-3 px-6 font-normal">
-              Currency
-            </th>
-            <th scope="col" className="py-3 px-6 font-normal">
-              Amount
-            </th>
-            <th scope="col" className="py-3 px-6 font-normal">
-              Payment Method
-            </th>
-            <th scope="col" className="py-3 px-6 font-normal">
-              Payment Status
-            </th>
+            {reportData?.headers?.map((header: any) => (
+              <th scope="col" className="py-3 px-6 font-normal">
+                {header.name}
+              </th>
+            ))}
           </tr>
         </thead>
-        <tbody >
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border border-[var(--borderGray)]/50 text-[var(--primary)]/60 hover:bg-[var(--tableHeaderBg)] transition-all duration-150">
-            <td className="py-4 px-6">01</td>
-            <td className="py-4 px-6">JT-INV-1001</td>
-            <td className="py-4 px-6">REF-1234567890</td>
-            <td className="py-4 px-6">John Doe</td>
-            <td className="py-4 px-6">LKR</td>
-            <td className="py-4 px-6">$1,000.00</td>
-            <td className="py-4 px-6">Credit Card</td>
-           
-            <td className="py-4 px-6">
-              <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                Active
-              </span>
-            </td>
-        
-            
-          </tr>
-          {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border border-[var(--borderGray)]/50 text-[var(--primary)]/60 hover:bg-[var(--tableHeaderBg)] transition-all duration-150">
-            <td className="py-4 px-6">01</td>
-            <td className="py-4 px-6">Jane Doe</td>
-            <td className="py-4 px-6">Jane Doe</td>
-            <td className="py-4 px-6">jane.doe@example.com</td>
-            <td className="py-4 px-6">070 123 4567</td>
-            <td className="py-4 px-6">12, Galle Road, Colombo 03, Sri Lanka</td>
-            <td className="py-4 px-6">LKR</td>
-            <td className="py-4 px-6">
-              <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                Active
-              </span>
-            </td>
-            <td className="py-4 px-6">
-              <RightBar>
-                <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline border border-[var(--borderGray)]/50 rounded-md p-2 hover:bg-gray-200 transition-all duration-150">
-                  <CiMenuKebab />
-                </button>
-              </RightBar>
-            </td>
-          </tr> */}
+        <tbody>
+          {reportData?.reportData?.content?.map(
+            (row: any, rowIndex: number) => (
+              <tr
+                key={rowIndex}
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border border-[var(--borderGray)]/50 text-[var(--primary)]/60 hover:bg-[var(--tableHeaderBg)] transition-all duration-150"
+              >
+                {reportData?.headers?.map((header: any, colIndex: number) => (
+                  <td key={colIndex} className="py-4 px-6">
+                    {row[header.field] ?? "-"}
+                  </td>
+                ))}
+              </tr>
+            )
+          )}
         </tbody>
       </table>
+    </div>
+      <Pagination
+          totalPages={reportData?.reportData?.totalPages}
+          currentPage={reportData?.reportData?.currentPage}
+          onPageChange={(value) => {
+            setCurrentPage(value);
+          }}
+        />
     </div>
   );
 };

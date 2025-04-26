@@ -7,16 +7,16 @@ const DefaultLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="flex w-full">
       <div className=" h-screen ">
         <LeftSidebar />
-        <div className="md:w-[272px]"></div>
+        {/* <div className="md:w-[272px]"></div> */}
       </div>
 
       <div className="flex flex-col w-full  ">
-        <div className="">
+        <div className="md:pl-[272px]">
           <Navbar />
         </div>
         <CompanySelector />
       
-        <div className="flex-1 p-5 bg-white md:bg-[#F9FAFB] w-full ">{children}</div>
+        <div className="flex-1 md:p-5 p-1 bg-white md:bg-[#F9FAFB] w-full md:pl-[290px] ">{children}</div>
       </div>
     </div>
   );

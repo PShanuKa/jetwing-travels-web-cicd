@@ -158,7 +158,7 @@ const AddNewCustomer = () => {
   };
 
   return (
-    <div className="grid md:grid-cols-2 gap-5 ">
+    <div className="grid md:grid-cols-2 gap-5 p-3">
       <div className="mt-5  rounded-lg  md:border border-[var(--borderGray)]/50 md:p-10 bg-[#fff]">
         <div className="flex justify-between items-center">
           <h1 className="text-[24px] font-medium text-[var(--primary)] mb-5">

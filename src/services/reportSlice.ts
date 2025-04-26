@@ -1,6 +1,5 @@
 import apiSlice from "./apiSlice";
 
-
 const reportSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getFiltersSchema: builder.query({
@@ -10,10 +9,11 @@ const reportSlice = apiSlice.injectEndpoints({
       }),
     }),
     getReportData: builder.query({
-      query: ({ name, query, 
-        
+      query: ({
+        name,
+        query,
+
         // filters
-      
       }) => {
         const queryString = new URLSearchParams(query);
         return {
@@ -21,44 +21,66 @@ const reportSlice = apiSlice.injectEndpoints({
           method: "POST",
           // body: {"filters": filters},
           body: {
-            "filters": [
+            filters: [
               {
-                "filterName": "string",
-                "filterParameter": "string",
-                "dataType": "string",
-                "options": [
+                filterName: "string",
+                filterParameter: "string",
+                dataType: "string",
+                options: [
                   {
-                    "code": "string",
-                    "name": "string",
-                    "valid": true
-                  }
+                    code: "string",
+                    name: "string",
+                    valid: true,
+                  },
                 ],
-                "value": "string"
-              }
-            ]
+                value: "string",
+              },
+            ],
           },
         };
       },
     }),
     downloadReport: builder.mutation({
-      query: ({ name,
-        //  filters
+      query: ({
+        name,
+        query,
 
-
-       } ) => {
+        // filters
+      }) => {
         return {
           url: `report/${name}/download`,
           method: "POST",
+          responseHandler: (response: any) => {
+            return response.blob();
+          },
           // body: {"filters": filters},
-          responseHandler: (response: any) => response.blob(),
+          body: {
+            filters: [
+              {
+                filterName: "string",
+                filterParameter: "string",
+                dataType: "string",
+                options: [
+                  {
+                    code: "string",
+                    name: "string",
+                    valid: true,
+                  },
+                ],
+                value: "string",
+              },
+            ],
+          },
         };
       },
     }),
   }),
 });
 
-export const { useGetFiltersSchemaQuery, useGetReportDataQuery, useDownloadReportMutation } = reportSlice;
+export const {
+  useGetFiltersSchemaQuery,
+  useGetReportDataQuery,
+  useDownloadReportMutation,
+} = reportSlice;
 
 export default reportSlice;
-
-

@@ -38,7 +38,7 @@ const CompanySelector = () => {
         >
           {/* Modal Content */}
           <div
-            className="w-[1000px] bg-white rounded-lg shadow-lg p-8 relative"
+            className="w-[1000px] bg-white rounded-lg shadow-lg p-8 relative m-2"
             onClick={(e) => e.stopPropagation()} // Prevent clicks inside modal from closing it
           >
             {/* Close Button */}
@@ -64,27 +64,27 @@ const CompanySelector = () => {
 
             {/* Header */}
             <div className="flex flex-col gap-4">
-              <h1 className="text-[32px] font-medium text-[var(--primary)]">
+              <h1 className="md:text-[32px] text-[24px] font-medium text-[var(--primary)]">
                 Good Morning, Alison!
               </h1>
               <div className="w-full h-[2px] bg-[#E5E7EB] rounded-full"></div>
-              <p className="text-[16px] text-[#04334D] font-medium">
+              <p className="md:text-[16px] text-[14px] text-[#04334D] font-medium">
                 We are ready for you to begin. Please select your company to get
                 started with your tasks. We’re excited to have you onboard!
               </p>
             </div>
 
-            <div className="grid grid-cols-4 gap-6 mt-10">
+            <div className="grid md:grid-cols-4 grid-cols-2 gap-4 md:gap-6 mt-10">
               {companies?.data?.content?.map((company: any) => (
                 <div
                   onClick={() => selectedHandler(company)}
                   className="w-full aspect-square  flex-col  gap-4 rounded-lg bg-[#225451] relative overflow-hidden border border-[#225451] flex justify-center items-center hover:scale-105 transition-all duration-150 "
                 >
-                  <div className="w-[70%] h-[70%] p-5 bg-white rounded-full flex justify-center items-center absolute top-[-40px] left-[-10px]">
+                  <div className="w-[70%] h-[70%] p-5 bg-white rounded-full flex justify-center items-center absolute md:top-[-40px] top-[-20px] left-[-10px]">
                     <img src={logo} className="w-full" alt="company" />
                   </div>
                   <div className="flex flex-col gap-2 mt-20">
-                    <h1 className="text-[27px] text-white font-medium text-center uppercase">
+                    <h1 className="md:text-[24px] text-[14px] text-white font-medium text-center uppercase">
                       {company.name}
                     </h1>
                     <div className="w-full flex justify-center items-center">
@@ -94,26 +94,7 @@ const CompanySelector = () => {
                 </div>
               ))}
 
-              
-
-              {/* {companies.map((company) => (
-                <div
-                  onClick={() => dispatch(setCompanySelectedOpen(false))}
-                  className="w-full aspect-square  flex-col  gap-4 rounded-lg bg-[#225451] relative overflow-hidden border border-[#225451] flex justify-center items-center hover:scale-105 transition-all duration-150"
-                >
-                  <div className="w-[70%] h-[70%] p-5 bg-white rounded-full flex justify-center items-center absolute top-[-40px] left-[-10px]">
-                    <img src={logo} className="w-full" alt="company" />
-                  </div>
-                  <div className="flex flex-col gap-2 mt-20">
-                    <h1 className="text-[27px] text-white font-medium text-center uppercase">
-                      {company.name}
-                    </h1>
-                    <div className="w-full flex justify-center items-center">
-                      {company.icon}
-                    </div>
-                  </div>
-                </div>
-              ))} */}
+            
             </div>
           </div>
         </div>

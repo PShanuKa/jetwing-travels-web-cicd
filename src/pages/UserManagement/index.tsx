@@ -40,13 +40,7 @@ const UserManagement = () => {
               <option value="executive">Executive</option>
             </SelectNative>
           </div>
-          {/* <div>
-            <SelectNative className="w-40">
-              <option value="">User Status</option>
-              <option value="admin">Active</option>
-              <option value="executive">Inactive</option>
-            </SelectNative>
-          </div> */}
+        
           <div>
             <SelectNative value={formData.organizationId} onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })} className="w-40">
               <option value="">Company</option>
@@ -77,62 +71,24 @@ const UserManagement = () => {
         </div>
       </div>
       <div
-        className={`flex w-full flex-col gap-5 overflow-hidden ${filterIsOpen ? "" : "h-0 hidden"}`}
+        className={`flex w-full flex-col gap-2 overflow-hidden ${filterIsOpen ? "" : "h-0 hidden"}`}
       >
         <div>
-          <h1 className="text-[16px] font-medium">User Role</h1>
-          <div className="flex flex-wrap gap-5 mt-3 px-2">
-            <div className="flex items-center gap-2 ">
-              <input type="checkbox" />
-              <p>Admin</p>
-            </div>
-            <div className="flex items-center gap-2 ">
-              <input type="checkbox" />
-              <p>Executive</p>
-            </div>
-
-            <div className="flex items-center gap-2 ">
-              <input type="checkbox" />
-              <p>User</p>
-            </div>
+            <SelectNative value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="w-full">
+              <option value="">Role</option>
+              <option value="admin">Admin</option>
+              <option value="executive">Executive</option>
+            </SelectNative>
           </div>
-        </div>
-
-        <div>
-          <h1 className="text-[16px] font-medium">User Status</h1>
-          <div className="flex flex-wrap gap-5 mt-3 px-2">
-            <div className="flex items-center gap-2 ">
-              <input type="checkbox" />
-              <p>Active</p>
-            </div>
-            <div className="flex items-center gap-2 ">
-              <input type="checkbox" />
-              <p>Executive</p>
-            </div>
+        
+          <div>
+            <SelectNative value={formData.organizationId} onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })} className="w-full">
+              <option value="">Company</option>
+              {companies?.data?.content?.map((company: any) => (
+                <option value={company.id}>{company.name}</option>
+              ))}
+            </SelectNative>
           </div>
-        </div>
-
-        <div>
-          <h1 className="text-[16px] font-medium">Company</h1>
-          <div className="flex flex-wrap gap-5 mt-3 px-2">
-            <div className="flex items-center gap-2 ">
-              <input type="checkbox" />
-              <p>Travels</p>
-            </div>
-            <div className="flex items-center gap-2 ">
-              <input type="checkbox" />
-              <p>Eco Holding</p>
-            </div>
-            <div className="flex items-center gap-2 ">
-              <input type="checkbox" />
-              <p>Adventure</p>
-            </div>
-            <div className="flex items-center gap-2 ">
-              <input type="checkbox" />
-              <p>Trailer Made</p>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div className="w-full overflow-x-auto">

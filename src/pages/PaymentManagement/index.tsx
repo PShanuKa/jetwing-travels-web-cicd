@@ -84,32 +84,38 @@ const PaymentManagement = () => {
           filterIsOpen ? "" : "h-0 hidden"
         }`}
       >
-        <div className="w-full flex flex-col items-center gap-2">
-          <div className="w-full">
-            <SelectNative>
-              <option value="1">Payment Status</option>
-              <option value="admin">Paid</option>
-              <option value="executive">Unpaid</option>
+        <div className="w-full grid items-center gap-1">
+        <div>
+            <SelectNative className="w-full" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
+              <option value="">Select Payment Status</option>
+              <option value="PAID">Paid</option>
+              <option value="PARTIALLY_PAID">Partially Paid</option>
+              <option value="FAILED">Failed</option>
+              <option value="CANCELLED">Cancelled</option>
             </SelectNative>
           </div>
-          <div className="w-full">
-            <SelectNative className="w-full">
-              <option value="1">Currency</option>
-              <option value="admin">Credit Card</option>
-              <option value="executive">Debit Card</option>
+          <div>
+            <SelectNative className="w-full" value={formData.currency} onChange={(e) => setFormData({ ...formData, currency: e.target.value })}>
+              <option value="">Select Currency</option>
+              <option value="USD">USD</option>
+              <option value="LKR">LKR</option>
+              <option value="GBP">GBP</option>
+              <option value="EURO">EURO</option>
             </SelectNative>
           </div>
-          <div className="w-full">
-            <SelectNative className="w-full">
-              <option value="1">Payment Type</option>
-              <option value="admin">Yes</option>
-              <option value="executive">No</option>
+          <div>
+            <SelectNative className="w-full" value={formData.paymentType} onChange={(e) => setFormData({ ...formData, paymentType: e.target.value })}>
+              <option value="">Select Payment Type</option>
+              <option value="CyberSource">CyberSource</option>
+              <option value="Master/Visa">Master/Visa</option>
+              <option value="Amex">Amex</option>
+              {/* <option value="executive">No</option> */}
             </SelectNative>
           </div>
         </div>
       </div>
 
-      <div className="w-full overflow-x-auto">
+      <div className="w-full">
         <div className="w-full">
           <Table searchString={formData.text} status={formData.status} currency={formData.currency} paymentType={formData.paymentType} />
         </div>

@@ -39,7 +39,7 @@ const Payment = () => {
     console.log(formData.cartType);
     if (formData.cartType == "Master/Visa") {
       await initiatePayment({
-        amount: data?.data?.balancePayment,
+        amount: data?.data?.invoiceStatus == "PENDING" ? data?.data?.initialPayment : data?.data?.balancePayment,
         invoiceToken: data?.data?.token,
         currency: data?.data?.currency,
         gateway: "mastercard",
@@ -61,7 +61,7 @@ const Payment = () => {
     if (formData.cartType == "CyberSource") {
       try {
         const res = await initiatePayment({
-          amount: data?.data?.balancePayment,
+          amount: data?.data?.invoiceStatus == "PENDING" ? data?.data?.initialPayment : data?.data?.balancePayment,
           invoiceToken: data?.data?.token,
           currency: data?.data?.currency,
           gateway: "cybersource",
@@ -139,8 +139,8 @@ const Payment = () => {
       await initiatePaymentAmex({
         clientId: data?.data?.primaryEmail,
         transactionAmount: {
-          totalAmount: data?.data?.balancePayment,
-          paymentAmount: data?.data?.balancePayment,
+          totalAmount: data?.data?.invoiceStatus == "PENDING" ? data?.data?.initialPayment : data?.data?.balancePayment,
+          paymentAmount: data?.data?.invoiceStatus == "PENDING" ? data?.data?.initialPayment : data?.data?.balancePayment,
           serviceFeeAmount: 50.0,
           currency: data?.data?.currency,
         },
@@ -333,6 +333,10 @@ const Payment = () => {
                     <p>{data?.data?.paymentMethod}</p>
                   </div>
                 )}
+                 <div className="flex text-black text-[13px] font-semibold justify-between items-center">
+                  <h1>Invoice Status</h1>
+                  <p>{data?.data?.invoiceStatus}</p>
+                </div>
                 <div className="flex text-black text-[13px] font-semibold justify-between items-center">
                   <h1>Currency</h1>
                   <p>{data?.data?.currency}</p>

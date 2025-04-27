@@ -159,7 +159,9 @@ const Payment = () => {
               : data?.data?.balancePayment,
           serviceFeeAmount: 50.0,
           currency: data?.data?.currency,
+          
         },
+        invoiceToken: token,
         comment: "Test payment",
       }).then((res) => {
         localStorage.setItem("clientId", data?.data?.primaryEmail);

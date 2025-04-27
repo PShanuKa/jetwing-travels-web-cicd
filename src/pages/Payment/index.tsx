@@ -392,7 +392,7 @@ const Payment = () => {
                         Select Your Card Type
                       </p>
                       <div className="flex flex-row gap-5">
-                        {data.data.paymentGatewayDetailsDtoList.map(
+                        {(data?.data?.paymentGatewayDetailsDtoList || []).map(
                           (item: any) => (
                             <div className="flex items-center gap-2">
                               <input

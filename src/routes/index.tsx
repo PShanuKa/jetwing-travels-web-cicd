@@ -38,6 +38,7 @@ const privateRoutes: IRoute[] = [
     path: "/",
     element: <DashBoard />,
     name: "Dashboard",
+    
   },
   // User Management Routes
   {
@@ -114,6 +115,7 @@ const privateRoutes: IRoute[] = [
     path: "/settings",
     element: <Settings />,
     name: "Settings",
+    admin: true,
   },
 ];
 

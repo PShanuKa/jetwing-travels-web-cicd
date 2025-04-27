@@ -15,6 +15,7 @@ import Settings from "@/pages/Settings";
 import Payment from "@/pages/Payment";
 import PaymentSuccess from "@/pages/Payment/PaymentSuccess";
 import PaymentFailed from "@/pages/Payment/PaymentFailed";
+import MasterCardNotify from "@/pages/Payment/MasterCardNotify";
 
 export interface IRoute {
   path: string;
@@ -131,6 +132,11 @@ const publicRoutes: IRoute[] = [
     path: "/payment/failed",
     element: <PaymentFailed />,
     name: "Payment Failed",
+  },
+  {
+    path: "/payment/mastercard/notify",
+    element: <MasterCardNotify />,
+    name: "MasterCard Notify",
   },
   
 ];

@@ -50,9 +50,18 @@ const paymentSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    notifyPayment: builder.mutation({
+      query: (data) => {
+        return {
+          url: `payment/master-card/notify`,
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
-export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation , useFetchCaptureContextMutation , useGetAllPaymentQuery , useInitiatePaymentAmexMutation } = paymentSlice;
+export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation , useFetchCaptureContextMutation , useGetAllPaymentQuery , useInitiatePaymentAmexMutation , useNotifyPaymentMutation } = paymentSlice;
 
 export default paymentSlice;

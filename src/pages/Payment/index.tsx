@@ -5,6 +5,7 @@ import {
   useGetPaymentDetailsQuery,
   useInitiatePaymentAmexMutation,
   useInitiatePaymentMutation,
+  useNotifyPaymentMutation,
 } from "../../services/paymentSlice";
 import { GiDetour } from "react-icons/gi";
 import { BsCalendar2Date } from "react-icons/bs";
@@ -12,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { MdOutlineErrorOutline } from "react-icons/md";
 import { useGetFiltersSchemaQuery } from "@/services/reportSlice";
+
 
 const Payment = () => {
   const { id, token } = useParams();
@@ -28,8 +30,10 @@ const Payment = () => {
   const [sessionId, setSessionId] = useState(null);
   const [initiatePayment, { isLoading: isInitiating }] =
     useInitiatePaymentMutation();
-  const [initiatePaymentAmex, { isLoading: isInitiatingAmex }] =
+  const [initiatePaymentAmex, ] =
     useInitiatePaymentAmexMutation();
+
+    const [notifyPayment] = useNotifyPaymentMutation();
 
   const handleInitiatePayment = async () => {
     console.log(formData.cartType);
@@ -43,6 +47,7 @@ const Payment = () => {
         console.log(res);
         setSessionId(res?.data?.data?.paymentUrl?.sessionId);
         if (res?.data?.data?.paymentUrl?.sessionId) {
+          localStorage.setItem("merchantId", res?.data?.data?.merchantId);
           window.Checkout.configure({
             session: {
               id: sessionId || res?.data?.data?.paymentUrl?.sessionId,
@@ -113,7 +118,7 @@ const Payment = () => {
         console.error("Error during payment initiation:", error.message);
       }
     }
-
+    // Direct Pay
     // if( formData.cartType == "Amex") {
     //   await initiatePayment({
     //     amount: data?.data?.balancePayment,
@@ -153,6 +158,22 @@ const Payment = () => {
     }
   };
 
+  // useEffect(() => {
+  //   window.completeCallback = (resultIndicator: any, sessionVersion: any) => {
+  //     console.log("Payment Completed Successfully!", resultIndicator, sessionVersion);
+  //     notifyPayment({
+  //       resultIndicator: resultIndicator,
+  //       sessionId: sessionId,
+  //     }).then((res) => {
+  //       window.location.href = "https://jetwing.duckdns.org/payment/success";
+  //     });
+  //   };
+  //   return () => {
+  //     delete window.completeCallback;
+  //   };
+  // }, []);
+  
+
   if (isLoading) {
     return <Loading />;
   }
@@ -161,9 +182,7 @@ const Payment = () => {
     return <ExpirePayLink id={id} />;
   }
 
-  // if (data?.data?.paymentLink) {
-  //   return <Redirect to={data?.data?.paymentLink} />;
-  // }
+
 
   return (
     <div className="w-full min-h-screen ">
@@ -189,10 +208,10 @@ const Payment = () => {
                 <span className="text-[50px] font-semibold">
                   {data?.data?.balancePayment}
                 </span>{" "}
-                / LKR
+                / {data?.data?.currency}
               </h1>
               <p className="text-white/50  text-[13px] md:text-[16px] font-normal">
-                Next Payment will be changed in 25th September
+                Balance Payment Due Date: {data?.data?.balancePaymentDueDate}
               </p>
             </div>
           </div>
@@ -308,13 +327,15 @@ const Payment = () => {
               </div>
 
               <div className="mt-5 flex flex-col gap-2">
-                <div className="flex text-black text-[13px] font-semibold justify-between items-center">
-                  <h1>Payment Method</h1>
-                  <p>CARD</p>
-                </div>
+                {data?.data?.paymentMethod && (
+                  <div className="flex text-black text-[13px] font-semibold justify-between items-center">
+                    <h1>Payment Method</h1>
+                    <p>{data?.data?.paymentMethod}</p>
+                  </div>
+                )}
                 <div className="flex text-black text-[13px] font-semibold justify-between items-center">
                   <h1>Currency</h1>
-                  <p>USD</p>
+                  <p>{data?.data?.currency}</p>
                 </div>
                 {/* <div className="flex text-black text-[13px] font-semibold justify-between items-center">
                   <h1>Payment Gateway</h1>
@@ -322,7 +343,7 @@ const Payment = () => {
                 </div> */}
                 <hr className="border-black/30" />
                 <div className="flex text-black text-[13px] font-semibold justify-between items-center">
-                  <h1>Balance Payment(2024.12.03)</h1>
+                  <h1>Balance Payment</h1>
                   <p>{data?.data?.balancePayment}</p>
                 </div>
                 {/* <div className="flex text-black text-[13px] font-semibold justify-between items-center">

@@ -61,10 +61,11 @@ const paymentSlice = apiSlice.injectEndpoints({
     }),
     notifyPaymentAmex: builder.mutation({
       query: (data) => {
+        const { clientRef, ...rest } = data;
         return {
-          url: `payments/complete`,
+          url: `payments/complete?clientRef=${clientRef}`,
           method: "POST",
-          body: data,
+          body: rest,
         };
       },
     }),

@@ -14,7 +14,6 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { MdOutlineErrorOutline } from "react-icons/md";
 import { useGetFiltersSchemaQuery } from "@/services/reportSlice";
 
-
 const Payment = () => {
   const { id, token } = useParams();
   // const [searchParams] = useSearchParams();
@@ -30,27 +29,35 @@ const Payment = () => {
 
   const [initiatePayment, { isLoading: isInitiating }] =
     useInitiatePaymentMutation();
-  const [initiatePaymentAmex, ] =
-    useInitiatePaymentAmexMutation();
+  const [initiatePaymentAmex] = useInitiatePaymentAmexMutation();
 
-    // const [notifyPayment] = useNotifyPaymentMutation();
+  // const [notifyPayment] = useNotifyPaymentMutation();
 
   const handleInitiatePayment = async () => {
     console.log(formData.cartType);
     if (formData.cartType == "Master/Visa") {
       await initiatePayment({
-        amount: data?.data?.invoiceStatus == "PENDING" ? data?.data?.initialPayment : data?.data?.balancePayment,
+        amount:
+          data?.data?.invoiceStatus == "PENDING"
+            ? data?.data?.initialPayment
+            : data?.data?.balancePayment,
         invoiceToken: data?.data?.token,
         currency: data?.data?.currency,
         gateway: "mastercard",
       }).then((res) => {
         console.log(res);
         if (res?.data?.data?.paymentUrl?.sessionId) {
-          localStorage.setItem("merchantId", res?.data?.data?.paymentUrl?.merchant);
-          localStorage.setItem("sessionId", res?.data?.data?.paymentUrl?.sessionId);
+          localStorage.setItem(
+            "merchantId",
+            res?.data?.data?.paymentUrl?.merchant
+          );
+          localStorage.setItem(
+            "sessionId",
+            res?.data?.data?.paymentUrl?.sessionId
+          );
           window.Checkout.configure({
             session: {
-              id:  res?.data?.data?.paymentUrl?.sessionId,
+              id: res?.data?.data?.paymentUrl?.sessionId,
             },
           });
           window.Checkout.showEmbeddedPage("#embed-target");
@@ -61,7 +68,10 @@ const Payment = () => {
     if (formData.cartType == "CyberSource") {
       try {
         const res = await initiatePayment({
-          amount: data?.data?.invoiceStatus == "PENDING" ? data?.data?.initialPayment : data?.data?.balancePayment,
+          amount:
+            data?.data?.invoiceStatus == "PENDING"
+              ? data?.data?.initialPayment
+              : data?.data?.balancePayment,
           invoiceToken: data?.data?.token,
           currency: data?.data?.currency,
           gateway: "cybersource",
@@ -139,13 +149,20 @@ const Payment = () => {
       await initiatePaymentAmex({
         clientId: data?.data?.primaryEmail,
         transactionAmount: {
-          totalAmount: data?.data?.invoiceStatus == "PENDING" ? data?.data?.initialPayment : data?.data?.balancePayment,
-          paymentAmount: data?.data?.invoiceStatus == "PENDING" ? data?.data?.initialPayment : data?.data?.balancePayment,
+          totalAmount:
+            data?.data?.invoiceStatus == "PENDING"
+              ? data?.data?.initialPayment
+              : data?.data?.balancePayment,
+          paymentAmount:
+            data?.data?.invoiceStatus == "PENDING"
+              ? data?.data?.initialPayment
+              : data?.data?.balancePayment,
           serviceFeeAmount: 50.0,
           currency: data?.data?.currency,
         },
         comment: "Test payment",
       }).then((res) => {
+        localStorage.setItem("clientId", data?.data?.primaryEmail);
         console.log(res);
         const paymentPageUrl = res?.data?.responseData?.paymentPageUrl;
 
@@ -172,7 +189,6 @@ const Payment = () => {
   //     delete window.completeCallback;
   //   };
   // }, []);
-  
 
   if (isLoading) {
     return <Loading />;
@@ -181,8 +197,6 @@ const Payment = () => {
   if (!data?.data) {
     return <ExpirePayLink id={id} />;
   }
-
-
 
   return (
     <div className="w-full min-h-screen ">
@@ -206,7 +220,9 @@ const Payment = () => {
             <div className="max-w-7xl w-full mt-10  mx-auto  items-center ">
               <h1 className="text-white text-[18px] font-normal">
                 <span className="text-[50px] font-semibold">
-                  {data?.data?.balancePayment}
+                  {data?.data?.invoiceStatus == "PENDING"
+                    ? data?.data?.initialPayment
+                    : data?.data?.balancePayment}
                 </span>{" "}
                 / {data?.data?.currency}
               </h1>
@@ -333,7 +349,7 @@ const Payment = () => {
                     <p>{data?.data?.paymentMethod}</p>
                   </div>
                 )}
-                 <div className="flex text-black text-[13px] font-semibold justify-between items-center">
+                <div className="flex text-black text-[13px] font-semibold justify-between items-center">
                   <h1>Invoice Status</h1>
                   <p>{data?.data?.invoiceStatus}</p>
                 </div>
@@ -345,11 +361,11 @@ const Payment = () => {
                   <h1>Payment Gateway</h1>
                   <p>Stripe</p>
                 </div> */}
-                <hr className="border-black/30" />
+                {/* <hr className="border-black/30" />
                 <div className="flex text-black text-[13px] font-semibold justify-between items-center">
                   <h1>Balance Payment</h1>
-                  <p>{data?.data?.balancePayment}</p>
-                </div>
+                  <p>{ data?.data?.balancePayment}</p>
+                </div> */}
                 {/* <div className="flex text-black text-[13px] font-semibold justify-between items-center">
                   <h1>Service Charge(2024.12.03)</h1>
                   <p>18.00$</p>
@@ -360,47 +376,68 @@ const Payment = () => {
                 </div> */}
                 <div className="flex text-black text-[19px] font-semibold justify-between items-center border-t border-black/30 pt-2">
                   <h1>TOTAL</h1>
-                  <p>{data?.data?.balancePayment}</p>
-                </div>
-                <div className="flex flex-col gap-3 mt-2">
-                  <p className="text-[13px] text-black/50">
-                    Select Your Card Type
+                  <p>
+                    {data?.data?.invoiceStatus == "PENDING"
+                      ? data?.data?.initialPayment
+                      : data?.data?.balancePayment}
                   </p>
-                  <div className="flex flex-row gap-5">
-                    {data.data.paymentGatewayDetailsDtoList.map((item: any) => (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          name="payment"
-                          id={item?.name}
-                          value={item?.name}
-                          checked={formData.cartType === item?.name} // Bind the checked state
-                          onChange={() =>
-                            setFormData({ ...formData, cartType: item?.name })
-                          } // Update state on change
-                        />
-                        <label
-                          htmlFor="visa"
-                          className="text-[13px] font-semibold"
-                        >
-                          {item?.name}
-                        </label>
+                </div>
+
+                {data?.data?.invoiceStatus != "PAID" ? (
+                  <>
+                    <div className="flex flex-col gap-3 mt-2">
+                      <p className="text-[13px] text-black/50">
+                        Select Your Card Type
+                      </p>
+                      <div className="flex flex-row gap-5">
+                        {data.data.paymentGatewayDetailsDtoList.map(
+                          (item: any) => (
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="radio"
+                                name="payment"
+                                id={item?.name}
+                                value={item?.name}
+                                checked={formData.cartType === item?.name} // Bind the checked state
+                                onChange={() =>
+                                  setFormData({
+                                    ...formData,
+                                    cartType: item?.name,
+                                  })
+                                } // Update state on change
+                              />
+                              <label
+                                htmlFor="visa"
+                                className="text-[13px] font-semibold"
+                              >
+                                {item?.name}
+                              </label>
+                            </div>
+                          )
+                        )}
                       </div>
-                    ))}
+                    </div>
+                    <div className="flex md:flex-row flex-col justify-end mt-2">
+                      <button
+                        className="bg-black text-white px-15 py-2 rounded-md hover:bg-black/80 transition-all duration-150 cursor-pointer active:scale-95"
+                        onClick={handleInitiatePayment}
+                      >
+                        {isInitiating ? (
+                          <div className="animate-spin mx-auto rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                        ) : (
+                          <p className="text-[16px]">Pay Now</p>
+                        )}
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-end mt-2">
+                    <p className=" text-[12px] bg-green-500 text-white px-4 py-2 rounded-md">
+                      Payment Already Completed
+                    </p>
                   </div>
-                </div>
-                <div className="flex md:flex-row flex-col justify-end mt-2">
-                  <button
-                    className="bg-black text-white px-15 py-2 rounded-md hover:bg-black/80 transition-all duration-150 cursor-pointer active:scale-95"
-                    onClick={handleInitiatePayment}
-                  >
-                    {isInitiating ? (
-                      <div className="animate-spin mx-auto rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                    ) : (
-                      <p className="text-[16px]">Pay Now</p>
-                    )}
-                  </button>
-                </div>
+                )}
+
                 <div id="embed-target"></div>
                 <div className="flex justify-end mt-3">
                   <p className="text-black/50 text-[12px]">

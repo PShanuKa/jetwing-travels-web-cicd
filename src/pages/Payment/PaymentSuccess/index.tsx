@@ -14,10 +14,18 @@ const PaymentSuccess = () => {
     if (clientRef && reqid) {
       notifyPaymentAmex({
         requestData: {
-          clientRef: clientRef,
+          clientId: localStorage.getItem("clientId"),
           reqid: reqid,
         },
-      });
+        clientRef: clientRef,
+      })
+        // .then((res) => {
+        //   console.log("Payment Successfully Completed");
+        // })
+        // .catch((err) => {
+        //   console.log(err);
+        //   window.location.href = "https://jetwing.duckdns.org/payment/failed";
+        // });
     }
   }, []);
 

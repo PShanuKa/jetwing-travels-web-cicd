@@ -32,26 +32,38 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+  const [authError, setAuthError] = useState("");
 
   const [login, { isLoading }] = useLoginMutation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setAuthError("");
       const { MdRememberMe, ...rest } = formData;
       await validationSchema.validate(rest, { abortEarly: false });
 
-      await login(rest).unwrap().then((res) => {
-
-        const {token, ...userData} = res.data
-        const user = {...userData}
-        console.log(user)
-        toast.success(res.message);
-        dispatch(setUser({user , token}));
-        // localStorage.setItem("token", token);
-      }).catch((error) => {
-        toast.error(error.data.message || "Something went wrong");
-      });
+      await login(rest)
+        .unwrap()
+        .then((res) => {
+          const { token, ...userData } = res.data;
+          const user = { ...userData };
+          console.log(user);
+          toast.success(res.message);
+          dispatch(setUser({ user, token }));
+          // localStorage.setItem("token", token);
+        })
+        .catch((error) => {
+          // Check if it's a 401 authentication failure
+          if (error.data && error.data.code === 401) {
+            setAuthError("Email or password is incorrect. Please try again.");
+          } else {
+            setAuthError(
+              error.data?.message ||
+                "Email or password is incorrect. Please try again."
+            );
+          }
+        });
     } catch (error) {
       if (error instanceof yup.ValidationError) {
         const errors: Record<string, string> = {};
@@ -67,7 +79,6 @@ const LoginPage = () => {
           password: "",
         });
         console.error("An unexpected error occurred:", error);
-     
       }
     }
   };
@@ -93,6 +104,11 @@ const LoginPage = () => {
             </div>
 
             <div className="mt-[40px] grid gap-3">
+              {authError && (
+                <div className="text-red-700 relative text-sm">
+                  <span className="block sm:inline">{authError}</span>
+                </div>
+              )}
               <div className="flex flex-col gap-3">
                 <label className="text-[12px] text-fontGray">
                   Email Address
@@ -105,7 +121,9 @@ const LoginPage = () => {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   placeholder="Enter your Address"
-                  className="w-full border border-fontGray/40 focus:outline-none px-2 py-2 text-[12px] rounded-sm"
+                  className={`w-full border ${
+                    formError.email ? "border-red-500" : "border-fontGray/40"
+                  } focus:outline-none px-2 py-2 text-[12px] rounded-sm`}
                 />
                 {formError.email && (
                   <p className="text-[12px] text-red-500">{formError.email}</p>
@@ -123,7 +141,11 @@ const LoginPage = () => {
                         setFormData({ ...formData, password: e.target.value })
                       }
                       placeholder="Enter your Password"
-                      className="w-full border border-fontGray/40 focus:outline-none px-2 py-2 text-[12px] rounded-sm"
+                      className={`w-full border ${
+                        formError.password
+                          ? "border-red-500"
+                          : "border-fontGray/40"
+                      } focus:outline-none px-2 py-2 text-[12px] rounded-sm`}
                     />
                     <div
                       className="absolute inset-y-0 right-0 pr-3 opacity-50 flex items-center text-[18px] leading-5 cursor-pointer"
@@ -159,7 +181,7 @@ const LoginPage = () => {
               <div className="mt-[20px]">
                 <button
                   type="submit"
-                  className="w-full bg-slate-200 text-primary hover:bg-primary hover:text-white transition-all font-bold text-[14px] py-2 rounded-sm flex items-center justify-center gap-1 transform hover:scale-[98%] duration-200"
+                  className="w-full bg-slate-200 text-primary hover:bg-primary hover:text-primary cursor-pointer transition-all font-bold text-[14px] py-2 rounded-sm flex items-center justify-center gap-1 transform hover:scale-[98%] duration-200"
                   onClick={(e: any) => handleSubmit(e)}
                 >
                   {isLoading ? (

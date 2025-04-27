@@ -1,6 +1,9 @@
 import Input from "@/components/common/Input";
 import SearchInput from "@/components/common/SearchInput";
-import { useCreateInvoiceMutation, useGetCurrencyQuery } from "@/services/invoiceSlice";
+import {
+  useCreateInvoiceMutation,
+  useGetCurrencyQuery,
+} from "@/services/invoiceSlice";
 import { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa6";
@@ -10,11 +13,13 @@ import { toast } from "react-toastify";
 import { IoClose } from "react-icons/io5";
 
 import * as Yup from "yup";
-    import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setPageHeader } from "@/features/metaSlice";
 import Dropdown from "@/components/common/Dropdown";
 import SearchDropDown from "@/components/common/SearchDropDown";
 
+import { DatePicker } from "@/components/ui/date-picker";
+import { format } from "date-fns";
 
 const initialFormData = {
   title: "",
@@ -32,7 +37,7 @@ const initialFormData = {
   items: [],
   initialPayment: "",
   balancePayment: "",
-  balancePaymentDueDate: new Date().toISOString().split('T')[0],
+  balancePaymentDueDate: new Date().toISOString().split("T")[0],
   paymentPercentage: 100,
   attachments: null,
   currency: "LKR",
@@ -53,34 +58,6 @@ const titleOptions = [
   },
 ];
 
-const paymentPercentageOptions = [
-  {
-    name: "100%",
-    value: 100,
-  },
-  {
-    name: "75%",
-    value: 75,
-  },
-  {
-    name: "50%",
-    value: 50,
-  },
-  {
-    name: "25%",
-    value: 25,
-  },
-  {
-    name: "0%",
-    value: 0,
-  },
-];
-
-
-
-
-
-
 const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
   tourNumber: Yup.string().required("Tour number is required"),
@@ -89,6 +66,12 @@ const validationSchema = Yup.object({
   primaryEmail: Yup.string()
     .email("Invalid email format")
     .required("Primary email is required"),
+  address: Yup.string().required("Address is required"),
+  country: Yup.string().required("Country is required"),
+  // postalCode: Yup.string().required("Postal code is required"),
+  contactNumber: Yup.string().required("Contact number is required"),
+  initialPayment: Yup.string().required("Initial payment is required"),
+  // balancePayment: Yup.string().required("Balance payment is required"),
 });
 
 const AddNewInvoice = () => {
@@ -98,6 +81,9 @@ const AddNewInvoice = () => {
   const type = id && encodedItem ? "edit" : "view";
   const [formData, setFormData] = useState<any>(initialFormData);
   const [formErrors, setFormErrors] = useState<any>({});
+  const [balancePaymentDueDate, setBalancePaymentDueDate] = useState<
+    Date | undefined
+  >(undefined);
   const navigate = useNavigate();
   const companyId = useSelector((state: any) => state.meta.companySelected.id);
 
@@ -120,17 +106,35 @@ const AddNewInvoice = () => {
   };
 
   useEffect(() => {
+    // setFormData({
+    //   ...formData,
+    //   balancePayment: Number(formData.initialPayment) - (Number(formData.initialPayment) * Number(formData.paymentPercentage) / 100),
+    // });
     setFormData({
       ...formData,
-      balancePayment: Number(formData.initialPayment) - (Number(formData.initialPayment) * Number(formData.paymentPercentage) / 100),
+      balancePayment:
+        Number(formData.initialPayment) -
+        (Number(formData.initialPayment) * Number(formData.paymentPercentage)) /
+          100,
     });
   }, [formData.initialPayment, formData.paymentPercentage]);
 
+  useEffect(() => {
+    if (balancePaymentDueDate) {
+      setFormData({
+        ...formData,
+        balancePaymentDueDate: format(balancePaymentDueDate, "yyyy-MM-dd"),
+      });
+      setFormErrors({
+        ...formErrors,
+        balancePaymentDueDate: "",
+      });
+    }
+  }, [balancePaymentDueDate]);
 
-
-const { data: currencyData } = useGetCurrencyQuery({
-  organizationId: companyId,
-});
+  const { data: currencyData } = useGetCurrencyQuery({
+    organizationId: companyId,
+  });
 
   console.log(formData);
 
@@ -234,9 +238,6 @@ const { data: currencyData } = useGetCurrencyQuery({
     }
   };
 
-
-
-
   const SearchDropDownHandler = (value: any) => {
     setFormData({
       ...formData,
@@ -250,8 +251,8 @@ const { data: currencyData } = useGetCurrencyQuery({
       country: value.country || "",
       postalCode: value.postalCode || "",
       contactNumber: value.contactNumber || "",
-    })
-  }
+    });
+  };
 
   return (
     <div className="grid md:grid-cols-2 gap-5 p-3">
@@ -267,7 +268,7 @@ const { data: currencyData } = useGetCurrencyQuery({
             <p className="text-[14px] font-medium text-[var(--primary)] text-start mb-2">
               Search Existing Customer Using Customer Name Or Email
             </p>
-            <SearchDropDown  onChange={SearchDropDownHandler} />
+            <SearchDropDown onChange={SearchDropDownHandler} />
           </div>
           <div className="grid grid-cols-2 gap-5">
             <div>
@@ -381,7 +382,11 @@ const { data: currencyData } = useGetCurrencyQuery({
                 name="postalCode"
                 value={formData.postalCode}
                 errors={formErrors.postalCode || ""}
-                onChangeHandler={handleChange}
+                onChangeHandler={(e) => {
+                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
+                  e.target.value = numericValue;
+                  handleChange(e);
+                }}
               />
             </div>
           </div>
@@ -393,7 +398,11 @@ const { data: currencyData } = useGetCurrencyQuery({
                 name="contactNumber"
                 value={formData.contactNumber}
                 errors={formErrors.contactNumber || ""}
-                onChangeHandler={handleChange}
+                onChangeHandler={(e) => {
+                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
+                  e.target.value = numericValue;
+                  handleChange(e);
+                }}
                 required
               />
             </div>
@@ -461,9 +470,14 @@ const { data: currencyData } = useGetCurrencyQuery({
                         name={`amount-${index}`}
                         value={item.amount}
                         type="number"
-                        onChangeHandler={(e) =>
-                          handleItemChange(index, "amount", e.target.value)
-                        }
+                        onChangeHandler={(e) => {
+                          const numericValue = e.target.value.replace(
+                            /[^0-9.]/g,
+                            ""
+                          );
+                          e.target.value = numericValue;
+                          handleItemChange(index, "amount", e.target.value);
+                        }}
                       />
                     </div>
                     <button
@@ -496,39 +510,42 @@ const { data: currencyData } = useGetCurrencyQuery({
             <label className="text-[14px] font-medium text-[var(--primary)] text-start">
               Initial Payment
             </label>
-            <div className="grid grid-cols-5 gap-4">
+            <div className="grid grid-cols-5 gap-4 items-top">
               <div>
-                <Input
-                  type="dropdown"
-                  placeholder="Balance Payment Due Date"
-                  name="paymentPercentage"
-                  options={paymentPercentageOptions}
-                  value={formData.paymentPercentage}
-                  errors={formErrors.paymentPercentage || ""}
-                  onChangeHandler={handleChange}
-                />
+                <div className="relative">
+                  <Input
+                    placeholder="100%"
+                    name="paymentPercentage"
+                    value={formData.paymentPercentage || 100}
+                    errors={formErrors.paymentPercentage || ""}
+                    onChangeHandler={handleChange}
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                    %
+                  </span>
+                </div>
               </div>
-              {/* <div className="col-span-4">
-                <Input
-                  placeholder="0.00"
-                  name="initialPayment"
-                  value={formData.initialPayment}
-                  errors={formErrors.initialPayment || ""}
-                  onChangeHandler={handleChange}
-                />
-              </div> */}
-              <div className="col-span-4 flex items-center gap-1">
-                <input
-                  placeholder="0.00"
-                  className="w-full h-[44px] mt-1 border border-[var(--borderGray)]/50 rounded-md p-2 outline-none text-[14px]"
-                  name="initialPayment"
-                  value={formData.initialPayment}
-                  onChange={handleChange}
-                />
+              <div className="col-span-4 flex items-top gap-1">
+                <div className="w-full">
+                  <Input
+                    placeholder="0.00"
+                    name="initialPayment"
+                    value={formData.initialPayment}
+                    errors={formErrors.initialPayment || ""}
+                    onChangeHandler={(e) => {
+                      const numericValue = e.target.value.replace(
+                        /[^0-9.]/g,
+                        ""
+                      );
+                      e.target.value = numericValue;
+                      handleChange(e);
+                    }}
+                  />
+                </div>
                 <div className="mt-1 w-[100px]">
                   <Dropdown
                     // placeholder="Select currency"
-                    options={currencyData?.data?.map((item:any) => {
+                    options={currencyData?.data?.map((item: any) => {
                       return {
                         name: item.currency,
                         value: item.currency,
@@ -545,16 +562,22 @@ const { data: currencyData } = useGetCurrencyQuery({
 
           <div className="grid grid-cols-2 gap-5">
             <div>
-              <Input
-                label="Balance Payment Due Date"
-                placeholder="Balance Payment Due Date"
-                name="balancePaymentDueDate"
-                value={formData.balancePaymentDueDate}
-                errors={formErrors.balancePaymentDueDate || ""}
-                type="date"
-                onChangeHandler={handleChange}
-                // required
+              <label className="text-[14px] font-medium text-[var(--primary)] text-start">
+                Balance Payment Due Date
+                {formErrors.balancePaymentDueDate && (
+                  <span className="text-[var(--red)]"> *</span>
+                )}
+              </label>
+              <DatePicker
+                date={balancePaymentDueDate}
+                setDate={setBalancePaymentDueDate}
+                placeholder="Select due date"
               />
+              {formErrors.balancePaymentDueDate && (
+                <p className="text-[var(--red)] text-[12px]">
+                  {formErrors.balancePaymentDueDate}
+                </p>
+              )}
             </div>
             <div>
               <Input
@@ -563,7 +586,11 @@ const { data: currencyData } = useGetCurrencyQuery({
                 name="balancePayment"
                 value={formData.balancePayment}
                 errors={formErrors.balancePayment || ""}
-                onChangeHandler={handleChange}
+                onChangeHandler={(e) => {
+                  const numericValue = e.target.value.replace(/[^0-9.]/g, "");
+                  e.target.value = numericValue;
+                  handleChange(e);
+                }}
                 // required
               />
             </div>

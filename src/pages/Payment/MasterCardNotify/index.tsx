@@ -4,9 +4,7 @@ import { useSearchParams } from "react-router-dom";
 
 const MasterCardNotify = () => {
   const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get("sessionId");
   const resultIndicator = searchParams.get("resultIndicator");
-  const checkoutVersion = searchParams.get("checkoutVersion");
   const [pageView, setPageView] = useState("Loading...");
 
   const [notifyPayment] =
@@ -23,9 +21,9 @@ const MasterCardNotify = () => {
       localStorage.removeItem("merchantId");
       localStorage.removeItem("sessionId");
       setPageView("Processing Payment...");
-      // setTimeout(() => {
-      //   window.location.href = "/payment/success";
-      //   }, 3000);
+      setTimeout(() => {
+        window.location.href = res?.data?.data?.paymentUrl;
+        }, 3000);
       });
     }else{
       setPageView("Invalid Request");

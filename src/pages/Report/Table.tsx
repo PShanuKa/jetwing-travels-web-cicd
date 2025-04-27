@@ -1,21 +1,28 @@
 import Pagination from "@/components/common/Pagination";
 import { useGetReportDataQuery } from "@/services/reportSlice";
 import { useState } from "react";
+import {
+  TableSkeleton,
+  EmptyState,
+} from "@/components/common/TableSkeletonAndEmpty";
 
 const Table = () => {
+
+  const [currentPage, setCurrentPage] = useState(1);
   const { data: reportData } = useGetReportDataQuery({
     name: "Payment-Report",
     query: {
-      page: 0,
+      page: currentPage - 1,
       size: 10,
     },
   });
-  const [currentPage, setCurrentPage] = useState(0);
 
-
+  const hasData =
+    reportData?.reportData?.content && reportData.reportData.content.length > 0;
 
   return (
     <div>
+
     <div className="mt-5  rounded-lg  border border-[var(--borderGray)]/50  w-full overflow-x-scroll">
       <table className="w-full text-sm text-left text-[var(--primary)] dark:text-gray-400 ">
         <thead className="text-[14px] w-full  bg-[var(--tableHeaderBg)] dark:bg-gray-700 dark:text-gray-400 font-normal  ">
@@ -47,7 +54,7 @@ const Table = () => {
     </div>
       <Pagination
           totalPages={reportData?.reportData?.totalPages}
-          currentPage={reportData?.reportData?.currentPage}
+          currentPage={currentPage}
           onPageChange={(value) => {
             setCurrentPage(value);
           }}

@@ -237,6 +237,7 @@ const AddNewCustomer = () => {
                 label="Postal Code"
                 placeholder="Enter postal code"
                 name="postalCode"
+                type="number"
                 required
                 value={formData.postalCode}
                 onChangeHandler={handleChange}
@@ -270,6 +271,7 @@ const AddNewCustomer = () => {
             <div>
               <Input
                 label="Mobile Number"
+                type="number"
                 placeholder="Enter mobile number"
                 name="contactNumber"
                 required

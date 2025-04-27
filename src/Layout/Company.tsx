@@ -1,14 +1,33 @@
 // import { useState } from "react";
 import logo from "@/assets/logo.png";
+import { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/store";
-import { setCompanySelected, setCompanySelectedOpen } from "@/features/metaSlice";
+import {
+  setCompanySelected,
+  setCompanySelectedOpen,
+} from "@/features/metaSlice";
 import { useGetAllOrganizationsQuery } from "@/services/organizationSlice";
 
 const CompanySelector = () => {
   // State to manage modal visibility
   // const [isOpen, setIsOpen] = useState(true);
+  const [userName, setUserName] = useState("User");
+
+  useEffect(() => {
+    try {
+      const userString = localStorage.getItem("user");
+      if (userString) {
+        const userData = JSON.parse(userString);
+        if (userData && userData.name) {
+          setUserName(userData.name);
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+    }
+  }, []);
 
   const companySelected = useSelector(
     (state: RootState) => state.meta.companySelected
@@ -25,13 +44,10 @@ const CompanySelector = () => {
       // set full reload
       window.location.reload();
     }, 200);
- 
-  }
-
+  };
 
   return (
     <>
-    
       {!companySelected && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -71,7 +87,7 @@ const CompanySelector = () => {
               <div className="w-full h-[2px] bg-[#E5E7EB] rounded-full"></div>
               <p className="md:text-[16px] text-[14px] text-[#04334D] font-medium">
                 We are ready for you to begin. Please select your company to get
-                started with your tasks. We’re excited to have you onboard!
+                started with your tasks. We're excited to have you onboard!
               </p>
             </div>
 
@@ -94,8 +110,6 @@ const CompanySelector = () => {
                   </div>
                 </div>
               ))}
-
-            
             </div>
           </div>
         </div>

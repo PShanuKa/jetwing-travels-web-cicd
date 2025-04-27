@@ -46,7 +46,7 @@ const RightBar = ({ children , payment}: { children: React.ReactNode , payment: 
     },
     {
       title: "Amount",
-      value: invoiceDetails?.initialPayment,
+      value: invoiceDetails?.balancePayment,
       icon: <FaSortAmountUp className="text-[var(--iconGray)]" size={16} />,
     },
     {
@@ -66,7 +66,7 @@ const RightBar = ({ children , payment}: { children: React.ReactNode , payment: 
     },
     {
       title: "Reason for invoice fall Status",
-      value: "-",
+      value: payment?.reason || "-",
       icon: <TbMessageReport className="text-[var(--iconGray)]" size={18} />,
     },
   ];
@@ -159,7 +159,7 @@ const RightBar = ({ children , payment}: { children: React.ReactNode , payment: 
                     : "text-[#475467]/60"
                 } font-semibold`}
               >
-                Invoice Details
+                Payment Details
               </p>
             </div>
             <div
@@ -189,12 +189,12 @@ const RightBar = ({ children , payment}: { children: React.ReactNode , payment: 
               <div className="flex justify-between w-full items-center ">
                 <div>
                   <p className="text-[14px] text-[#475467] font-semibold ">
-                    2025-03-06 08:45 AM
+                    {payment?.transactionDate.split("T")[0] + " " + payment?.transactionDate.split("T")[1]}
                   </p>
                 </div>
                 <div className="flex items-center  px-3  rounded-full bg-green-500/10">
-                    <p className="text-[14px] text-green-500 font-semibold">
-                     Partial
+                    <p className="text-[14px]  font-semibold">
+                     {payment?.status}
                     </p>
                   </div>
               </div>

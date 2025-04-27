@@ -342,11 +342,13 @@ const RightBar = ({
                           {item.createdAt}
                         </p>
                       </div>
+                      
                       <button onClick={handleDownload} className="w-[30px] h-[30px] rounded-full flex items-center justify-center hover:bg-[#293446]/10 transition-all duration-150">
                         {isLoading ? <AiOutlineLoading3Quarters className="animate-spin" size={20} /> : <AiOutlineDownload color="#293446" size={20} />}
                       </button>
                     </div>
                   </div>
+                  
                 </div>
               </div>
             </>

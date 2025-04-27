@@ -45,7 +45,6 @@ const Payment = () => {
         gateway: "mastercard",
       }).then((res) => {
         console.log(res);
-   
         if (res?.data?.data?.paymentUrl?.sessionId) {
           localStorage.setItem("merchantId", res?.data?.data?.paymentUrl?.merchant);
           localStorage.setItem("sessionId", res?.data?.data?.paymentUrl?.sessionId);

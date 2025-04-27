@@ -51,7 +51,7 @@ const Payment = () => {
           localStorage.setItem("sessionId", res?.data?.data?.paymentUrl?.sessionId);
           window.Checkout.configure({
             session: {
-              id: sessionId || res?.data?.data?.paymentUrl?.sessionId,
+              id: res?.data?.data?.paymentUrl?.sessionId,
             },
           });
           window.Checkout.showEmbeddedPage("#embed-target");

@@ -10,6 +10,7 @@ const invoiceSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["invoice"],
     }),
     getAllInvoices: builder.query({
       query: (params) => {
@@ -19,12 +20,14 @@ const invoiceSlice = apiSlice.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: ["invoice"],
     }),
     ganaratePaymentLink: builder.mutation({
       query: ({id, email}) => ({
         url: `invoice/generate-link/${id}/${email}`,
         method: "POST",
       }),
+      invalidatesTags: ["invoice"],
     }),
     getCurrency: builder.query({
       query: ({organizationId}) => ({

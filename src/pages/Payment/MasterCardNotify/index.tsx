@@ -22,8 +22,8 @@ const MasterCardNotify = () => {
       localStorage.removeItem("sessionId");
       setPageView("Processing Payment...");
       setTimeout(() => {
-        window.location.href = res?.data?.data?.paymentUrl;
-        }, 3000);
+        window.location.href = res?.data;
+        }, 1000);
       });
     }else{
       setPageView("Invalid Request");

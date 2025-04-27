@@ -13,6 +13,7 @@ const CompanySelector = () => {
   const companySelected = useSelector(
     (state: RootState) => state.meta.companySelected
   );
+  const user = useSelector((state: RootState) => state.auth.userInfo);
 
   const { data: companies } = useGetAllOrganizationsQuery(undefined);
 
@@ -42,7 +43,7 @@ const CompanySelector = () => {
             onClick={(e) => e.stopPropagation()} // Prevent clicks inside modal from closing it
           >
             {/* Close Button */}
-            <button
+            {/* <button
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
               onClick={() => dispatch(setCompanySelectedOpen(false))}
             >
@@ -60,12 +61,12 @@ const CompanySelector = () => {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </button>
+            </button> */}
 
             {/* Header */}
             <div className="flex flex-col gap-4">
               <h1 className="md:text-[32px] text-[24px] font-medium text-[var(--primary)]">
-                Good Morning, Alison!
+                Welcome, {user?.name}!
               </h1>
               <div className="w-full h-[2px] bg-[#E5E7EB] rounded-full"></div>
               <p className="md:text-[16px] text-[14px] text-[#04334D] font-medium">

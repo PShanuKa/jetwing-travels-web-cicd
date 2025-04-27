@@ -95,7 +95,7 @@ const Settings = () => {
                 onClick={handleUpdateSetting}
                 disabled={isLoading}
               >
-                {isLoading ? "Updating..." : "Edit"}
+                {isLoading ? "Updating..." : "Update"}
               </button>
             </div>
 

@@ -27,13 +27,13 @@ const Payment = () => {
     invoiceId: id,
     token: token,
   });
-  const [sessionId, setSessionId] = useState(null);
+
   const [initiatePayment, { isLoading: isInitiating }] =
     useInitiatePaymentMutation();
   const [initiatePaymentAmex, ] =
     useInitiatePaymentAmexMutation();
 
-    const [notifyPayment] = useNotifyPaymentMutation();
+    // const [notifyPayment] = useNotifyPaymentMutation();
 
   const handleInitiatePayment = async () => {
     console.log(formData.cartType);
@@ -45,9 +45,10 @@ const Payment = () => {
         gateway: "mastercard",
       }).then((res) => {
         console.log(res);
-        setSessionId(res?.data?.data?.paymentUrl?.sessionId);
+   
         if (res?.data?.data?.paymentUrl?.sessionId) {
-          localStorage.setItem("merchantId", res?.data?.data?.merchantId);
+          localStorage.setItem("merchantId", res?.data?.data?.paymentUrl?.merchant);
+          localStorage.setItem("sessionId", res?.data?.data?.paymentUrl?.sessionId);
           window.Checkout.configure({
             session: {
               id: sessionId || res?.data?.data?.paymentUrl?.sessionId,

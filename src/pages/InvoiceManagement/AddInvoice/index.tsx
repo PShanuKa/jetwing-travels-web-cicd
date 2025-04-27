@@ -8,13 +8,13 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { IoClose } from "react-icons/io5";
-// import DeleteDialog from "./DeleteDialog";
+
 import * as Yup from "yup";
     import { useDispatch, useSelector } from "react-redux";
 import { setPageHeader } from "@/features/metaSlice";
 import Dropdown from "@/components/common/Dropdown";
 import SearchDropDown from "@/components/common/SearchDropDown";
-import { title } from "process";
+
 
 const initialFormData = {
   title: "",
@@ -32,7 +32,7 @@ const initialFormData = {
   items: [],
   initialPayment: "",
   balancePayment: "",
-  balancePaymentDueDate: "",
+  balancePaymentDueDate: new Date().toISOString().split('T')[0],
   paymentPercentage: 100,
   attachments: null,
   currency: "LKR",

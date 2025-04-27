@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useCreateUserMutation, useUpdateUserMutation } from "@/services/userSlice";
 import { useGetAllOrganizationsQuery } from "@/services/organizationSlice";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { BiLoaderAlt } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 import { setPageHeader } from "@/features/metaSlice";
@@ -367,14 +367,14 @@ const AddNewUser = () => {
         </div>
 
         <div className="flex justify-end mt-10 gap-3">
-          <RightBar>
+      
 
 
-            <div className="border-[var(--primary)]/20 border hover:opacity-80 focus:opacity-90 active:scale-95 text-[var(--primary)]/60 px-10 py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36x] h-[36px] transition-all duration-150 outline-none">
+            <Link to="/admin/user" className="border-[var(--primary)]/20 border hover:opacity-80 focus:opacity-90 active:scale-95 text-[var(--primary)]/60 px-10 py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36x] h-[36px] transition-all duration-150 outline-none">
               Cancel
-            </div>
+            </Link>
         
-          </RightBar>
+        
           <button
             className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"
             onClick={handleSubmit}

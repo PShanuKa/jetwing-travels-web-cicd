@@ -2,11 +2,10 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 // import { store } from "@/store";
 import { RootState } from "@/app/store";
 
-export const baseUrl = "https://f0mv977jk7.execute-api.ap-southeast-1.amazonaws.com/api/";
 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: baseUrl,
+  baseUrl: "https://f0mv977jk7.execute-api.ap-southeast-1.amazonaws.com/api/",
   prepareHeaders: (headers, { getState }) => {
     // Get the token from the Redux store
     const token = (getState() as RootState).auth.token; // Assuming token is stored in auth state
@@ -20,9 +19,7 @@ const baseQuery = fetchBaseQuery({
 
     if (companyId) {
       headers.set("company-Id", `${companyId}`);
-      headers.set("Company-Id", `${companyId}`);
     }
-    
 
     if (userId) {
       headers.set("user-Id", `${userId}`);
@@ -46,7 +43,7 @@ const apiSlice = createApi({
   reducerPath: "api",
   baseQuery,
   endpoints: () => ({}),
-  tagTypes: ["customers", "users", "Setting", "invoice"],
+  tagTypes: ["customers", "users", "Setting"],
 });
 
 export default apiSlice;

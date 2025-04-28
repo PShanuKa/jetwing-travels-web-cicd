@@ -50,28 +50,9 @@ const paymentSlice = apiSlice.injectEndpoints({
         };
       },
     }),
-    notifyPayment: builder.mutation({
-      query: (data) => {
-        return {
-          url: `payment/master-card/notify`,
-          method: "POST",
-          body: data,
-        };
-      },
-    }),
-    notifyPaymentAmex: builder.mutation({
-      query: (data) => {
-        const { clientRef, ...rest } = data;
-        return {
-          url: `payments/complete?clientRef=${clientRef}`,
-          method: "POST",
-          body: rest,
-        };
-      },
-    }),
   }),
 });
 
-export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation , useFetchCaptureContextMutation , useGetAllPaymentQuery , useInitiatePaymentAmexMutation , useNotifyPaymentMutation , useNotifyPaymentAmexMutation } = paymentSlice;
+export const { useGetPaymentDetailsQuery, useInitiatePaymentMutation , useFetchCaptureContextMutation , useGetAllPaymentQuery , useInitiatePaymentAmexMutation } = paymentSlice;
 
 export default paymentSlice;

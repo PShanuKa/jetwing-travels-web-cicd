@@ -47,16 +47,15 @@ const Navbar = () => {
         </button>
         <div>
           {company?.name ? (
-            <h1 className="text-[24px] font-semibold hidden md:block">
-              {pageHeader === "Dashboard" ? `Welcome To ${company?.name}` : `${pageHeader.split("/")[0]} `} 
-            
+            <h1 className="text-[24px] font-medium hidden md:block">
+              Welcome To {company?.name}
             </h1>
           ) : (
             <h1 className="text-[24px] font-medium hidden md:block">
               Welcome {user?.name}
             </h1>
           )}
-          <h1 className="text-[22px] md:text-[14px] font-medium md:font-normal ">
+          <h1 className="text-[22px] md:text-[14px] font-medium md:font-normal md:text-[var(--textBlue)]">
             {pageHeader}
           </h1>
         </div>

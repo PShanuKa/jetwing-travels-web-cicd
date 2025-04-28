@@ -80,7 +80,7 @@ const yearSummaryData = [
 
 const DashBoard = () => {
   const dispatch = useDispatch();
-  dispatch(setPageHeader("Dashboard"));
+  dispatch(setPageHeader("DashBoard"));
   return (
     <div className="md:p-5">
       {/* Overall Summary */}

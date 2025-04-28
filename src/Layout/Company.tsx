@@ -3,24 +3,20 @@ import logo from "@/assets/logo.png";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/store";
-import {
-  setCompanySelected,
-  setCompanySelectedOpen,
-} from "@/features/metaSlice";
+import { setCompanySelected, setCompanySelectedOpen } from "@/features/metaSlice";
 import { useGetAllOrganizationsQuery } from "@/services/organizationSlice";
 
 const CompanySelector = () => {
   // State to manage modal visibility
   // const [isOpen, setIsOpen] = useState(true);
 
-  const dispatch = useDispatch();
   const companySelected = useSelector(
     (state: RootState) => state.meta.companySelected
   );
-  // const [collapsed, setCollapsed] = useState(false);
-  const user = useSelector((state: RootState) => state.auth.userInfo);
 
   const { data: companies } = useGetAllOrganizationsQuery(undefined);
+
+  const dispatch = useDispatch();
 
   const selectedHandler = (company: any) => {
     dispatch(setCompanySelected(company));
@@ -28,10 +24,13 @@ const CompanySelector = () => {
       // set full reload
       window.location.reload();
     }, 200);
-  };
+ 
+  }
+
 
   return (
     <>
+    
       {!companySelected && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -43,7 +42,7 @@ const CompanySelector = () => {
             onClick={(e) => e.stopPropagation()} // Prevent clicks inside modal from closing it
           >
             {/* Close Button */}
-            {/* <button
+            <button
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
               onClick={() => dispatch(setCompanySelectedOpen(false))}
             >
@@ -61,17 +60,17 @@ const CompanySelector = () => {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </button> */}
+            </button>
 
             {/* Header */}
             <div className="flex flex-col gap-4">
               <h1 className="md:text-[32px] text-[24px] font-medium text-[var(--primary)]">
-                Welcome, {user?.name}!
+                Good Morning, Alison!
               </h1>
               <div className="w-full h-[2px] bg-[#E5E7EB] rounded-full"></div>
               <p className="md:text-[16px] text-[14px] text-[#04334D] font-medium">
                 We are ready for you to begin. Please select your company to get
-                started with your tasks. We're excited to have you onboard!
+                started with your tasks. We’re excited to have you onboard!
               </p>
             </div>
 
@@ -94,6 +93,8 @@ const CompanySelector = () => {
                   </div>
                 </div>
               ))}
+
+            
             </div>
           </div>
         </div>

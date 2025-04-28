@@ -5,11 +5,10 @@ import { FiLogOut } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { clearCompanySelected, setIsSidebarOpen } from "@/features/metaSlice";
+import { setIsSidebarOpen } from "@/features/metaSlice";
 import { Link } from "react-router-dom";
 import { logout } from "@/features/authSlice";
 import { useLocation } from "react-router-dom";
-import { FaBuilding } from "react-icons/fa6"
 
 
 
@@ -53,20 +52,12 @@ const currentPath = location.pathname;
           })}
         </div>
         <div className="w-full ">
-          {user?.roleName === "Admin" && (
           <Link to="/admin/settings" className="w-full h-[47px]  hover:bg-[#293446] rounded-[10px] flex items-center gap-3 px-4 transition-all duration-150">
             <div className="w-[24px] h-[24px] flex items-center justify-center">
               <LuSettings color="#98A2B3" size={20} />
             </div>
             <p className="text-[14px] text-[#98A2B3] font-normal">Settings</p>
           </Link>
-          )}
-           <button onClick={() => dispatch(clearCompanySelected())} className="w-full h-[47px]  hover:bg-[#293446] rounded-[10px] flex items-center gap-3 px-4 transition-all duration-150 md:hidden">
-            <div className="w-[24px] h-[24px] flex items-center justify-center">
-              <FaBuilding color="#98A2B3" size={20} />
-            </div>
-            <p className="text-[14px] text-[#98A2B3] font-normal">Change Company</p>
-          </button>
 
           <div className="w-full h-[70px]  rounded-[10px] flex items-center gap-3 px-4 my-5">
             {/* <div>

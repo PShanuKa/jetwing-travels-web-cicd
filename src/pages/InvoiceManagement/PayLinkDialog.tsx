@@ -15,21 +15,19 @@ import { Loader2 } from "lucide-react";
 const PayLinkDialog = ({
   children,
   item,
-  linkType = "initialPaymentLink",
 }: {
   children: React.ReactNode;
   item: any;
-  linkType?: "initialPaymentLink" | "balancePaymentLink";
 }) => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isExistingEmail, setIsExistingEmail] = useState(true);
 
   const [generatePaymentLink, { isLoading }] = useGanaratePaymentLinkMutation();
-
+  
   useEffect(() => {
     setError("");
-  }, [isExistingEmail]);
+  }, [isExistingEmail])
 
   const handleGeneratePaymentLink = async () => {
     if (!isExistingEmail) {
@@ -44,7 +42,6 @@ const PayLinkDialog = ({
     await generatePaymentLink({
       id: item?.id,
       email: isExistingEmail ? item?.primaryEmail : email,
-      linkType: linkType,
     })
       .then((res) => {
         toast.success(res?.data?.message || "Link Sent Successfully");
@@ -53,11 +50,6 @@ const PayLinkDialog = ({
         toast.error(err?.data?.message || "Something went wrong");
       });
   };
-
-  const dialogTitle =
-    linkType === "initialPaymentLink"
-      ? "Send Initial Payment Link"
-      : "Send Balance Payment Link";
 
   return (
     <>
@@ -73,7 +65,7 @@ const PayLinkDialog = ({
 
             <div className="flex flex-col gap-4 ">
               <h1 className="text-[22px] font-medium text-[var(--primary)]">
-                {dialogTitle}
+                Send Payment Link
               </h1>
 
               <p className="text-[16px] text-[#101928] font-normal text-start">
@@ -130,10 +122,8 @@ const PayLinkDialog = ({
                       <span>Sending...</span>
                       <Loader2 className="animate-spin" />
                     </div>
-                  ) : linkType === "initialPaymentLink" ? (
-                    "Send Initial Payment Link"
                   ) : (
-                    "Send Balance Payment Link"
+                    "Send Payment Link"
                   )}
                 </button>
               </div>

@@ -26,7 +26,7 @@ const AllRoutes = () => {
         />
       ))}
 
-      {privateRoutes.filter((route: IRoute) => route.admin ? user?.roleName === "admin" : true).map((route: IRoute, index: number) => (
+      {privateRoutes.filter((route: IRoute) => route.admin ? user?.roleName === "Admin" : true).map((route: IRoute, index: number) => (
         <Route key={index} path={`/admin${route.path}`} element={!user ? <Navigate to="/admin/login" /> : <DefaultLayout>{route.element}</DefaultLayout>} />
       ))}
 

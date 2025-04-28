@@ -53,7 +53,7 @@ const RightBar = ({
 
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `incoice-${item.id}.pdf`); 
+        link.setAttribute('download', `invoice-${item.id}.pdf`); 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -268,7 +268,7 @@ const RightBar = ({
                 <div className="flex justify-between w-full items-center ">
                   <div>
                     <p className="text-[14px] text-[#475467] font-semibold ">
-                      2025-03-06 08:45 AM
+                      {item.createdAt.split("T")[0]}
                     </p>
                   </div>
                   <div
@@ -290,8 +290,8 @@ const RightBar = ({
                     Invoice Status
                   </p>
                   <div className="flex items-center  px-3  rounded-full bg-green-500/10">
-                    <p className="md:text-[14px] text-[11px] text-green-500 font-semibold">
-                      Active
+                    <p className="md:text-[14px] text-[11px] text-green-500 font-semibold ">
+                      {item.invoiceStatus}
                     </p>
                   </div>
                 </div>
@@ -308,8 +308,8 @@ const RightBar = ({
               </div>
 
               <div className="w-full flex flex-col gap-5 mt-5 md:mt-0">
-                {InvoiceDetails.map((detail) => (
-                  <div className="w-full md:pl-5 ">
+                {InvoiceDetails.map((detail , index) => (
+                  <div className="w-full md:pl-5  " key={index}>
                     <div className="flex items-center gap-5 ">
                       <div className="w-[24px] h-[24px] flex items-center justify-center">
                         {detail.icon}
@@ -336,10 +336,10 @@ const RightBar = ({
                     <div className="flex items-center justify-between w-full">
                       <div>
                         <p className="text-[12px] text-[#475467] font-normal">
-                          incoice-{item.id}.pdf
+                          invoice-{item.id}.pdf
                         </p>
                         <p className="text-[11px] text-[#475467]/50 font-normal">
-                          {item.createdAt}
+                          {item.createdAt.split("T")[0]}
                         </p>
                       </div>
                       
@@ -439,9 +439,9 @@ const RightBar = ({
 
           <PayLinkDialog item={item}>
             <div className="flex gap-2 ">
-              <button className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] w-full transition-all duration-150 outline-none justify-center text-[14px]">
+              <div className="bg-[#04334D] hover:opacity-80 focus:opacity-90 active:scale-95 text-white px-4 py-2 rounded-md font-normal flex items-center gap-2 h-[36px] w-full transition-all duration-150 outline-none justify-center text-[14px]">
                 Send Payment Link
-              </button>
+              </div>
             </div>
           </PayLinkDialog>
         </div>

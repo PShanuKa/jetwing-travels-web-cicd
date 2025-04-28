@@ -53,7 +53,7 @@ const currentPath = location.pathname;
           })}
         </div>
         <div className="w-full ">
-          {user?.roleName === "admin" && (
+          {user?.roleName === "Admin" && (
           <Link to="/admin/settings" className="w-full h-[47px]  hover:bg-[#293446] rounded-[10px] flex items-center gap-3 px-4 transition-all duration-150">
             <div className="w-[24px] h-[24px] flex items-center justify-center">
               <LuSettings color="#98A2B3" size={20} />

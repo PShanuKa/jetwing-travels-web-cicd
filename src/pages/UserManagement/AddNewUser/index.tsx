@@ -38,7 +38,7 @@ const initialFormData: {
 
 const AddNewUser = () => {
   const dispatch = useDispatch();
-  dispatch(setPageHeader("Add New User"));
+  dispatch(setPageHeader("User Management / Create New User"));
   const [formData, setFormData] = useState(initialFormData);
   const [formErrors, setFormErrors] = useState<any>({});
   const navigate = useNavigate();
@@ -303,6 +303,18 @@ const AddNewUser = () => {
             />
             <label htmlFor="superAdmin">Super Admin</label>
           </div> */}
+          <div className="flex items-center gap-2">
+            <input
+              type="radio"
+              id="superAdmin"
+              name="roleName"
+              value="Super Admin"
+              checked={formData.roleName === "Super Admin"}
+              onChange={() => handleRoleChange("Super Admin")}
+              className="w-[16px] h-[16px]"
+            />
+            <label htmlFor="superAdmin">Super Admin</label>
+          </div>
           <div className="flex items-center gap-2">
             <input
               type="radio"

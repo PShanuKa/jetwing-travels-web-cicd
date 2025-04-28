@@ -19,7 +19,8 @@ import Dropdown from "@/components/common/Dropdown";
 import SearchDropDown from "@/components/common/SearchDropDown";
 
 import { DatePicker } from "@/components/ui/date-picker";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
+import { useGetSettingQuery } from "@/services/settingSlice";
 
 const initialFormData = {
   title: "",
@@ -41,6 +42,7 @@ const initialFormData = {
   paymentPercentage: 100,
   attachments: null,
   currency: "LKR",
+  bankCharge: 0,
 };
 
 const titleOptions = [
@@ -76,7 +78,7 @@ const validationSchema = Yup.object({
 
 const AddNewInvoice = () => {
   const dispatch = useDispatch();
-  dispatch(setPageHeader("Add New Invoice"));
+  dispatch(setPageHeader("Invoice Management / Create New Invoice"));
   const { id, encodedItem } = useParams();
   const type = id && encodedItem ? "edit" : "view";
   const [formData, setFormData] = useState<any>(initialFormData);
@@ -86,6 +88,19 @@ const AddNewInvoice = () => {
   >(undefined);
   const navigate = useNavigate();
   const companyId = useSelector((state: any) => state.meta.companySelected.id);
+  const companyRate = useSelector(
+    (state: any) => state.meta.companySelected.organizationRate
+  );
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      setFormData({
+        ...formData,
+        bankCharge: companyRate,
+      });
+    }, 300);
+  }, [companyRate]);
 
   const handleChange = (e: any) => {
     setFormData({
@@ -135,8 +150,6 @@ const AddNewInvoice = () => {
   const { data: currencyData } = useGetCurrencyQuery({
     organizationId: companyId,
   });
-
-  console.log(formData);
 
   const handleDeleteItem = (index: number) => {
     const updatedItems = formData.items.filter(

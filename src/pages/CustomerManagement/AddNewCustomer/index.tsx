@@ -45,9 +45,9 @@ const AddNewCustomer = () => {
   const navigate = useNavigate();
   const type = id && encodedItem ? "edit" : "view";
   if (type === "edit") {
-    dispatch(setPageHeader("Edit Customer Details"));
+    dispatch(setPageHeader("Customer Management / Edit Customer Details"));
   } else {
-    dispatch(setPageHeader("Add New Customer"));
+    dispatch(setPageHeader("Customer Management / Create New Customer"));
   }
   const decodedItem = decodeURIComponent(encodedItem || "");
   const parsedItem = JSON.parse(decodedItem || "{}");

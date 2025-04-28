@@ -93,11 +93,6 @@ const Table = ({ searchString = "" }: { searchString: string }) => {
                   </td>
                   <td className="py-4 px-6">-</td>
 
-                  <td className="py-4 px-6">
-                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                      Active
-                    </span>
-                  </td>
                   <td className="py-4 px-6 justify-center items-center">
                     <span
                       className={` text-xs font-medium px-2.5 py-0.5 rounded ${
@@ -109,6 +104,11 @@ const Table = ({ searchString = "" }: { searchString: string }) => {
                       }`}
                     >
                       {invoice.invoiceStatus}
+                    </span>
+                  </td>
+                  <td className="py-4 px-6">
+                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                      Active
                     </span>
                   </td>
                   <td className="py-4 px-6 text-center">{invoice.paymentLinkClickedTimes}</td>

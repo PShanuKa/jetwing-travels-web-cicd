@@ -1,44 +1,49 @@
-import * as React from "react"
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import * as React from "react";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 
 interface DatePickerProps {
-  date: Date | undefined
-  setDate: (date: Date | undefined) => void
-  className?: string
-  placeholder?: string
+  date: Date | undefined;
+  setDate: (date: Date | undefined) => void;
+  className?: string;
+  placeholder?: string;
 }
 
-export function DatePicker({ date, setDate, className, placeholder = "Pick a date" }: DatePickerProps) {
-  const [open, setOpen] = React.useState(false)
-  
+export function DatePicker({
+  date,
+  setDate,
+  className,
+  placeholder = "Pick a date",
+}: DatePickerProps) {
+  const [open, setOpen] = React.useState(false);
+
   const handleSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate)
+    setDate(selectedDate);
     if (selectedDate) {
-      setOpen(false)
+      setOpen(false);
     }
-  }
+  };
 
   // Get current date to disable past dates
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
           className={cn(
-            "w-full h-[44px] border border-[var(--borderGray)]/50 rounded-md p-2 outline-none text-[14px] justify-start text-left font-normal",
+            "w-full border border-[var(--borderGray)]/50 rounded-md p-2 outline-none text-[14px] justify-start text-left font-normal h-[44px]",
             !date && "text-muted-foreground",
             className
           )}
@@ -58,5 +63,5 @@ export function DatePicker({ date, setDate, className, placeholder = "Pick a dat
         />
       </PopoverContent>
     </Popover>
-  )
-} 
+  );
+}

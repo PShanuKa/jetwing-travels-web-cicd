@@ -1,7 +1,5 @@
 import apiSlice from "./apiSlice";
 
-
-
 const invoiceSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createInvoice: builder.mutation({
@@ -23,26 +21,26 @@ const invoiceSlice = apiSlice.injectEndpoints({
       providesTags: ["invoice"],
     }),
     ganaratePaymentLink: builder.mutation({
-      query: ({id, email}) => ({
+      query: ({ id, email }) => ({
         url: `invoice/generate-link/${id}/${email}`,
         method: "POST",
       }),
       invalidatesTags: ["invoice"],
     }),
     getCurrency: builder.query({
-      query: ({organizationId}) => ({
+      query: ({ organizationId }) => ({
         url: `currency/organization/${organizationId}`,
         method: "GET",
       }),
     }),
     existingCustomer: builder.query({
-      query: ({searchString}) => ({
+      query: ({ searchString }) => ({
         url: `invoice/existing-customer/${searchString}`,
         method: "GET",
       }),
     }),
     downloadInvoice: builder.mutation({
-      query: ({invoiceId}) => ({
+      query: ({ invoiceId }) => ({
         url: `/invoice/download/${invoiceId}`,
         method: "GET",
         responseHandler: (response: any) => {
@@ -53,6 +51,13 @@ const invoiceSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useCreateInvoiceMutation, useGetAllInvoicesQuery, useGanaratePaymentLinkMutation, useGetCurrencyQuery, useExistingCustomerQuery, useDownloadInvoiceMutation } = invoiceSlice;
+export const {
+  useCreateInvoiceMutation,
+  useGetAllInvoicesQuery,
+  useGanaratePaymentLinkMutation,
+  useGetCurrencyQuery,
+  useExistingCustomerQuery,
+  useDownloadInvoiceMutation,
+} = invoiceSlice;
 
 export default invoiceSlice;

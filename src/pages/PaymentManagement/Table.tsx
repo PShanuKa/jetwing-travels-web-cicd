@@ -2,7 +2,7 @@ import { CiMenuKebab } from "react-icons/ci";
 
 import RightBar from "./RightBar";
 import Pagination from "@/components/common/Pagination";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetAllPaymentQuery } from "@/services/paymentSlice";
 import {
   TableSkeleton,
@@ -22,14 +22,28 @@ const Table = ({
   paymentType: string;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [companyId, setCompanyId] = useState<string | null>(null);
 
-  const { data, isLoading } = useGetAllPaymentQuery({
+  useEffect(() => {
+    const selectedCompany = localStorage.getItem("companySelected");
+    if (selectedCompany) {
+      try {
+        const parsedCompany = JSON.parse(selectedCompany);
+        setCompanyId(parsedCompany.id);
+      } catch (error) {
+        console.error("Error parsing company data from localStorage:", error);
+      }
+    }
+  }, []);
+
+  const { data, isLoading, isFetching } = useGetAllPaymentQuery({
     ...(searchString && { searchText: searchString }),
     page: currentPage - 1,
     size: 10,
     ...(status && { status: status }),
     ...(currency && { currency: currency }),
     ...(paymentType && { paymentType: paymentType }),
+    ...(companyId && { "Company-id": companyId }),
   });
 
   const hasData = data?.data?.content && data.data.content.length > 0;
@@ -37,7 +51,7 @@ const Table = ({
   return (
     <div>
       <div className="mt-5 rounded-lg border border-[var(--borderGray)]/50 overflow-x-auto w-[100%] ">
-        {isLoading ? (
+        {isLoading || isFetching ? (
           <TableSkeleton columns={10} />
         ) : !hasData ? (
           <EmptyState message="No payment data found" />
@@ -143,7 +157,7 @@ const Table = ({
           </table>
         )}
       </div>
-      {hasData && (
+      {hasData && !isFetching && (
         <Pagination
           totalPages={data?.data?.totalPages}
           currentPage={currentPage}

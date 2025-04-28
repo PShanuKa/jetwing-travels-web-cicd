@@ -1,37 +1,28 @@
 import { IoSearchOutline } from "react-icons/io5";
-import { GiSettingsKnobs } from "react-icons/gi";
-
-import { SelectNative } from "@/components/ui/select-native";
 import { FaPlus } from "react-icons/fa6";
 import Table from "./Table";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import SearchInput from "@/components/common/SearchInput";
 import { useDispatch } from "react-redux";
 import { setPageHeader } from "@/features/metaSlice";
 
 const AddNewInvoice = () => {
-
   const dispatch = useDispatch();
   dispatch(setPageHeader("Invoice Management"));
 
-  const [filterIsOpen, setFilterIsOpen] = useState(false);
 
   const [searchParams] = useSearchParams();
   const search = searchParams.get("searchString");
 
-  
-
   const [searchIsOpen, setSearchIsOpen] = useState(false);
   const [searchString, setSearchString] = useState("");
-
 
   useEffect(() => {
     if (search) {
       setSearchString(search);
     }
   }, [search]);
-
 
   return (
     <div className="md:p-4 p-2 border-[var(--borderGray)]  md:border rounded-lg w-full flex flex-col gap-4 bg-white ">
@@ -70,8 +61,7 @@ const AddNewInvoice = () => {
           </Link>
         </div>
       </div>
-      
-    
+
       <MobileSearch
         onChange={(e) => setSearchString(e.target.value)}
         value={searchString}
@@ -85,8 +75,6 @@ const AddNewInvoice = () => {
     </div>
   );
 };
-
-
 
 const MobileSearch = ({
   onChange,
@@ -108,14 +96,13 @@ const MobileSearch = ({
   );
 };
 
-
 // const MobileFilter = ({ filterIsOpen }: { filterIsOpen: boolean }) => {
 //   const contentRef = useRef<HTMLDivElement>(null);
 //   const [height, setHeight] = useState<number | null>(null);
 
 //   useEffect(() => {
 //     if (contentRef.current) {
-    
+
 //       const measuredHeight = filterIsOpen ? contentRef.current.scrollHeight : 0;
 //       setHeight(measuredHeight);
 //     }
@@ -152,6 +139,5 @@ const MobileSearch = ({
 //     </div>
 //   );
 // };
-
 
 export default AddNewInvoice;

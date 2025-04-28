@@ -1,6 +1,5 @@
 // import { useState } from "react";
 import logo from "@/assets/logo.png";
-import { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/store";
@@ -13,30 +12,15 @@ import { useGetAllOrganizationsQuery } from "@/services/organizationSlice";
 const CompanySelector = () => {
   // State to manage modal visibility
   // const [isOpen, setIsOpen] = useState(true);
-  const [userName, setUserName] = useState("User");
 
-  useEffect(() => {
-    try {
-      const userString = localStorage.getItem("user");
-      if (userString) {
-        const userData = JSON.parse(userString);
-        if (userData && userData.name) {
-          setUserName(userData.name);
-        }
-      }
-    } catch (error) {
-      console.error("Error parsing user data:", error);
-    }
-  }, []);
-
+  const dispatch = useDispatch();
   const companySelected = useSelector(
     (state: RootState) => state.meta.companySelected
   );
+  // const [collapsed, setCollapsed] = useState(false);
   const user = useSelector((state: RootState) => state.auth.userInfo);
 
   const { data: companies } = useGetAllOrganizationsQuery(undefined);
-
-  const dispatch = useDispatch();
 
   const selectedHandler = (company: any) => {
     dispatch(setCompanySelected(company));

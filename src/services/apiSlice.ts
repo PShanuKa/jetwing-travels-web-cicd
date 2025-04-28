@@ -20,7 +20,9 @@ const baseQuery = fetchBaseQuery({
 
     if (companyId) {
       headers.set("company-Id", `${companyId}`);
+      headers.set("Company-Id", `${companyId}`);
     }
+    
 
     if (userId) {
       headers.set("user-Id", `${userId}`);

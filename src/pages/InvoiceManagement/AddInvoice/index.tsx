@@ -94,11 +94,13 @@ const AddNewInvoice = () => {
 
 
   useEffect(() => {
+    console.log(companyRate)
     setTimeout(() => {
       setFormData({
         ...formData,
         bankCharge: companyRate,
       });
+
     }, 300);
   }, [companyRate]);
 
@@ -199,7 +201,9 @@ const AddNewInvoice = () => {
     formDataToSubmit.append("contactNumber", formData.contactNumber);
     formDataToSubmit.append("initialPayment", formData.initialPayment);
     formDataToSubmit.append("balancePayment", formData.balancePayment);
+    formDataToSubmit.append("paymentPercentage", formData.paymentPercentage);
     formDataToSubmit.append("currency", formData.currency);
+    formDataToSubmit.append("bankCharge", formData.bankCharge);
     formDataToSubmit.append(
       "balancePaymentDueDate",
       formData.balancePaymentDueDate

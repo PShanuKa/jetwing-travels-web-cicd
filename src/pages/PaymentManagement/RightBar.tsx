@@ -2,18 +2,13 @@ import { useState } from "react";
 
 import { SlUser } from "react-icons/sl";
 import { MdOutlineMail } from "react-icons/md";
-import { BsMailbox } from "react-icons/bs";
-import { GrMapLocation } from "react-icons/gr";
 import { FiPhone } from "react-icons/fi";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import { LiaCoinsSolid } from "react-icons/lia";
-import { FaRegAddressCard } from "react-icons/fa6";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { FaSortAmountUp } from "react-icons/fa";
 import { SlWallet } from "react-icons/sl";
-import { TiPen } from "react-icons/ti";
 import { PiCursorClick } from "react-icons/pi";
 import { TbMessageReport } from "react-icons/tb";
 

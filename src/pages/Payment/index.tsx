@@ -14,6 +14,16 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { MdOutlineErrorOutline } from "react-icons/md";
 import { useGetFiltersSchemaQuery } from "@/services/reportSlice";
 
+// Define the type for window.Checkout
+declare global {
+  interface Window {
+    Checkout: {
+      configure: (config: { session: { id: string } }) => void;
+      showEmbeddedPage: (target: string) => void;
+    };
+  }
+}
+
 const Payment = () => {
   const { id, token } = useParams();
   // const [searchParams] = useSearchParams();
@@ -21,6 +31,8 @@ const Payment = () => {
   const [formData, setFormData] = useState({
     cartType: "",
   });
+  const [error, setError] = useState("");
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { data, isLoading } = useGetPaymentDetailsQuery({
     invoiceId: id,
@@ -34,8 +46,25 @@ const Payment = () => {
   // const [notifyPayment] = useNotifyPaymentMutation();
 
   const handleInitiatePayment = async () => {
+    if (!formData.cartType) {
+      setError("Please select a card type to proceed");
+      return;
+    }
+
+    setError("");
+    setIsRedirecting(true);
     console.log(formData.cartType);
     if (formData.cartType == "Master/Visa") {
+      console.log("Initiating Master/Visa payment");
+      console.log("Payment data:", {
+        amount:
+          data?.data?.invoiceStatus == "PENDING"
+            ? data?.data?.initialPayment
+            : data?.data?.balancePayment,
+        invoiceToken: data?.data?.token,
+        currency: data?.data?.currency,
+      });
+
       await initiatePayment({
         amount:
           data?.data?.invoiceStatus == "PENDING"
@@ -44,25 +73,48 @@ const Payment = () => {
         invoiceToken: data?.data?.token,
         currency: data?.data?.currency,
         gateway: "mastercard",
-      }).then((res) => {
-        console.log(res);
-        if (res?.data?.data?.paymentUrl?.sessionId) {
-          localStorage.setItem(
-            "merchantId",
-            res?.data?.data?.paymentUrl?.merchant
+      })
+        .then((res) => {
+          console.log("Master/Visa payment response:", res);
+          if (res?.data?.data?.paymentUrl?.sessionId) {
+            console.log("Storing payment data in localStorage");
+            localStorage.setItem(
+              "merchantId",
+              res?.data?.data?.paymentUrl?.merchant
+            );
+            localStorage.setItem(
+              "sessionId",
+              res?.data?.data?.paymentUrl?.sessionId
+            );
+            // Store invoiceToken for the notification endpoint
+            localStorage.setItem("invoiceToken", data?.data?.token);
+            console.log("Payment data stored in localStorage:", {
+              merchantId: res?.data?.data?.paymentUrl?.merchant,
+              sessionId: res?.data?.data?.paymentUrl?.sessionId,
+              invoiceToken: data?.data?.token,
+            });
+
+            window.Checkout.configure({
+              session: {
+                id: res?.data?.data?.paymentUrl?.sessionId,
+              },
+            });
+            console.log("Configured Checkout with sessionId");
+            window.Checkout.showEmbeddedPage("#embed-target");
+            console.log("Showing embedded payment page");
+            setIsRedirecting(false);
+          } else {
+            console.error("No session ID in payment response");
+            setIsRedirecting(false);
+          }
+        })
+        .catch((error: unknown) => {
+          console.error(
+            "Payment error:",
+            error instanceof Error ? error.message : "Unknown error"
           );
-          localStorage.setItem(
-            "sessionId",
-            res?.data?.data?.paymentUrl?.sessionId
-          );
-          window.Checkout.configure({
-            session: {
-              id: res?.data?.data?.paymentUrl?.sessionId,
-            },
-          });
-          window.Checkout.showEmbeddedPage("#embed-target");
-        }
-      });
+          setIsRedirecting(false);
+        });
     }
 
     if (formData.cartType == "CyberSource") {
@@ -84,48 +136,34 @@ const Payment = () => {
 
         console.log("CyberSource Values:", cyberSourceValues);
 
-        const formData = {
-          // access_key: paymentResponse.access_key,
-          // profile_id: paymentResponse.profile_id,
-          // transaction_uuid: paymentResponse.transaction_uuid,
-          // unsigned_field_names: paymentResponse.unsigned_field_names,
-          // signed_date_time: paymentResponse.signed_date_time,
-          // signed_field_names: paymentResponse.signed_field_names,
-          // locale: paymentResponse.locale,
-          // transaction_type: paymentResponse.transaction_type,
-          // reference_number: paymentResponse.reference_number,
-          // amount: paymentResponse.amount,
-          // currency: paymentResponse.currency,
-          // signed_field_names: paymentResponse.signed_field_names,
-          // payment_method: paymentResponse.payment_method,
-          // signature: paymentResponse.signature,
-          // return_url: paymentResponse.return_url,
-          // cancel_url: paymentResponse.cancel_url,
-          // notify_url: paymentResponse.notify_url,
-        };
+        const cyberSourceFormData: Record<string, string> = {};
 
         Object.entries(cyberSourceValues).forEach(([key, value]) => {
-          formData[key] = value;
+          cyberSourceFormData[key] = value as string;
         });
 
-        console.log("Form Data Payload:", formData);
+        console.log("Form Data Payload:", cyberSourceFormData);
 
         const form = document.createElement("form");
         form.method = "POST";
         form.action = "https://testsecureacceptance.cybersource.com/pay";
 
-        Object.entries(formData).forEach(([key, value]) => {
+        Object.entries(cyberSourceFormData).forEach(([key, value]) => {
           const input = document.createElement("input");
           input.type = "hidden";
           input.name = key;
-          input.value = value as string;
+          input.value = value;
           form.appendChild(input);
         });
 
         document.body.appendChild(form);
         form.submit();
-      } catch (error) {
-        console.error("Error during payment initiation:", error.message);
+      } catch (error: unknown) {
+        console.error(
+          "Error during payment initiation:",
+          error instanceof Error ? error.message : "Unknown error occurred"
+        );
+        setIsRedirecting(false);
       }
     }
     // Direct Pay
@@ -145,7 +183,7 @@ const Payment = () => {
     //   });
     // }
 
-    if (formData.cartType == "Amex") {
+    if (formData.cartType === "Amex") {
       await initiatePaymentAmex({
         clientId: data?.data?.primaryEmail,
         transactionAmount: {
@@ -159,21 +197,29 @@ const Payment = () => {
               : data?.data?.balancePayment,
           serviceFeeAmount: 50.0,
           currency: data?.data?.currency,
-          
         },
         invoiceToken: token,
         comment: "Test payment",
-      }).then((res) => {
-        localStorage.setItem("clientId", data?.data?.primaryEmail);
-        console.log(res);
-        const paymentPageUrl = res?.data?.responseData?.paymentPageUrl;
+      })
+        .then((res) => {
+          localStorage.setItem("clientId", data?.data?.primaryEmail);
+          console.log(res);
+          const paymentPageUrl = res?.data?.responseData?.paymentPageUrl;
 
-        if (paymentPageUrl) {
-          window.location.href = paymentPageUrl;
-        } else {
-          console.error("Payment page URL not found in the response.");
-        }
-      });
+          if (paymentPageUrl) {
+            window.location.href = paymentPageUrl;
+          } else {
+            console.error("Payment page URL not found in the response.");
+            setIsRedirecting(false);
+          }
+        })
+        .catch((error: unknown) => {
+          console.error(
+            "Amex payment error:",
+            error instanceof Error ? error.message : "Unknown error"
+          );
+          setIsRedirecting(false);
+        });
     }
   };
 
@@ -202,6 +248,7 @@ const Payment = () => {
 
   return (
     <div className="w-full min-h-screen ">
+      {isRedirecting && <FullPageLoader />}
       <div className="w-full  bg-[var(--publicBg)] pb-7 px-7">
         {/* header */}
         <div className="max-w-7xl w-full py-2 md:py-5  mx-auto flex items-center ">
@@ -223,8 +270,14 @@ const Payment = () => {
               <h1 className="text-white text-[18px] font-normal">
                 <span className="text-[50px] font-semibold">
                   {data?.data?.invoiceStatus == "PENDING"
-                    ? data?.data?.initialPayment
-                    : data?.data?.balancePayment}
+                    ? data?.data?.initialPayment?.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })
+                    : data?.data?.balancePayment?.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                 </span>{" "}
                 / {data?.data?.currency}
               </h1>
@@ -255,7 +308,7 @@ const Payment = () => {
                 Invoice Details
               </h1>
               <p className="text-black/50  text-[18px] font-normal">
-                ID: #000{data?.data?.id}
+                ID: #000{data?.data?.invoiceNumber}
               </p>
 
               <div className="flex items-center mt-5 gap-4">
@@ -300,21 +353,29 @@ const Payment = () => {
                   {data?.data?.itemList?.map((item: any) => (
                     <div
                       key={item?.itemId}
-                      className="flex flex-col gap-1 border border-black/30 rounded-lg p-2"
+                      className="flex flex-col md:flex-row md:justify-between gap-1 border border-black/30 rounded-lg p-3 hover:shadow-sm transition-all"
                     >
-                      <p className="text-[15px] font-normal ">
+                      <p className="text-[15px] font-normal">
                         {item?.description}
                       </p>
                       <p className="text-[15px] font-bold text-end">
-                        ${item?.amount?.toFixed(2)}
+                        {data?.data?.currency}{" "}
+                        {item?.amount?.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </p>
                     </div>
                   ))}
 
                   <div className="flex justify-end gap-1 pb-2">
-                    <div className="flex flex-col gap-1 border-b border-black/30">
-                      <p className="text-[15px] font-normal text-end">
-                        TOTAL: {data?.data?.itemTotal?.toFixed(2)}
+                    <div className="flex flex-col gap-1 border-b border-black/30 px-3">
+                      <p className="text-[16px] font-semibold text-end">
+                        TOTAL: {data?.data?.currency}{" "}
+                        {data?.data?.itemTotal?.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </p>
                     </div>
                   </div>
@@ -351,10 +412,10 @@ const Payment = () => {
                     <p>{data?.data?.paymentMethod}</p>
                   </div>
                 )}
-                <div className="flex text-black text-[13px] font-semibold justify-between items-center">
+                {/* <div className="flex text-black text-[13px] font-semibold justify-between items-center">
                   <h1>Invoice Status</h1>
                   <p>{data?.data?.invoiceStatus}</p>
-                </div>
+                </div> */}
                 <div className="flex text-black text-[13px] font-semibold justify-between items-center">
                   <h1>Currency</h1>
                   <p>{data?.data?.currency}</p>
@@ -380,8 +441,14 @@ const Payment = () => {
                   <h1>TOTAL</h1>
                   <p>
                     {data?.data?.invoiceStatus == "PENDING"
-                      ? data?.data?.initialPayment
-                      : data?.data?.balancePayment}
+                      ? data?.data?.initialPayment?.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      : data?.data?.balancePayment?.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                   </p>
                 </div>
 
@@ -401,23 +468,29 @@ const Payment = () => {
                                 id={item?.name}
                                 value={item?.name}
                                 checked={formData.cartType === item?.name} // Bind the checked state
-                                onChange={() =>
+                                onChange={() => {
                                   setFormData({
                                     ...formData,
                                     cartType: item?.name,
-                                  })
-                                } // Update state on change
+                                  });
+                                  setError("");
+                                }} // Update state on change
                               />
                               <label
                                 htmlFor="visa"
                                 className="text-[13px] font-semibold"
                               >
-                                {item?.name}
+                                {item?.name === "CyberSource"
+                                  ? "Visa/Master"
+                                  : item?.name}
                               </label>
                             </div>
                           )
                         )}
                       </div>
+                      {error && (
+                        <p className="text-red-500 text-[13px] mt-1">{error}</p>
+                      )}
                     </div>
                     <div className="flex md:flex-row flex-col justify-end mt-2">
                       <button
@@ -574,6 +647,25 @@ const ExpirePayLink = ({ id }: { id: string | undefined }) => {
       <div className="w-full py-4 px-7 text-center">
         <p className="text-white text-sm">
           Copyright © {new Date().getFullYear()} jetwing. All rights reserved.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const FullPageLoader = () => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="flex flex-col items-center">
+        <div className="relative w-20 h-20">
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-t-transparent border-r-transparent border-white rounded-full animate-spin"></div>
+          <div
+            className="absolute top-1 left-1 w-[70px] h-[70px] border-4 border-b-transparent border-l-transparent border-[var(--publicBg)] rounded-full animate-spin"
+            style={{ animationDirection: "reverse", animationDuration: "0.8s" }}
+          ></div>
+        </div>
+        <p className="text-white mt-4 font-medium tracking-wider">
+          PROCESSING PAYMENT
         </p>
       </div>
     </div>

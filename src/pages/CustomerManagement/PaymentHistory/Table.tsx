@@ -6,8 +6,8 @@ import { useState } from "react";
 
 const Table = () => {
   // Simulating loading state for demo purposes
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasData, setHasData] = useState(true);
+  const [isLoading] = useState(false);
+  const [hasData] = useState(true);
 
   return (
     <div className="mt-5 rounded-lg border border-[var(--borderGray)]/50">

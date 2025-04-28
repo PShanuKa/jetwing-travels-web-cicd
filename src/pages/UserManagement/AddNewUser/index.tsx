@@ -1,10 +1,12 @@
 import Input from "@/components/common/Input";
 import logo from "@/assets/logo.png";
-import RightBar from "./RightBar";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import { useCreateUserMutation, useUpdateUserMutation } from "@/services/userSlice";
+import {
+  useCreateUserMutation,
+  useUpdateUserMutation,
+} from "@/services/userSlice";
 import { useGetAllOrganizationsQuery } from "@/services/organizationSlice";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { BiLoaderAlt } from "react-icons/bi";
@@ -35,7 +37,6 @@ const initialFormData: {
   password: "",
 };
 
-
 const AddNewUser = () => {
   const dispatch = useDispatch();
   dispatch(setPageHeader("User Management / Create New User"));
@@ -49,26 +50,30 @@ const AddNewUser = () => {
 
   // console.log(parsedItem);
 
-  
   const validationSchema = Yup.object({
     fullName: Yup.string().required("Full name is required"),
     // address: Yup.string().required("Address is required"),
     mobileNumber: Yup.string()
       .required("Mobile number is required")
-      .matches(/^\d{10,}$/, "Mobile number must be at least 10 digits and contain only numbers")
+      .matches(
+        /^\d{10,}$/,
+        "Mobile number must be at least 10 digits and contain only numbers"
+      )
       .min(10, "Mobile number must be at least 10 digits"),
     email: Yup.string()
       .email("Invalid email format")
       .required("Email is required"),
-    password: Yup.string().test("password", "Password is required", function(value) {
-      return type === "edit" ? true : value?.length > 0;
-    }),
+    password: Yup.string().test(
+      "password",
+      "Password is required",
+      function (value) {
+        return type === "edit" ? true : Boolean(value && value.length > 0);
+      }
+    ),
     nicOrPassportNumber: Yup.string()
-    .nullable() // Allows null or undefined values
-    .min(6, "NIC or Passport Number must be at least 6 characters"), 
+      .nullable() // Allows null or undefined values
+      .min(6, "NIC or Passport Number must be at least 6 characters"),
   });
-
-
 
   useEffect(() => {
     if (type === "edit" && parsedItem) {
@@ -80,11 +85,11 @@ const AddNewUser = () => {
         mobileNumber: parsedItem.contactNumber,
         nicOrPassportNumber: parsedItem.identityNumber,
         roleName: parsedItem.roleName,
-        organizationIds: parsedItem?.organizationsList?.map((item: any) => item.id),
+        organizationIds: parsedItem?.organizationsList?.map(
+          (item: any) => item.id
+        ),
         // password: parsedItem.password,
       });
-
-
     }
   }, [type]);
 
@@ -124,11 +129,15 @@ const AddNewUser = () => {
     });
   };
 
-
-
   const handleSubmit = async () => {
     try {
-      await validationSchema.validate({...formData ,nicOrPassportNumber: formData.nicOrPassportNumber|| undefined}, { abortEarly: false });
+      await validationSchema.validate(
+        {
+          ...formData,
+          nicOrPassportNumber: formData.nicOrPassportNumber || undefined,
+        },
+        { abortEarly: false }
+      );
       console.log(formData);
 
       if (type == "edit") {
@@ -191,7 +200,7 @@ const AddNewUser = () => {
     }));
   };
 
-  
+ 
 
   return (
     <div className="grid md:grid-cols-2 gap-5 p-3">
@@ -379,14 +388,13 @@ const AddNewUser = () => {
         </div>
 
         <div className="flex justify-end mt-10 gap-3">
-      
+          <Link
+            to="/admin/user"
+            className="border-[var(--primary)]/20 border hover:opacity-80 focus:opacity-90 active:scale-95 text-[var(--primary)]/60 px-10 py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36x] h-[36px] transition-all duration-150 outline-none"
+          >
+            Cancel
+          </Link>
 
-
-            <Link to="/admin/user" className="border-[var(--primary)]/20 border hover:opacity-80 focus:opacity-90 active:scale-95 text-[var(--primary)]/60 px-10 py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36x] h-[36px] transition-all duration-150 outline-none">
-              Cancel
-            </Link>
-        
-        
           <button
             className="bg-[var(--primary)] hover:opacity-80 focus:opacity-90 active:scale-95 text-white py-2 rounded-md text-[14px] font-normal flex items-center gap-2 md:h-[36px] h-[36px] transition-all duration-150 outline-none px-10"
             onClick={handleSubmit}

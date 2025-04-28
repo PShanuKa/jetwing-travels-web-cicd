@@ -19,8 +19,7 @@ import Dropdown from "@/components/common/Dropdown";
 import SearchDropDown from "@/components/common/SearchDropDown";
 
 import { DatePicker } from "@/components/ui/date-picker";
-import { format, set } from "date-fns";
-import { useGetSettingQuery } from "@/services/settingSlice";
+import { format } from "date-fns";
 
 const initialFormData = {
   title: "",
@@ -42,7 +41,7 @@ const initialFormData = {
   balancePayment: "",
   balancePaymentDueDate: new Date().toISOString().split("T")[0],
   attachments: null,
-  currency: "LKR",
+  currency: "",
   bankCharge: 0,
 };
 
@@ -75,6 +74,9 @@ const validationSchema = Yup.object({
   contactNumber: Yup.string().required("Contact number is required"),
   initialPayment: Yup.string().required("Initial payment is required"),
   fullAmount: Yup.string().required("Full amount is required"),
+  balancePaymentDueDate: Yup.string().required(
+    "Balance payment due date is required"
+  ),
   // balancePayment: Yup.string().required("Balance payment is required"),
 });
 
@@ -97,7 +99,6 @@ const AddNewInvoice = () => {
 
   // Extract organization rate based on company ID
   useEffect(() => {
-
     if (settingsData?.data?.organizationList && companyId) {
       const selectedOrganization = settingsData.data.organizationList.find(
         (org: any) => org.id === companyId
@@ -108,7 +109,6 @@ const AddNewInvoice = () => {
       }
     }
   }, [settingsData, companyId]);
-
 
   const handleChange = (e: any) => {
     setFormData({
@@ -200,6 +200,16 @@ const AddNewInvoice = () => {
     organizationId: companyId,
   });
 
+  // Add this useEffect to set the first currency when currencyData is loaded
+  useEffect(() => {
+    if (currencyData?.data?.length > 0 && !formData.currency) {
+      setFormData({
+        ...formData,
+        currency: currencyData.data[0].currency,
+      });
+    }
+  }, [currencyData]);
+
   const handleDeleteItem = (index: number) => {
     // Prevent deleting the last item
     if (formData.items.length <= 1) {
@@ -261,6 +271,15 @@ const AddNewInvoice = () => {
   const handleSubmit = async () => {
     const formDataToSubmit = new FormData();
 
+    // Manual validation for balancePaymentDueDate
+    if (!balancePaymentDueDate || !formData.balancePaymentDueDate) {
+      setFormErrors({
+        ...formErrors,
+        balancePaymentDueDate: "Balance payment due date is required",
+      });
+      return;
+    }
+
     formDataToSubmit.append("title", formData.title);
     formDataToSubmit.append("tourNumber", formData.tourNumber);
     formDataToSubmit.append("firstName", formData.firstName);
@@ -269,7 +288,7 @@ const AddNewInvoice = () => {
     formDataToSubmit.append("secondaryEmail", formData.secondaryEmail);
     formDataToSubmit.append("ccEmail", formData.ccEmail);
     if (formData.items.length > 0) {
-      formDataToSubmit.append("itemList", JSON.stringify(formData.items));
+      formDataToSubmit.append("items", JSON.stringify(formData.items));
     }
     formDataToSubmit.append("address", formData.address);
     formDataToSubmit.append("country", formData.country);
@@ -281,7 +300,6 @@ const AddNewInvoice = () => {
     formDataToSubmit.append("balancePayment", formData.balancePayment);
     formDataToSubmit.append("paymentPercentage", formData.paymentPercentage);
     formDataToSubmit.append("currency", formData.currency);
-
 
     // Calculate the proper values
     const itemTotalValue = calculateTotalAmount();
@@ -298,7 +316,6 @@ const AddNewInvoice = () => {
     // fullAmount is the total with bank charge included
     formDataToSubmit.append("fullAmount", fullAmountValue.toFixed(2));
     formDataToSubmit.append("totalAmount", fullAmountValue.toFixed(2));
-
 
     formDataToSubmit.append(
       "balancePaymentDueDate",
@@ -558,6 +575,7 @@ const AddNewInvoice = () => {
                     onChangeHandler={handleChange}
                     name="currency"
                     size="small"
+                    placeholder=""
                   />
                 </div>
               </div>
@@ -727,47 +745,61 @@ const AddNewInvoice = () => {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-1">
-              {Number(formData.paymentPercentage) < 100 && (
-                <>
-                  <div>
-                    <Input
-                      label="Balance Payment"
-                      placeholder="0.00"
-                      name="balancePayment"
-                      value={formatNumberWithCommas(formData.balancePayment)}
-                      errors={formErrors.balancePayment || ""}
-                      disabled={true}
-                      size="small"
-                      onChangeHandler={(e) => {
-                        const numericValue = parseFormattedNumber(
-                          e.target.value
-                        ).replace(/[^0-9.]/g, "");
-                        e.target.value = numericValue;
-                        handleChange(e);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[12px] font-medium text-[var(--primary)] text-start">
-                      Balance Payment Due Date
-                      {formErrors.balancePaymentDueDate && (
-                        <span className="text-[var(--red)]"> *</span>
-                      )}
-                    </label>
-                    <DatePicker
-                      date={balancePaymentDueDate}
-                      setDate={setBalancePaymentDueDate}
-                      placeholder="Select due date"
-                      className="h-[32px] text-[12px]"
-                    />
-                    {formErrors.balancePaymentDueDate && (
-                      <p className="text-[var(--red)] text-[12px]">
-                        {formErrors.balancePaymentDueDate}
-                      </p>
-                    )}
-                  </div>
-                </>
-              )}
+              <div>
+                <Input
+                  label="Balance Payment"
+                  placeholder="0.00"
+                  name="balancePayment"
+                  value={formatNumberWithCommas(formData.balancePayment)}
+                  errors={formErrors.balancePayment || ""}
+                  disabled={true}
+                  size="small"
+                  onChangeHandler={(e) => {
+                    const numericValue = parseFormattedNumber(
+                      e.target.value
+                    ).replace(/[^0-9.]/g, "");
+                    e.target.value = numericValue;
+                    handleChange(e);
+                  }}
+                />
+              </div>
+              <div>
+                <label className="text-[12px] font-medium text-[var(--primary)] text-start">
+                  Balance Payment Due Date
+                  <span className="text-[var(--red)]"> *</span>
+                </label>
+                <div
+                  className={
+                    formErrors.balancePaymentDueDate
+                      ? "border border-[var(--red)] rounded-md"
+                      : ""
+                  }
+                >
+                  <DatePicker
+                    date={balancePaymentDueDate}
+                    setDate={(date) => {
+                      setBalancePaymentDueDate(date);
+                      if (date) {
+                        setFormData({
+                          ...formData,
+                          balancePaymentDueDate: format(date, "yyyy-MM-dd"),
+                        });
+                        setFormErrors({
+                          ...formErrors,
+                          balancePaymentDueDate: "",
+                        });
+                      }
+                    }}
+                    placeholder="Select due date"
+                    className="h-[32px] text-[12px]"
+                  />
+                </div>
+                {formErrors.balancePaymentDueDate && (
+                  <p className="text-[var(--red)] text-[12px]">
+                    {formErrors.balancePaymentDueDate}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
           <div className="mt-3">

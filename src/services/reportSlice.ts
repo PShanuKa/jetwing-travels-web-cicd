@@ -9,33 +9,14 @@ const reportSlice = apiSlice.injectEndpoints({
       }),
     }),
     getReportData: builder.query({
-      query: ({
-        name,
-        query,
-
-        // filters
-      }) => {
-        const queryString = new URLSearchParams(query);
+      query: (data) => {
+        const { name } = data;
         return {
-          url: `report/${name}?${queryString.toString()}`,
+          url: `report/${name}`,
           method: "POST",
-          // body: {"filters": filters},
           body: {
-            filters: [
-              {
-                filterName: "string",
-                filterParameter: "string",
-                dataType: "string",
-                options: [
-                  {
-                    code: "string",
-                    name: "string",
-                    valid: true,
-                  },
-                ],
-                value: "string",
-              },
-            ],
+            // Remove the unused query property
+            // query,
           },
         };
       },
@@ -43,7 +24,6 @@ const reportSlice = apiSlice.injectEndpoints({
     downloadReport: builder.mutation({
       query: ({
         name,
-        query,
 
         // filters
       }) => {

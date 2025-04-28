@@ -21,7 +21,6 @@ export interface IRoute {
   path: string;
   element?: RouteProps["element"];
   name: string;
-  admin?: boolean;
 }
 
 const authRoutes: IRoute[] = [
@@ -32,17 +31,19 @@ const authRoutes: IRoute[] = [
   },
 ];
 
+
 const privateRoutes: IRoute[] = [
   // DashBoard Routes
   {
     path: "/",
     element: <DashBoard />,
     name: "Dashboard",
+    
   },
   // User Management Routes
   {
     path: "/user",
-    element: <UserManagement />,
+    element: <UserManagement  />,
     name: "User Management",
   },
   {
@@ -120,7 +121,7 @@ const privateRoutes: IRoute[] = [
 
 const publicRoutes: IRoute[] = [
   {
-    path: "/payment/:id/:token/:paymentType",
+    path: "/payment/:id/:token",
     element: <Payment />,
     name: "Payment",
   },
@@ -135,10 +136,11 @@ const publicRoutes: IRoute[] = [
     name: "Payment Failed",
   },
   {
-    path: "/payment/master-card/notify",
+    path: "/payment/mastercard/notify",
     element: <MasterCardNotify />,
     name: "MasterCard Notify",
   },
+  
 ];
 
 export { authRoutes, privateRoutes, publicRoutes };

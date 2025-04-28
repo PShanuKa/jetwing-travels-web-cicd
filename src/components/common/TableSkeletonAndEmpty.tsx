@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import emptyStateImg from "@/assets/empty_status.png";
 
 export const TableSkeleton = ({ columns = 10 }: { columns?: number }) => {

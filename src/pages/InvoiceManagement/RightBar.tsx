@@ -1,16 +1,30 @@
 import { useState, useEffect } from "react";
+import { BiSolidEdit } from "react-icons/bi";
 import { SlUser } from "react-icons/sl";
 import { MdOutlineMail } from "react-icons/md";
+import { BsMailbox } from "react-icons/bs";
+import { GrMapLocation } from "react-icons/gr";
 import { FiPhone } from "react-icons/fi";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import { BiCheck } from "react-icons/bi";
-import { FiCopy } from "react-icons/fi";
-import { AiOutlineLoading3Quarters, AiOutlineDownload } from "react-icons/ai";
+import { LiaCoinsSolid } from "react-icons/lia";
+import { FaRegAddressCard } from "react-icons/fa6";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import { FaCalendarAlt } from "react-icons/fa";
-import { FaFileInvoiceDollar } from "react-icons/fa";
-import { PiBankBold } from "react-icons/pi";
-import { GiReceiveMoney, GiPayMoney } from "react-icons/gi";
+import { Link } from "react-router-dom";
+import { AiOutlineDownload, AiOutlineLoading3Quarters } from "react-icons/ai";
+
+import { IoDocumentTextOutline } from "react-icons/io5";
+import { FaSortAmountUp, FaPercentage, FaCalendarAlt } from "react-icons/fa";
+import { SlWallet } from "react-icons/sl";
+import { TiPen } from "react-icons/ti";
+import { PiCursorClick } from "react-icons/pi";
+import { TbMessageReport } from "react-icons/tb";
+import { FaFilePdf } from "react-icons/fa6";
+import { MdAttachMoney, MdMoneyOff } from "react-icons/md";
+import { GiReceiveMoney, GiPayMoney, GiTakeMyMoney } from "react-icons/gi";
+import { TbMoneybag } from "react-icons/tb";
+import { BsCurrencyExchange, BsCreditCard2Front } from "react-icons/bs";
+import { FiCopy } from "react-icons/fi";
+import { BiCheck } from "react-icons/bi";
 import PayLinkDialog from "./PayLinkDialog";
 import { useDownloadInvoiceMutation } from "@/services/invoiceSlice";
 import { format, parseISO } from "date-fns";
@@ -71,13 +85,13 @@ const RightBar = ({
       title: "Invoice Number",
       value: item.id || "-",
       icon: (
-        <FaFileInvoiceDollar className="text-[var(--iconGray)]" size={15} />
+        <IoDocumentTextOutline className="text-[var(--iconGray)]" size={15} />
       ),
     },
     {
       title: "Transaction Fee",
       value: item.currency + " " + item.bankCharge || "-",
-      icon: <PiBankBold className="text-[var(--iconGray)]" size={16} />,
+      icon: <BsCreditCard2Front className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Initial Payment",
@@ -107,9 +121,7 @@ const RightBar = ({
     {
       title: "Total Amount",
       value: item.currency + " " + item.totalAmount || "-",
-      icon: (
-        <FaFileInvoiceDollar className="text-[var(--iconGray)]" size={18} />
-      ),
+      icon: <TbMoneybag className="text-[var(--iconGray)]" size={18} />,
     },
     {
       title: "Balance Payment Due Date",
@@ -119,17 +131,17 @@ const RightBar = ({
     {
       title: "Payment Type",
       value: item.invoiceType || "-",
-      icon: <PiBankBold className="text-[var(--iconGray)]" size={16} />,
+      icon: <BsCurrencyExchange className="text-[var(--iconGray)]" size={16} />,
     },
     {
       title: "Initial Payment Link Clicked Times",
       value: item.initialPaymentLinkClickedTimes || "0",
-      icon: <PiBankBold className="text-[var(--iconGray)]" size={20} />,
+      icon: <PiCursorClick className="text-[var(--iconGray)]" size={20} />,
     },
     {
       title: "Balance Payment Link Clicked Times",
       value: item.balancePaymentLinkClickedTimes || "0",
-      icon: <PiBankBold className="text-[var(--iconGray)]" size={20} />,
+      icon: <PiCursorClick className="text-[var(--iconGray)]" size={20} />,
     },
   ];
 
@@ -192,44 +204,14 @@ const RightBar = ({
       return;
     }
 
-    if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(link);
-      setCopied(type);
-      toast.success(
-        `${
-          type.charAt(0).toUpperCase() + type.slice(1)
-        } payment link copied to clipboard`
-      );
-      setTimeout(() => setCopied(null), 2000);
-    } else {
-      // Fallback method for copying
-      const textArea = document.createElement("textarea");
-      textArea.value = link;
-      textArea.style.position = "fixed"; // Avoid scrolling to bottom
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-
-      try {
-        const successful = document.execCommand("copy");
-        if (successful) {
-          setCopied(type);
-          toast.success(
-            `${
-              type.charAt(0).toUpperCase() + type.slice(1)
-            } payment link copied to clipboard`
-          );
-        } else {
-          toast.error("Failed to copy link");
-        }
-      } catch (err) {
-        toast.error("Failed to copy link");
-        console.error("Fallback: Could not copy text: ", err);
-      }
-
-      document.body.removeChild(textArea);
-      setTimeout(() => setCopied(null), 2000);
-    }
+    navigator.clipboard.writeText(link);
+    setCopied(type);
+    toast.success(
+      `${
+        type.charAt(0).toUpperCase() + type.slice(1)
+      } payment link copied to clipboard`
+    );
+    setTimeout(() => setCopied(null), 2000);
   };
 
   const getPaymentStatusDisplay = (item: any) => {
@@ -248,6 +230,25 @@ const RightBar = ({
       return "PAID";
     } else {
       return "PARTIALLY_PAID";
+    }
+  };
+
+  const getInvoiceStatusClass = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case "ACTIVE":
+        return "bg-green-500/10 text-green-500";
+      case "PENDING":
+        return "bg-blue-500/10 text-blue-500";
+      case "PAID":
+        return "bg-green-500/10 text-green-500";
+      case "PARTIALLY_PAID":
+        return "bg-yellow-500/10 text-yellow-600";
+      case "PARTIALLY_CANCELLED":
+        return "bg-orange-500/10 text-orange-500";
+      case "CANCELLED":
+        return "bg-red-500/10 text-red-500";
+      default:
+        return "bg-gray-500/10 text-gray-500";
     }
   };
 
@@ -426,15 +427,13 @@ const RightBar = ({
                 <div className="w-full md:pl-5">
                   <div className="flex items-center gap-5 ">
                     <div className="w-[24px] h-[24px] flex items-center justify-center">
-                      <FaFileInvoiceDollar
-                        className="text-[var(--iconGray)]"
-                        size={16}
-                      />
+                      <FaFilePdf className="text-[var(--iconGray)]" size={16} />
                     </div>
                     <div className="flex items-center justify-between w-full">
                       <div>
                         <p className="text-[12px] text-[#475467] font-normal">
-                          invoice-{item.id}.pdf invoice-{item.id}.pdf
+                          invoice-{item.id}.pdf
+                          invoice-{item.id}.pdf
                         </p>
                         <p className="text-[11px] text-[#475467]/50 font-normal">
                           {formatDate(item.createdAt)}

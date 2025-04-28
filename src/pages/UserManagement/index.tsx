@@ -78,7 +78,7 @@ const UserManagement = () => {
             <SelectNative value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="w-full">
               <option value="">Role</option>
               <option value="admin">Admin</option>
-           }
+          
               <option value="executive">Executive</option>
             </SelectNative>
           </div>

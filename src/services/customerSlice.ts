@@ -1,11 +1,10 @@
 import apiSlice from "./apiSlice";
 
-
 const customerSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     addCustomer: builder.mutation({
       query: (data) => ({
-        url: "customers",
+        url: "customers/create",
         method: "POST",
         body: data,
       }),
@@ -13,7 +12,20 @@ const customerSlice = apiSlice.injectEndpoints({
     }),
     getAllCustomers: builder.query({
       query: (params) => {
-        const queryParams = new URLSearchParams(params).toString();
+        const companySelected = localStorage.getItem("companySelected");
+        let companyId = "";
+        if (companySelected) {
+          try {
+            const parsedData = JSON.parse(companySelected);
+            companyId = parsedData.id;
+          } catch (error) {
+            console.error("Error parsing company data", error);
+          }
+        }
+        const queryParams = new URLSearchParams({
+          ...params,
+          CompanyId: companyId,
+        }).toString();
         return {
           url: `customers/filter?${queryParams}`,
           method: "GET",
@@ -32,12 +44,10 @@ const customerSlice = apiSlice.injectEndpoints({
   }),
 });
 
-    
-
-
-
-export const { useAddCustomerMutation, useGetAllCustomersQuery, useGetUpdatedCustomersMutation } = customerSlice;
+export const {
+  useAddCustomerMutation,
+  useGetAllCustomersQuery,
+  useGetUpdatedCustomersMutation,
+} = customerSlice;
 
 export default customerSlice;
-
-

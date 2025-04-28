@@ -15,11 +15,13 @@ import Settings from "@/pages/Settings";
 import Payment from "@/pages/Payment";
 import PaymentSuccess from "@/pages/Payment/PaymentSuccess";
 import PaymentFailed from "@/pages/Payment/PaymentFailed";
+import MasterCardNotify from "@/pages/Payment/MasterCardNotify";
 
 export interface IRoute {
   path: string;
   element?: RouteProps["element"];
   name: string;
+  admin?: boolean;
 }
 
 const authRoutes: IRoute[] = [
@@ -29,7 +31,6 @@ const authRoutes: IRoute[] = [
     name: "Login",
   },
 ];
-
 
 const privateRoutes: IRoute[] = [
   // DashBoard Routes
@@ -41,7 +42,7 @@ const privateRoutes: IRoute[] = [
   // User Management Routes
   {
     path: "/user",
-    element: <UserManagement  />,
+    element: <UserManagement />,
     name: "User Management",
   },
   {
@@ -113,12 +114,13 @@ const privateRoutes: IRoute[] = [
     path: "/settings",
     element: <Settings />,
     name: "Settings",
+    admin: true,
   },
 ];
 
 const publicRoutes: IRoute[] = [
   {
-    path: "/payment/:id/:token",
+    path: "/payment/:id/:token/:paymentType",
     element: <Payment />,
     name: "Payment",
   },
@@ -132,7 +134,11 @@ const publicRoutes: IRoute[] = [
     element: <PaymentFailed />,
     name: "Payment Failed",
   },
-  
+  {
+    path: "/payment/master-card/notify",
+    element: <MasterCardNotify />,
+    name: "MasterCard Notify",
+  },
 ];
 
 export { authRoutes, privateRoutes, publicRoutes };

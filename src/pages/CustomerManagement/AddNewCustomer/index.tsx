@@ -45,9 +45,9 @@ const AddNewCustomer = () => {
   const navigate = useNavigate();
   const type = id && encodedItem ? "edit" : "view";
   if (type === "edit") {
-    dispatch(setPageHeader("Edit Customer Details"));
+    dispatch(setPageHeader("Customer Management / Edit Customer Details"));
   } else {
-    dispatch(setPageHeader("Add New Customer"));
+    dispatch(setPageHeader("Customer Management / Create New Customer"));
   }
   const decodedItem = decodeURIComponent(encodedItem || "");
   const parsedItem = JSON.parse(decodedItem || "{}");
@@ -237,6 +237,7 @@ const AddNewCustomer = () => {
                 label="Postal Code"
                 placeholder="Enter postal code"
                 name="postalCode"
+                type="number"
                 required
                 value={formData.postalCode}
                 onChangeHandler={handleChange}
@@ -270,6 +271,7 @@ const AddNewCustomer = () => {
             <div>
               <Input
                 label="Mobile Number"
+                type="number"
                 placeholder="Enter mobile number"
                 name="contactNumber"
                 required

@@ -1,37 +1,28 @@
 import { IoSearchOutline } from "react-icons/io5";
-import { GiSettingsKnobs } from "react-icons/gi";
-
-import { SelectNative } from "@/components/ui/select-native";
 import { FaPlus } from "react-icons/fa6";
 import Table from "./Table";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import SearchInput from "@/components/common/SearchInput";
 import { useDispatch } from "react-redux";
 import { setPageHeader } from "@/features/metaSlice";
 
-const InvoiceManagement = () => {
-
+const AddNewInvoice = () => {
   const dispatch = useDispatch();
   dispatch(setPageHeader("Invoice Management"));
 
-  const [filterIsOpen, setFilterIsOpen] = useState(false);
 
   const [searchParams] = useSearchParams();
   const search = searchParams.get("searchString");
 
-  
-
   const [searchIsOpen, setSearchIsOpen] = useState(false);
   const [searchString, setSearchString] = useState("");
-
 
   useEffect(() => {
     if (search) {
       setSearchString(search);
     }
   }, [search]);
-
 
   return (
     <div className="md:p-4 p-2 border-[var(--borderGray)]  md:border rounded-lg w-full flex flex-col gap-4 bg-white ">
@@ -70,8 +61,7 @@ const InvoiceManagement = () => {
           </Link>
         </div>
       </div>
-      
-    
+
       <MobileSearch
         onChange={(e) => setSearchString(e.target.value)}
         value={searchString}
@@ -85,8 +75,6 @@ const InvoiceManagement = () => {
     </div>
   );
 };
-
-export default InvoiceManagement;
 
 const MobileSearch = ({
   onChange,
@@ -108,47 +96,48 @@ const MobileSearch = ({
   );
 };
 
+// const MobileFilter = ({ filterIsOpen }: { filterIsOpen: boolean }) => {
+//   const contentRef = useRef<HTMLDivElement>(null);
+//   const [height, setHeight] = useState<number | null>(null);
 
-const MobileFilter = ({ filterIsOpen }: { filterIsOpen: boolean }) => {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState<number | null>(null);
+//   useEffect(() => {
+//     if (contentRef.current) {
 
-  useEffect(() => {
-    if (contentRef.current) {
-    
-      const measuredHeight = filterIsOpen ? contentRef.current.scrollHeight : 0;
-      setHeight(measuredHeight);
-    }
-  }, [filterIsOpen]);
+//       const measuredHeight = filterIsOpen ? contentRef.current.scrollHeight : 0;
+//       setHeight(measuredHeight);
+//     }
+//   }, [filterIsOpen]);
 
-  return (
-    <div
-      className={`flex w-full flex-col gap-5 overflow-hidden transition-all duration-300 md:hidden`}
-      style={{ height: height !== null ? `${height}px` : undefined }}
-    >
-      <div ref={contentRef} className="w-full flex flex-col items-center gap-2">
-        <div className="w-full">
-          <SelectNative>
-            <option value="1">Payment Status</option>
-            <option value="admin">Paid</option>
-            <option value="executive">Unpaid</option>
-          </SelectNative>
-        </div>
-        <div className="w-full">
-          <SelectNative className="w-full">
-            <option value="1">Currency</option>
-            <option value="admin">Credit Card</option>
-            <option value="executive">Debit Card</option>
-          </SelectNative>
-        </div>
-        <div className="w-full">
-          <SelectNative className="w-full">
-            <option value="1">Payment Type</option>
-            <option value="admin">Yes</option>
-            <option value="executive">No</option>
-          </SelectNative>
-        </div>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div
+//       className={`flex w-full flex-col gap-5 overflow-hidden transition-all duration-300 md:hidden`}
+//       style={{ height: height !== null ? `${height}px` : undefined }}
+//     >
+//       <div ref={contentRef} className="w-full flex flex-col items-center gap-2">
+//         <div className="w-full">
+//           <SelectNative>
+//             <option value="1">Payment Status</option>
+//             <option value="admin">Paid</option>
+//             <option value="executive">Unpaid</option>
+//           </SelectNative>
+//         </div>
+//         <div className="w-full">
+//           <SelectNative className="w-full">
+//             <option value="1">Currency</option>
+//             <option value="admin">Credit Card</option>
+//             <option value="executive">Debit Card</option>
+//           </SelectNative>
+//         </div>
+//         <div className="w-full">
+//           <SelectNative className="w-full">
+//             <option value="1">Payment Type</option>
+//             <option value="admin">Yes</option>
+//             <option value="executive">No</option>
+//           </SelectNative>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+export default AddNewInvoice;

@@ -7,7 +7,6 @@ import { BsMailbox } from "react-icons/bs";
 import { GrMapLocation } from "react-icons/gr";
 import { FiPhone } from "react-icons/fi";
 import { MdOutlineAlternateEmail } from "react-icons/md";
-import { LiaCoinsSolid } from "react-icons/lia";
 import { FaRegAddressCard } from "react-icons/fa6";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
@@ -20,13 +19,12 @@ const RightBar = ({
   item: any;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate(); 
-
+  const navigate = useNavigate();
 
   const handleEditClick = () => {
-    const stringifiedItem = JSON.stringify(item); 
-    const encodedItem = encodeURIComponent(stringifiedItem); 
-    navigate(`${item.id}/${encodedItem}`); 
+    const stringifiedItem = JSON.stringify(item);
+    const encodedItem = encodeURIComponent(stringifiedItem);
+    navigate(`${item.id}/${encodedItem}`);
   };
 
   const userDetails = [

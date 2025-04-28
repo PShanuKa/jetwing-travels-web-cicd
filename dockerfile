@@ -2,10 +2,10 @@
 FROM node:22-alpine AS builder
 
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps
+# COPY package.json package-lock.json ./
+# RUN npm ci --legacy-peer-deps
 COPY . .
-RUN npm run build2
+# RUN npm run build2
 
 # Production stage with Nginx
 FROM nginx:stable-alpine AS production
